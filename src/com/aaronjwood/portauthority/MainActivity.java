@@ -1,13 +1,8 @@
 package com.aaronjwood.portauthority;
 
-import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
