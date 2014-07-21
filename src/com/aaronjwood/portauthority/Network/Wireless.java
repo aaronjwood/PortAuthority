@@ -53,6 +53,7 @@ public class Wireless {
     }
 
     public int getSignalStrength() {
+        this.wifiInfo = this.wifi.getConnectionInfo();
         return this.wifiInfo.getRssi();
     }
 

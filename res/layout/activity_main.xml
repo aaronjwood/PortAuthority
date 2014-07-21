@@ -93,4 +93,32 @@
         android:text="@string/externalIpAddress"
         android:textColor="@color/icsblue" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/externalIpAddress"
+        android:background="@color/icsblue" />
+
+    <TextView
+        android:id="@+id/signalStrengthLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/externalIpAddressLabel"
+        android:layout_toLeftOf="@+id/signalStrength"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:text="@string/signalLabel"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/signalStrength"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/externalIpAddress"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:textColor="@color/icsblue" />
+
 </RelativeLayout>

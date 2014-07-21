@@ -1,7 +1,13 @@
 package com.aaronjwood.portauthority;
 
+import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -11,6 +17,7 @@ import com.aaronjwood.portauthority.Network.Wireless;
 public class MainActivity extends Activity {
 
     private Wireless wifi;
+    private final static int TIMER_INTERVAL = 1500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,14 +26,26 @@ public class MainActivity extends Activity {
 
         this.wifi = new Wireless(this);
 
+        this.wifi
+                .getExternalIpAddress((TextView) findViewById(R.id.externalIpAddress));
+
         TextView macAddress = (TextView) findViewById(R.id.deviceMacAddress);
         macAddress.setText(this.wifi.getMacAddress());
 
         TextView ipAddress = (TextView) findViewById(R.id.internalIpAddress);
         ipAddress.setText(this.wifi.getInternalIpAddress());
 
-        this.wifi
-                .getExternalIpAddress((TextView) findViewById(R.id.externalIpAddress));
+        final Handler mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                TextView signalStrength = (TextView) findViewById(R.id.signalStrength);
+                signalStrength.setText(String.valueOf(wifi.getSignalStrength())
+                        + " dBm");
+                mHandler.postDelayed(this, TIMER_INTERVAL);
+            }
+        }, 0);
     }
 
     @Override
