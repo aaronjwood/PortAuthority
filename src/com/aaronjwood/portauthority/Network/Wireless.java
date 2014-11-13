@@ -18,7 +18,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.net.wifi.WifiManager.MulticastLock;
 import android.os.AsyncTask;
 import android.widget.TextView;
 
@@ -31,7 +30,6 @@ public class Wireless {
     private WifiInfo wifiInfo;
     private ConnectivityManager connection;
     private NetworkInfo networkInfo;
-    private MulticastLock lock;
 
     private static final String EXTERNAL_IP_SERVICE = "http://whatismyip.akamai.com/";
 
@@ -44,22 +42,6 @@ public class Wireless {
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         this.networkInfo = this.connection
                 .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        this.lock = this.wifi.createMulticastLock("DNS Service Discovery Lock");
-        this.lock.setReferenceCounted(true);
-        
-        this.acquireMulticastLock();
-    }
-
-    public MulticastLock getMulticastLock() {
-        return this.lock;
-    }
-    
-    public void acquireMulticastLock() {
-        this.lock.acquire();
-    }
-    
-    public void releaseMulticastLock() {
-        this.lock.release();
     }
 
     public String getMacAddress() {
