@@ -1,17 +1,5 @@
 package com.aaronjwood.portauthority.Network;
 
-import java.io.IOException;
-import java.util.Locale;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -23,15 +11,26 @@ import android.widget.TextView;
 
 import com.aaronjwood.portauthority.R;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.util.Locale;
+
 public class Wireless {
 
+    private static final String EXTERNAL_IP_SERVICE = "http://whatismyip.akamai.com/";
     private Activity activity;
     private WifiManager wifi;
     private WifiInfo wifiInfo;
     private ConnectivityManager connection;
     private NetworkInfo networkInfo;
-
-    private static final String EXTERNAL_IP_SERVICE = "http://whatismyip.akamai.com/";
 
     public Wireless(Activity activity) {
         this.activity = activity;
@@ -83,10 +82,10 @@ public class Wireless {
                 try {
                     response = httpclient.execute(httpget);
                 }
-                catch (ClientProtocolException e) {
+                catch(ClientProtocolException e) {
                     return null;
                 }
-                catch (IOException e) {
+                catch(IOException e) {
                     return null;
                 }
 
@@ -96,10 +95,10 @@ public class Wireless {
                 try {
                     ip = EntityUtils.toString(entity);
                 }
-                catch (ParseException e) {
+                catch(ParseException e) {
                     return null;
                 }
-                catch (IOException e) {
+                catch(IOException e) {
                     return null;
                 }
 
