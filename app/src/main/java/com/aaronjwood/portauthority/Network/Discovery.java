@@ -37,7 +37,7 @@ public class Discovery extends AsyncTask<Void, Void, Void> {
             InetAddress address;
             try {
                 address = InetAddress.getByName(newIp);
-                address.isReachable(1);
+                address.isReachable(5);
             }
             catch(UnknownHostException e) {
                 Log.e(TAG, e.getMessage());
