@@ -20,22 +20,33 @@ import java.util.ArrayList;
 public class MainActivity extends Activity {
 
     private final static int TIMER_INTERVAL = 1500;
+
     private Wireless wifi;
 
     private Button discoverHosts;
+    private ListView hostList;
+    private TextView macAddress;
+    private TextView ipAddress;
+    private TextView signalStrength;
+
     private ArrayList<String> hosts = new ArrayList<>();
     private ArrayAdapter<String> adapter;
-    private ListView hostList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        this.hostList = (ListView) findViewById(R.id.hostList);
+        this.macAddress = (TextView) findViewById(R.id.deviceMacAddress);
+        this.ipAddress = (TextView) findViewById(R.id.internalIpAddress);
+        this.signalStrength = (TextView) findViewById(R.id.signalStrength);
+        this.discoverHosts = (Button) findViewById(R.id.discoverHosts);
+
         if(savedInstanceState != null) {
             this.hosts = savedInstanceState.getStringArrayList("hosts");
             this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.hosts);
-            this.hostList = (ListView) findViewById(R.id.hostList);
             this.hostList.setAdapter(this.adapter);
             this.adapter.notifyDataSetChanged();
         }
@@ -45,10 +56,7 @@ public class MainActivity extends Activity {
 
         final String internalIp = this.wifi.getInternalIpAddress();
 
-        TextView macAddress = (TextView) findViewById(R.id.deviceMacAddress);
         macAddress.setText(this.wifi.getMacAddress());
-
-        TextView ipAddress = (TextView) findViewById(R.id.internalIpAddress);
         ipAddress.setText(internalIp);
 
         final Handler mHandler = new Handler();
@@ -56,13 +64,10 @@ public class MainActivity extends Activity {
 
             @Override
             public void run() {
-                TextView signalStrength = (TextView) findViewById(R.id.signalStrength);
                 signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm");
                 mHandler.postDelayed(this, TIMER_INTERVAL);
             }
         }, 0);
-
-        this.discoverHosts = (Button) findViewById(R.id.discoverHosts);
 
         discoverHosts.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,7 +77,6 @@ public class MainActivity extends Activity {
                 hosts.clear();
 
                 adapter = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_list_item_1, hosts);
-                hostList = (ListView) findViewById(R.id.hostList);
                 hostList.setAdapter(adapter);
 
                 Discovery discovery = new Discovery((Activity) v.getContext(), internalIp);
