@@ -77,7 +77,7 @@ public class Discovery extends AsyncTask<Void, Void, Void> {
                 }
             }
             adapter.sort(new Comparator<String>() {
-                
+
                 @Override
                 public int compare(String lhs, String rhs) {
                     return lhs.compareTo(rhs);

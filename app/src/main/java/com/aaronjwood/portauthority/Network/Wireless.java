@@ -34,13 +34,10 @@ public class Wireless {
 
     public Wireless(Activity activity) {
         this.activity = activity;
-        this.wifi = (WifiManager) this.activity
-                .getSystemService(Context.WIFI_SERVICE);
+        this.wifi = (WifiManager) this.activity.getSystemService(Context.WIFI_SERVICE);
         this.wifiInfo = this.wifi.getConnectionInfo();
-        this.connection = (ConnectivityManager) this.activity
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        this.networkInfo = this.connection
-                .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        this.connection = (ConnectivityManager) this.activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        this.networkInfo = this.connection.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
     }
 
     public String getMacAddress() {
