@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Comparator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Discovery extends AsyncTask<Void, Void, Void> {
 
@@ -32,20 +35,24 @@ public class Discovery extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         String parts[] = this.ip.split("\\.");
-        for(int i = 1; i <= 255; i++) {
-            String newIp = parts[0] + "." + parts[1] + "." + parts[2] + "." + i;
-            InetAddress address;
-            try {
-                address = InetAddress.getByName(newIp);
-                address.isReachable(5);
-            }
-            catch(UnknownHostException e) {
-                Log.e(TAG, e.getMessage());
-            }
-            catch(IOException e) {
-                Log.e(TAG, e.getMessage());
-            }
+
+        ExecutorService executor = Executors.newFixedThreadPool(8);
+        executor.execute(new ScanHostsRunnable(parts, 1, 31));
+        executor.execute(new ScanHostsRunnable(parts, 32, 63));
+        executor.execute(new ScanHostsRunnable(parts, 64, 95));
+        executor.execute(new ScanHostsRunnable(parts, 96, 127));
+        executor.execute(new ScanHostsRunnable(parts, 128, 159));
+        executor.execute(new ScanHostsRunnable(parts, 160, 191));
+        executor.execute(new ScanHostsRunnable(parts, 192, 223));
+        executor.execute(new ScanHostsRunnable(parts, 224, 255));
+        executor.shutdown();
+        try {
+            executor.awaitTermination(5, TimeUnit.SECONDS);
         }
+        catch(InterruptedException e) {
+            Log.e(TAG, e.getMessage());
+        }
+
         return null;
     }
 
@@ -61,13 +68,16 @@ public class Discovery extends AsyncTask<Void, Void, Void> {
 
             while((line = reader.readLine()) != null) {
                 String[] l = line.split("\\s+");
+
                 String flag = l[2];
                 String macAddress = l[3];
+
                 if(!flag.equals("0x0") && !macAddress.equals("00:00:00:00:00:00")) {
                     adapter.add(l[0]);
                 }
             }
             adapter.sort(new Comparator<String>() {
+                
                 @Override
                 public int compare(String lhs, String rhs) {
                     return lhs.compareTo(rhs);
@@ -80,6 +90,40 @@ public class Discovery extends AsyncTask<Void, Void, Void> {
         }
         catch(IOException e) {
             Log.e(TAG, e.getMessage());
+        }
+    }
+
+    private static class ScanHostsRunnable implements Runnable {
+
+        private static final String TAG = "ScanHostsRunnable";
+
+        private String[] ipParts;
+        private int start;
+        private int stop;
+
+        public ScanHostsRunnable(String[] ipParts, int start, int stop) {
+            this.ipParts = ipParts;
+            this.start = start;
+            this.stop = stop;
+        }
+
+        @Override
+        public void run() {
+            for(int i = this.start; i <= this.stop; i++) {
+                String newIp = this.ipParts[0] + "." + this.ipParts[1] + "." + this.ipParts[2] + "." + i;
+                InetAddress address;
+                try {
+                    address = InetAddress.getByName(newIp);
+                    address.isReachable(50);
+                }
+                catch(UnknownHostException e) {
+                    Log.e(this.TAG, e.getMessage());
+                }
+                catch(IOException e) {
+                    Log.e(this.TAG, e.getMessage());
+                }
+            }
+
         }
     }
 }
