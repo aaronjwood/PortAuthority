@@ -67,7 +67,7 @@ public class Wireless {
                 (ip >> 8 & 0xff), (ip >> 16 & 0xff), (ip >> 24 & 0xff));
     }
 
-    public void getExternalIpAddress(TextView view) {
+    public void getExternalIpAddress() {
         new AsyncTask<Void, Void, String>() {
 
             @Override

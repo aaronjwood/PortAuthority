@@ -41,7 +41,7 @@ public class MainActivity extends Activity {
         }
 
         this.wifi = new Wireless(this);
-        this.wifi.getExternalIpAddress((TextView) findViewById(R.id.externalIpAddress));
+        this.wifi.getExternalIpAddress();
 
         final String internalIp = this.wifi.getInternalIpAddress();
 
