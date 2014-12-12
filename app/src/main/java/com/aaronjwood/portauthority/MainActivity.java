@@ -57,8 +57,7 @@ public class MainActivity extends Activity {
             @Override
             public void run() {
                 TextView signalStrength = (TextView) findViewById(R.id.signalStrength);
-                signalStrength.setText(String.valueOf(wifi.getSignalStrength())
-                        + " dBm");
+                signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm");
                 mHandler.postDelayed(this, TIMER_INTERVAL);
             }
         }, 0);
