@@ -46,6 +46,7 @@ public class Discovery extends AsyncTask<Void, Void, Void> {
         executor.execute(new ScanHostsRunnable(parts, 192, 223));
         executor.execute(new ScanHostsRunnable(parts, 224, 255));
         executor.shutdown();
+
         try {
             executor.awaitTermination(5, TimeUnit.SECONDS);
         }
@@ -58,6 +59,7 @@ public class Discovery extends AsyncTask<Void, Void, Void> {
 
     protected void onPostExecute(Void result) {
         Toast.makeText(this.activity.getApplicationContext(), "Host discovery finished!", Toast.LENGTH_SHORT).show();
+
         try {
             BufferedReader reader = new BufferedReader(new FileReader("/proc/net/arp"));
             reader.readLine();
@@ -76,6 +78,7 @@ public class Discovery extends AsyncTask<Void, Void, Void> {
                     adapter.add(l[0]);
                 }
             }
+
             adapter.sort(new Comparator<String>() {
 
                 @Override
@@ -83,6 +86,7 @@ public class Discovery extends AsyncTask<Void, Void, Void> {
                     return lhs.compareTo(rhs);
                 }
             });
+
             adapter.notifyDataSetChanged();
         }
         catch(FileNotFoundException e) {
