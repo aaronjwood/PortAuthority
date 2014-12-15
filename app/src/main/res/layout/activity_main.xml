@@ -22,7 +22,7 @@
         android:layout_toLeftOf="@+id/deviceMacAddress"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:text="@string/deviceMacLabel"
+        android:text="@string/macAddress"
         android:textColor="@color/white"/>
 
     <TextView

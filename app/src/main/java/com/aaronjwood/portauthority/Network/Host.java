@@ -7,6 +7,10 @@ import android.widget.TextView;
 
 import com.aaronjwood.portauthority.R;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -44,6 +48,33 @@ public class Host {
 
         }.execute();
         return null;
+    }
+
+    public void getMacAddress() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("/proc/net/arp"));
+            reader.readLine();
+            String line;
+
+            while((line = reader.readLine()) != null) {
+                String[] l = line.split("\\s+");
+
+                String ip = l[0];
+                String macAddress = l[3];
+
+                if(ip.equals(this.ip)) {
+                    TextView hostMac = (TextView) activity.findViewById(R.id.hostMac);
+                    hostMac.setText(macAddress);
+                    return;
+                }
+            }
+        }
+        catch(FileNotFoundException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        catch(IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
     }
 
 }

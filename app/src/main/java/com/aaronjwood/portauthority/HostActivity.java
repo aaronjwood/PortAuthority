@@ -35,6 +35,7 @@ public class HostActivity extends Activity {
 
         this.host = new Host(this, this.hostIp);
         host.getHostName();
+        host.getMacAddress();
     }
 
     @Override

@@ -103,8 +103,7 @@ public class Wireless {
 
             @Override
             protected void onPostExecute(String result) {
-                TextView ipAddress = (TextView) activity
-                        .findViewById(R.id.externalIpAddress);
+                TextView ipAddress = (TextView) activity.findViewById(R.id.externalIpAddress);
                 ipAddress.setText(result);
             }
 
