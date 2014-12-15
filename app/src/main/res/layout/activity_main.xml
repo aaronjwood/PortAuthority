@@ -174,10 +174,16 @@
         android:paddingTop="5dp"
         android:textColor="@color/icsblue"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/bssid"
+        android:background="@color/icsblue"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/ssidLabel"
+        android:layout_below="@id/bssidLabel"
         android:orientation="vertical">
 
         <ListView
