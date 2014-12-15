@@ -11,5 +11,6 @@
     <string name="signalLabel">Signal Strength</string>
     <string name="hostDiscovery">Discover Hosts</string>
     <string name="ssid">SSID</string>
+    <string name="bssid">BSSID</string>
 
 </resources>

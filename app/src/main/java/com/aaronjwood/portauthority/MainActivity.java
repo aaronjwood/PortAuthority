@@ -29,6 +29,7 @@ public class MainActivity extends Activity {
     private TextView ipAddress;
     private TextView signalStrength;
     private TextView ssid;
+    private TextView bssid;
 
     private ArrayList<String> hosts = new ArrayList<>();
     private ArrayAdapter<String> adapter;
@@ -45,6 +46,7 @@ public class MainActivity extends Activity {
         this.signalStrength = (TextView) findViewById(R.id.signalStrength);
         this.discoverHosts = (Button) findViewById(R.id.discoverHosts);
         this.ssid = (TextView) findViewById(R.id.ssid);
+        this.bssid = (TextView) findViewById(R.id.bssid);
 
         if(savedInstanceState != null) {
             this.hosts = savedInstanceState.getStringArrayList("hosts");
@@ -61,6 +63,7 @@ public class MainActivity extends Activity {
         macAddress.setText(this.wifi.getMacAddress());
         ipAddress.setText(internalIp);
         ssid.setText(this.wifi.getSSID());
+        bssid.setText(this.wifi.getBSSID());
 
         final Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable() {
