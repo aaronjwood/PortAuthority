@@ -89,7 +89,7 @@
         android:layout_below="@id/internalIpAddress"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:text="@string/externalIpAddress"
+        android:text="@string/fetching"
         android:textColor="@color/icsblue"/>
 
     <View
