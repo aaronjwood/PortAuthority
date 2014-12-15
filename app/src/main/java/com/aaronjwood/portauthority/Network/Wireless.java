@@ -69,7 +69,6 @@ public class Wireless {
 
     public void getExternalIpAddress() {
         new AsyncTask<Void, Void, String>() {
-
             @Override
             protected String doInBackground(Void... params) {
                 HttpClient httpclient = new DefaultHttpClient();
