@@ -5,5 +5,13 @@
                 android:background="@color/black"
                 tools:context="com.aaronjwood.portauthority.HostActivity">
 
+    <TextView
+        android:id="@+id/hostIpLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="10dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/icsblue"/>
 
 </RelativeLayout>

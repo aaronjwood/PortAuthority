@@ -99,7 +99,9 @@ public class MainActivity extends Activity {
         this.hostList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selectedHost = (String) hostList.getItemAtPosition(position);
                 Intent intent = new Intent(MainActivity.this, HostActivity.class);
+                intent.putExtra("HOST", selectedHost);
                 startActivity(intent);
             }
         });
