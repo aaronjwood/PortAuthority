@@ -10,9 +10,6 @@
     <string name="externalIpAddress">Fetching...</string>
     <string name="signalLabel">Signal Strength</string>
     <string name="hostDiscovery">Discover Hosts</string>
-
-    <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>
-    <color name="icsblue">#33B5E5</color>
+    <string name="ssid">SSID</string>
 
 </resources>
