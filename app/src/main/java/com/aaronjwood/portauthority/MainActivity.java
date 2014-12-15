@@ -60,10 +60,10 @@ public class MainActivity extends Activity {
 
         final String internalIp = this.wifi.getInternalIpAddress();
 
-        macAddress.setText(this.wifi.getMacAddress());
-        ipAddress.setText(internalIp);
-        ssid.setText(this.wifi.getSSID());
-        bssid.setText(this.wifi.getBSSID());
+        this.macAddress.setText(this.wifi.getMacAddress());
+        this.ipAddress.setText(internalIp);
+        this.ssid.setText(this.wifi.getSSID());
+        this.bssid.setText(this.wifi.getBSSID());
 
         final Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable() {
@@ -75,7 +75,7 @@ public class MainActivity extends Activity {
             }
         }, 0);
 
-        discoverHosts.setOnClickListener(new View.OnClickListener() {
+        this.discoverHosts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!wifi.isConnected()) {
@@ -94,6 +94,7 @@ public class MainActivity extends Activity {
                 discovery.execute();
             }
         });
+
     }
 
     @Override
