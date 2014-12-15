@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 
 public class HostActivity extends Activity {
 
     private TextView hostIp;
+    private String host = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,14 +20,23 @@ public class HostActivity extends Activity {
 
         this.hostIp = (TextView) findViewById(R.id.hostIpLabel);
 
-        String host = null;
+        if(savedInstanceState != null) {
+            this.host = savedInstanceState.getString("host");
+        }
 
         if(savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            host = extras.getString("HOST");
+            this.host = extras.getString("HOST");
         }
 
-        this.hostIp.setText(host);
+        this.hostIp.setText(this.host);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedState) {
+        super.onSaveInstanceState(savedState);
+
+        savedState.putString("host", this.host);
     }
 
 
