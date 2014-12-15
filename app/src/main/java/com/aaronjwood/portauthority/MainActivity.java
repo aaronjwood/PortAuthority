@@ -1,11 +1,13 @@
 package com.aaronjwood.portauthority;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -67,7 +69,6 @@ public class MainActivity extends Activity {
 
         final Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable() {
-
             @Override
             public void run() {
                 signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm");
@@ -92,6 +93,14 @@ public class MainActivity extends Activity {
 
                 Discovery discovery = new Discovery((Activity) v.getContext(), internalIp);
                 discovery.execute();
+            }
+        });
+
+        this.hostList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, HostActivity.class);
+                startActivity(intent);
             }
         });
 
