@@ -20,7 +20,6 @@ public class HostActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host);
 
-        this.host = new Host(this, this.hostIp);
         this.hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
 
         if(savedInstanceState != null) {
@@ -34,6 +33,7 @@ public class HostActivity extends Activity {
 
         this.hostIpLabel.setText(this.hostIp);
 
+        this.host = new Host(this, this.hostIp);
         host.getHostName();
     }
 
