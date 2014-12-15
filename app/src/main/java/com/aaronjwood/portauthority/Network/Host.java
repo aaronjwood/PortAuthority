@@ -3,6 +3,9 @@ package com.aaronjwood.portauthority.Network;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.TextView;
+
+import com.aaronjwood.portauthority.R;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -35,7 +38,8 @@ public class Host {
 
             @Override
             protected void onPostExecute(String result) {
-
+                TextView hostName = (TextView) activity.findViewById(R.id.hostName);
+                hostName.setText(result);
             }
 
         }.execute();
