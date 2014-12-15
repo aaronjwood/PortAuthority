@@ -118,7 +118,7 @@ public class Discovery extends AsyncTask<Void, Void, Void> {
                 InetAddress address;
                 try {
                     address = InetAddress.getByName(newIp);
-                    address.isReachable(50);
+                    address.isReachable(75);
                 }
                 catch(UnknownHostException e) {
                     Log.e(this.TAG, e.getMessage());
