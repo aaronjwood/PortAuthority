@@ -4,39 +4,44 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.aaronjwood.portauthority.Network.Host;
 
 
 public class HostActivity extends Activity {
 
-    private TextView hostIp;
-    private String host = null;
+    private Host host;
+    private TextView hostIpLabel;
+    private String hostIp = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host);
 
-        this.hostIp = (TextView) findViewById(R.id.hostIpLabel);
+        this.host = new Host(this, this.hostIp);
+        this.hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
 
         if(savedInstanceState != null) {
-            this.host = savedInstanceState.getString("host");
+            this.hostIp = savedInstanceState.getString("hostIp");
         }
 
         if(savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            this.host = extras.getString("HOST");
+            this.hostIp = extras.getString("HOST");
         }
 
-        this.hostIp.setText(this.host);
+        this.hostIpLabel.setText(this.hostIp);
+
+        host.getHostName();
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
-        savedState.putString("host", this.host);
+        savedState.putString("hostIp", this.hostIp);
     }
 
 
