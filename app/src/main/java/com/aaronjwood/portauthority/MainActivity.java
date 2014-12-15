@@ -78,6 +78,11 @@ public class MainActivity extends Activity {
         discoverHosts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!wifi.isConnected()) {
+                    Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Toast.makeText(getApplicationContext(), "Finding hosts on your network...", Toast.LENGTH_SHORT).show();
 
                 hosts.clear();
