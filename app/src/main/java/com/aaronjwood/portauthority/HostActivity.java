@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.aaronjwood.portauthority.Network.Host;
@@ -13,7 +14,8 @@ public class HostActivity extends Activity {
 
     private Host host;
     private TextView hostIpLabel;
-    private String hostIp = null;
+    private String hostIp;
+    private Button scanPortsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +23,7 @@ public class HostActivity extends Activity {
         setContentView(R.layout.activity_host);
 
         this.hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
+        this.scanPortsButton = (Button) findViewById(R.id.scanPorts);
 
         if(savedInstanceState != null) {
             this.hostIp = savedInstanceState.getString("hostIp");

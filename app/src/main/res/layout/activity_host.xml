@@ -72,7 +72,7 @@
             android:layout_weight="1"></ListView>
 
         <Button
-            android:id="@+id/scanHost"
+            android:id="@+id/scanPorts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/button"
