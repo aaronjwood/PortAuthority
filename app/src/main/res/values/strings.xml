@@ -13,5 +13,6 @@
     <string name="ssid">SSID</string>
     <string name="bssid">BSSID</string>
     <string name="hostname">Hostname</string>
+    <string name="scanHost">Scan Ports</string>
 
 </resources>

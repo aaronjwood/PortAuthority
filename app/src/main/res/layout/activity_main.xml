@@ -196,9 +196,9 @@
             android:id="@+id/discoverHosts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/discover_hosts_button"
+            android:background="@drawable/button"
             android:text="@string/hostDiscovery"
-            android:textColor="@drawable/discover_hosts_button_text"/>
+            android:textColor="@drawable/button_text"/>
     </LinearLayout>
 
 </RelativeLayout>
