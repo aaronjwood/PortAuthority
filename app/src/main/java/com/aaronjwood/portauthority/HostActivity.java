@@ -32,7 +32,7 @@ public class HostActivity extends Activity {
         setContentView(R.layout.activity_host);
 
         this.hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
-        this.scanPortsButton = (Button) findViewById(R.id.scanPorts);
+        this.scanPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
         this.portList = (ListView) findViewById(R.id.portList);
 
         if(savedInstanceState != null) {

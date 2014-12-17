@@ -71,13 +71,30 @@
             android:layout_height="0dp"
             android:layout_weight="1"></ListView>
 
-        <Button
-            android:id="@+id/scanPorts"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/button"
-            android:text="@string/scanHost"
-            android:textColor="@drawable/button_text"/>
+            android:layout_below="@id/portList"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/scanWellKnownPorts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button"
+                android:text="@string/scanWellKnownPorts"
+                android:textColor="@drawable/button_text"/>
+
+            <Button
+                android:id="@+id/scanPortRange"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button"
+                android:text="@string/scanPortRange"
+                android:textColor="@drawable/button_text"/>
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>
