@@ -132,7 +132,6 @@ public class Host {
                 ArrayAdapter<Integer> adapter = (ArrayAdapter<Integer>) portList.getAdapter();
                 adapter.addAll(result);
                 adapter.notifyDataSetChanged();
-
             }
 
         }.execute();
@@ -140,7 +139,7 @@ public class Host {
 
     private static class ScanPortsCallable implements Callable<ArrayList<Integer>> {
 
-        private static final String TAG = "ScanPortsRunnable";
+        private static final String TAG = "ScanPortsCallable";
 
         private String ip;
         private int startPort;
