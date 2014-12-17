@@ -10,7 +10,7 @@
         android:layout_centerHorizontal="true"
         android:paddingBottom="10dp"
         android:text="@string/deviceInfoLabel"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/icsblue"/>
 
     <TextView

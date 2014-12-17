@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:paddingBottom="10dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/icsblue"/>
 
     <TextView
@@ -37,6 +37,12 @@
         android:textColor="@color/icsblue"
         android:text="@string/fetching"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/hostName"
+        android:background="@color/icsblue"/>
+
     <TextView
         android:id="@+id/hostMacLabel"
         android:layout_width="wrap_content"
@@ -59,10 +65,28 @@
         android:paddingTop="5dp"
         android:textColor="@color/icsblue"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/hostMac"
+        android:background="@color/icsblue"/>
+
+    <TextView
+        android:id="@+id/portListLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_below="@id/hostMac"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/openPorts"
+        android:textColor="@color/icsblue"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/hostMacLabel"
+        android:layout_below="@id/portListLabel"
         android:orientation="vertical">
 
         <ListView
@@ -82,6 +106,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:layout_marginRight="5dp"
                 android:background="@drawable/button"
                 android:text="@string/scanWellKnownPorts"
                 android:textColor="@drawable/button_text"/>

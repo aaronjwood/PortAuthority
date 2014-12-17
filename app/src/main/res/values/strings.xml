@@ -15,5 +15,6 @@
     <string name="hostname">Hostname</string>
     <string name="scanWellKnownPorts">Scan Well Known Ports</string>
     <string name="scanPortRange">Scan Port Range</string>
+    <string name="openPorts">Open Ports</string>
 
 </resources>
