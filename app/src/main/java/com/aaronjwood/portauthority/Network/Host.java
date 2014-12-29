@@ -93,7 +93,7 @@ public class Host {
 
     public void scanSystemPorts() {
         this.scanProgressDialog = new ProgressDialog(this.activity, AlertDialog.THEME_HOLO_DARK);
-        scanProgressDialog.setTitle("Scanning well known ports...");
+        scanProgressDialog.setTitle("Scanning Well Known Ports");
         scanProgressDialog.setProgressStyle(scanProgressDialog.STYLE_HORIZONTAL);
         scanProgressDialog.setProgress(0);
         scanProgressDialog.setMax(1024);

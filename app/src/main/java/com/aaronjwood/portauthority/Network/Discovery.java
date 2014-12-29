@@ -36,7 +36,7 @@ public class Discovery {
 
     public void scanHosts() {
         this.scanProgressDialog = new ProgressDialog(this.activity, AlertDialog.THEME_HOLO_DARK);
-        scanProgressDialog.setTitle("Scanning for hosts...");
+        scanProgressDialog.setTitle("Scanning For Hosts");
         scanProgressDialog.setProgressStyle(scanProgressDialog.STYLE_HORIZONTAL);
         scanProgressDialog.setProgress(0);
         scanProgressDialog.setMax(255);
