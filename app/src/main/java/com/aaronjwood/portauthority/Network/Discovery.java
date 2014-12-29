@@ -135,7 +135,7 @@ public class Discovery {
                 InetAddress address;
                 try {
                     address = InetAddress.getByName(newIp);
-                    address.isReachable(75);
+                    address.isReachable(100);
                 }
                 catch(UnknownHostException e) {
                     Log.e(this.TAG, e.getMessage());
