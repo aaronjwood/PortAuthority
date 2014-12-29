@@ -92,7 +92,7 @@ public class MainActivity extends Activity {
                 hostList.setAdapter(adapter);
 
                 Discovery discovery = new Discovery((Activity) v.getContext(), internalIp);
-                discovery.execute();
+                discovery.scanHosts();
             }
         });
 
