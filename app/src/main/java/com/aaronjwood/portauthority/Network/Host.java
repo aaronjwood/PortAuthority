@@ -8,7 +8,6 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
 
@@ -138,7 +137,6 @@ public class Host {
 
             @Override
             protected void onPostExecute(ArrayList<Integer> result) {
-                Toast.makeText(activity.getApplicationContext(), "Finished scanning well known ports!", Toast.LENGTH_SHORT).show();
                 ListView portList = (ListView) activity.findViewById(R.id.portList);
                 ArrayAdapter<Integer> adapter = (ArrayAdapter<Integer>) portList.getAdapter();
                 adapter.addAll(result);
