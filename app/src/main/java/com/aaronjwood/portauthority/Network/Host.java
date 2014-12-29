@@ -1,6 +1,8 @@
 package com.aaronjwood.portauthority.Network;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -31,6 +33,7 @@ public class Host {
 
     private Activity activity;
     private String ip;
+    private ProgressDialog scanProgressDialog;
 
     public Host(Activity activity, String ip) {
         this.activity = activity;
@@ -89,6 +92,13 @@ public class Host {
     }
 
     public void scanSystemPorts() {
+        this.scanProgressDialog = new ProgressDialog(this.activity, AlertDialog.THEME_HOLO_DARK);
+        scanProgressDialog.setTitle("Scanning well known ports...");
+        scanProgressDialog.setProgressStyle(scanProgressDialog.STYLE_HORIZONTAL);
+        scanProgressDialog.setProgress(0);
+        scanProgressDialog.setMax(1024);
+        scanProgressDialog.show();
+
         new AsyncTask<Void, Void, ArrayList<Integer>>() {
             @Override
             protected ArrayList<Integer> doInBackground(Void... params) {
@@ -121,6 +131,7 @@ public class Host {
                 }
                 finally {
                     executor.shutdown();
+                    scanProgressDialog.dismiss();
                 }
                 return null;
             }
@@ -137,7 +148,7 @@ public class Host {
         }.execute();
     }
 
-    private static class ScanPortsCallable implements Callable<ArrayList<Integer>> {
+    private class ScanPortsCallable implements Callable<ArrayList<Integer>> {
 
         private static final String TAG = "ScanPortsCallable";
 
@@ -162,7 +173,10 @@ public class Host {
                     ports.add(i);
                 }
                 catch(IOException e) {
-
+                    Log.e(TAG, e.getMessage());
+                }
+                finally {
+                    scanProgressDialog.incrementProgressBy(1);
                 }
             }
             return ports;
