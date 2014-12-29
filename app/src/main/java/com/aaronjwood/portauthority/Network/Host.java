@@ -41,6 +41,7 @@ public class Host {
 
     public String getHostName() {
         new AsyncTask<Void, Void, String>() {
+
             @Override
             protected String doInBackground(Void... params) {
                 try {
@@ -93,6 +94,7 @@ public class Host {
     public void scanSystemPorts() {
         this.scanProgressDialog = new ProgressDialog(this.activity, AlertDialog.THEME_HOLO_DARK);
         scanProgressDialog.setTitle("Scanning Well Known Ports");
+        scanProgressDialog.setMessage(""); //For some reason we need to set a blank message here if we want to change it later on
         scanProgressDialog.setProgressStyle(scanProgressDialog.STYLE_HORIZONTAL);
         scanProgressDialog.setProgress(0);
         scanProgressDialog.setMax(1024);
@@ -165,10 +167,19 @@ public class Host {
             ArrayList<Integer> ports = new ArrayList<>();
             for(int i = this.startPort; i <= this.stopPort; i++) {
                 try {
+                    final int port = i;
                     Socket socket = new Socket();
-                    socket.connect(new InetSocketAddress(this.ip, i), 100);
+                    socket.connect(new InetSocketAddress(this.ip, port), 50);
                     socket.close();
-                    ports.add(i);
+                    ports.add(port);
+                    activity.runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            scanProgressDialog.setMessage("Port " + port + " is open!");
+                        }
+                    });
+
                 }
                 catch(IOException e) {
                     Log.e(TAG, e.getMessage());
