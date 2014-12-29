@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aaronjwood.portauthority.Network.Host;
 
@@ -56,8 +55,6 @@ public class HostActivity extends Activity {
         this.scanPortsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Scanning well known ports...", Toast.LENGTH_SHORT).show();
-
                 ports.clear();
 
                 adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, ports);

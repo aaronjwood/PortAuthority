@@ -84,8 +84,6 @@ public class MainActivity extends Activity {
                     return;
                 }
 
-                Toast.makeText(getApplicationContext(), "Finding hosts on your network...", Toast.LENGTH_SHORT).show();
-
                 hosts.clear();
 
                 adapter = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_list_item_1, hosts);
