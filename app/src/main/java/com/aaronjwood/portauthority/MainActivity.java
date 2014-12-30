@@ -35,7 +35,8 @@ public class MainActivity extends Activity implements MainAsyncResponse {
     private Button discoverHosts;
     private ListView hostList;
     private TextView macAddress;
-    private TextView ipAddress;
+    private TextView internalIp;
+    private TextView externalIp;
     private TextView signalStrength;
     private TextView ssid;
     private TextView bssid;
@@ -49,19 +50,20 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
         this.hostList = (ListView) findViewById(R.id.hostList);
         this.macAddress = (TextView) findViewById(R.id.deviceMacAddress);
-        this.ipAddress = (TextView) findViewById(R.id.internalIpAddress);
+        this.internalIp = (TextView) findViewById(R.id.internalIpAddress);
+        this.externalIp = (TextView) findViewById(R.id.externalIpAddress);
         this.signalStrength = (TextView) findViewById(R.id.signalStrength);
         this.discoverHosts = (Button) findViewById(R.id.discoverHosts);
         this.ssid = (TextView) findViewById(R.id.ssid);
         this.bssid = (TextView) findViewById(R.id.bssid);
 
         this.wifi = new Wireless(this);
-        this.wifi.getExternalIpAddress();
+        this.wifi.getExternalIpAddress(this);
 
         final String internalIp = this.wifi.getInternalIpAddress();
 
         this.macAddress.setText(this.wifi.getMacAddress());
-        this.ipAddress.setText(internalIp);
+        this.internalIp.setText(internalIp);
         this.ssid.setText(this.wifi.getSSID());
         this.bssid.setText(this.wifi.getBSSID());
 
@@ -180,5 +182,10 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         if(this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.incrementProgressBy(output);
         }
+    }
+
+    @Override
+    public void processFinish(String output) {
+        this.externalIp.setText(output);
     }
 }

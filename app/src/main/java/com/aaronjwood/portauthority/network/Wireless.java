@@ -6,26 +6,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
-import android.widget.TextView;
 
-import com.aaronjwood.portauthority.R;
+import com.aaronjwood.portauthority.async.GetExternalIpAsyncTask;
+import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
-import java.io.IOException;
 import java.util.Locale;
 
 public class Wireless {
 
-    private static final String EXTERNAL_IP_SERVICE = "http://whatismyip.akamai.com/";
     private Activity activity;
     private WifiManager wifi;
     private WifiInfo wifiInfo;
@@ -67,47 +55,8 @@ public class Wireless {
                 (ip >> 8 & 0xff), (ip >> 16 & 0xff), (ip >> 24 & 0xff));
     }
 
-    public void getExternalIpAddress() {
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                HttpClient httpclient = new DefaultHttpClient();
-                HttpGet httpget = new HttpGet(EXTERNAL_IP_SERVICE);
-                HttpResponse response;
-
-                try {
-                    response = httpclient.execute(httpget);
-                }
-                catch(ClientProtocolException e) {
-                    return null;
-                }
-                catch(IOException e) {
-                    return null;
-                }
-
-                String ip;
-                HttpEntity entity = response.getEntity();
-
-                try {
-                    ip = EntityUtils.toString(entity);
-                }
-                catch(ParseException e) {
-                    return null;
-                }
-                catch(IOException e) {
-                    return null;
-                }
-
-                return ip;
-            }
-
-            @Override
-            protected void onPostExecute(String result) {
-                TextView ipAddress = (TextView) activity.findViewById(R.id.externalIpAddress);
-                ipAddress.setText(result);
-            }
-
-        }.execute();
+    public void getExternalIpAddress(MainAsyncResponse delegate) {
+        new GetExternalIpAsyncTask(delegate).execute();
     }
 
     public int getLinkSpeed() {

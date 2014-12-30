@@ -8,4 +8,6 @@ public interface MainAsyncResponse {
     void processFinish(ArrayList<Map<String, String>> output);
 
     void processFinish(int output);
+
+    void processFinish(String output);
 }
