@@ -3,7 +3,7 @@ package com.aaronjwood.portauthority.async;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.aaronjwood.portauthority.AsyncResponse;
+import com.aaronjwood.portauthority.MainAsyncResponse;
 import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
 
 import java.io.BufferedReader;
@@ -22,9 +22,9 @@ import java.util.concurrent.TimeUnit;
 public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<String, String>>> {
 
     private static final String TAG = "ScanHostsAsyncTask";
-    private AsyncResponse delegate;
+    private MainAsyncResponse delegate;
 
-    public ScanHostsAsyncTask(AsyncResponse delegate) {
+    public ScanHostsAsyncTask(MainAsyncResponse delegate) {
         this.delegate = delegate;
     }
 

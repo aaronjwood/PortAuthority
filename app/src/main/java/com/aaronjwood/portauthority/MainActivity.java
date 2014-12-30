@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends Activity implements AsyncResponse {
+public class MainActivity extends Activity implements MainAsyncResponse {
 
     private final static int TIMER_INTERVAL = 1500;
 

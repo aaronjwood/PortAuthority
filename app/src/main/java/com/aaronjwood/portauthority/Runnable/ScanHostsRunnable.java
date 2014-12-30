@@ -2,7 +2,7 @@ package com.aaronjwood.portauthority.runnable;
 
 import android.util.Log;
 
-import com.aaronjwood.portauthority.AsyncResponse;
+import com.aaronjwood.portauthority.MainAsyncResponse;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -15,9 +15,9 @@ public class ScanHostsRunnable implements Runnable {
     private String[] ipParts;
     private int start;
     private int stop;
-    private AsyncResponse delegate;
+    private MainAsyncResponse delegate;
 
-    public ScanHostsRunnable(String[] ipParts, int start, int stop, AsyncResponse delegate) {
+    public ScanHostsRunnable(String[] ipParts, int start, int stop, MainAsyncResponse delegate) {
         this.ipParts = ipParts;
         this.start = start;
         this.stop = stop;
