@@ -84,11 +84,12 @@ public class Discovery {
                     while((line = reader.readLine()) != null) {
                         String[] l = line.split("\\s+");
 
+                        String ip = l[0];
                         String flag = l[2];
                         String macAddress = l[3];
 
                         if(!flag.equals("0x0") && !macAddress.equals("00:00:00:00:00:00")) {
-                            adapter.add(l[0]);
+                            adapter.add(ip);
                         }
                     }
 
@@ -111,7 +112,6 @@ public class Discovery {
             }
         }.execute();
     }
-
 
 
     private class ScanHostsRunnable implements Runnable {
