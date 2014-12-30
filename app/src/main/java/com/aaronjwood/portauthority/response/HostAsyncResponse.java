@@ -1,4 +1,4 @@
-package com.aaronjwood.portauthority;
+package com.aaronjwood.portauthority.response;
 
 import java.util.ArrayList;
 

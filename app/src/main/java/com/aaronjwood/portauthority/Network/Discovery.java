@@ -1,6 +1,6 @@
 package com.aaronjwood.portauthority.network;
 
-import com.aaronjwood.portauthority.MainAsyncResponse;
+import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.async.ScanHostsAsyncTask;
 
 public class Discovery {

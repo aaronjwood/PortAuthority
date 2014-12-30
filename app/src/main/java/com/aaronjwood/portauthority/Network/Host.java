@@ -1,6 +1,6 @@
 package com.aaronjwood.portauthority.network;
 
-import com.aaronjwood.portauthority.HostAsyncResponse;
+import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.async.ScanWellKnownPortsAsyncTask;
 
 public class Host {

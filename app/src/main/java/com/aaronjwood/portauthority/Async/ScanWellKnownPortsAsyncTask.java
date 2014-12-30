@@ -3,7 +3,7 @@ package com.aaronjwood.portauthority.async;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.aaronjwood.portauthority.HostAsyncResponse;
+import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.callable.ScanPortsCallable;
 
 import java.util.ArrayList;

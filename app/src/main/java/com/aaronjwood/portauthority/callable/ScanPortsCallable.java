@@ -2,7 +2,7 @@ package com.aaronjwood.portauthority.callable;
 
 import android.util.Log;
 
-import com.aaronjwood.portauthority.HostAsyncResponse;
+import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

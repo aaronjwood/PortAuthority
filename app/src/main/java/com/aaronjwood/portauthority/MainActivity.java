@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.aaronjwood.portauthority.network.Discovery;
 import com.aaronjwood.portauthority.network.Wireless;
+import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
