@@ -93,6 +93,7 @@ public class Host {
 
     public void scanSystemPorts() {
         this.scanProgressDialog = new ProgressDialog(this.activity, AlertDialog.THEME_HOLO_DARK);
+        scanProgressDialog.setCancelable(false);
         scanProgressDialog.setTitle("Scanning Well Known Ports");
         scanProgressDialog.setMessage(""); //For some reason we need to set a blank message here if we want to change it later on
         scanProgressDialog.setProgressStyle(scanProgressDialog.STYLE_HORIZONTAL);
