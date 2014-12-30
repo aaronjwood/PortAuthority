@@ -1,6 +1,8 @@
 package com.aaronjwood.portauthority;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,7 +19,7 @@ import java.util.ArrayList;
 
 public class HostActivity extends Activity implements HostAsyncResponse {
 
-    private Host host;
+    private Host host = new Host();
     private TextView hostIpLabel;
     private TextView hostNameLabel;
     private String hostName;
@@ -28,6 +30,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     private ListView portList;
     private ArrayAdapter<Integer> adapter;
     private ArrayList<Integer> ports = new ArrayList<>();
+    private ProgressDialog scanProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,19 +60,20 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
         this.hostIpLabel.setText(this.hostIp);
         this.hostNameLabel.setText(this.hostName);
-
-        this.host = new Host(this, this.hostIp);
         this.hostMacLabel.setText(this.hostMac);
 
         this.scanPortsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ports.clear();
+                scanProgressDialog = new ProgressDialog(HostActivity.this, AlertDialog.THEME_HOLO_DARK);
+                scanProgressDialog.setCancelable(false);
+                scanProgressDialog.setTitle("Scanning Well Known Ports");
+                scanProgressDialog.setProgressStyle(scanProgressDialog.STYLE_HORIZONTAL);
+                scanProgressDialog.setProgress(0);
+                scanProgressDialog.setMax(1024);
+                scanProgressDialog.show();
 
-                adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, ports);
-                portList.setAdapter(adapter);
-
-                host.scanSystemPorts();
+                host.scanWellKnownPorts(hostIp, HostActivity.this);
             }
         });
 
@@ -110,6 +114,13 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
     @Override
     public void processFinish(ArrayList<Integer> output) {
+        this.scanProgressDialog.dismiss();
+        ArrayAdapter<Integer> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, output);
+        this.portList.setAdapter(adapter);
+    }
 
+    @Override
+    public void processFinish(int output) {
+        this.scanProgressDialog.incrementProgressBy(output);
     }
 }

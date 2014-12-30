@@ -6,4 +6,5 @@ public interface HostAsyncResponse {
 
     void processFinish(ArrayList<Integer> output);
 
+    void processFinish(int output);
 }
