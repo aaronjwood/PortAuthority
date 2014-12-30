@@ -59,8 +59,9 @@ public class HostActivity extends Activity implements HostAsyncResponse {
             this.hostMac = extras.getString("MAC");
         }
 
+        this.host.getHostname(this.hostIp, this);
+
         this.hostIpLabel.setText(this.hostIp);
-        this.hostNameLabel.setText(this.hostName);
         this.hostMacLabel.setText(this.hostMac);
 
         this.scanPortsButton.setOnClickListener(new View.OnClickListener() {
@@ -123,5 +124,10 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     @Override
     public void processFinish(int output) {
         this.scanProgressDialog.incrementProgressBy(output);
+    }
+
+    @Override
+    public void processFinish(String output) {
+        this.hostNameLabel.setText(output);
     }
 }
