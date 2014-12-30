@@ -15,8 +15,8 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aaronjwood.portauthority.Network.Discovery;
-import com.aaronjwood.portauthority.Network.Wireless;
+import com.aaronjwood.portauthority.network.Discovery;
+import com.aaronjwood.portauthority.network.Wireless;
 
 import java.util.ArrayList;
 import java.util.HashMap;

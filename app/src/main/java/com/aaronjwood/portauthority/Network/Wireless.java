@@ -1,4 +1,4 @@
-package com.aaronjwood.portauthority.Network;
+package com.aaronjwood.portauthority.network;
 
 import android.app.Activity;
 import android.content.Context;

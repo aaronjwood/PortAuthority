@@ -1,10 +1,10 @@
-package com.aaronjwood.portauthority.Async;
+package com.aaronjwood.portauthority.async;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.aaronjwood.portauthority.AsyncResponse;
-import com.aaronjwood.portauthority.Runnable.ScanHostsRunnable;
+import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

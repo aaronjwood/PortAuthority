@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.aaronjwood.portauthority.Network.Host;
+import com.aaronjwood.portauthority.network.Host;
 
 import java.util.ArrayList;
 
