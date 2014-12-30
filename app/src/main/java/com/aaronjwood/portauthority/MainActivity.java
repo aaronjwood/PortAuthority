@@ -101,7 +101,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                 HashMap<String, String> map = (HashMap) hostList.getItemAtPosition(position);
                 Intent intent = new Intent(MainActivity.this, HostActivity.class);
                 intent.putExtra("HOST", map.get("First Line"));
-                intent.putExtra("HOSTNAME", map.get("Second Line"));
+                intent.putExtra("MAC", map.get("Second Line"));
                 startActivity(intent);
             }
         });

@@ -7,13 +7,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.aaronjwood.portauthority.R;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -35,33 +31,6 @@ public class Host {
     public Host(Activity activity, String ip) {
         this.activity = activity;
         this.ip = ip;
-    }
-
-    public void getMacAddress() {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader("/proc/net/arp"));
-            reader.readLine();
-            String line;
-
-            while((line = reader.readLine()) != null) {
-                String[] l = line.split("\\s+");
-
-                String ip = l[0];
-                String macAddress = l[3];
-
-                if(ip.equals(this.ip)) {
-                    TextView hostMac = (TextView) activity.findViewById(R.id.hostMac);
-                    hostMac.setText(macAddress);
-                    return;
-                }
-            }
-        }
-        catch(FileNotFoundException e) {
-            Log.e(TAG, e.getMessage());
-        }
-        catch(IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
     }
 
     public void scanSystemPorts() {

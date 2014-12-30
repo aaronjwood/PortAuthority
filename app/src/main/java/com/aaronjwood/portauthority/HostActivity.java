@@ -15,13 +15,15 @@ import com.aaronjwood.portauthority.network.Host;
 import java.util.ArrayList;
 
 
-public class HostActivity extends Activity {
+public class HostActivity extends Activity implements HostAsyncResponse {
 
     private Host host;
     private TextView hostIpLabel;
     private TextView hostNameLabel;
     private String hostName;
     private String hostIp;
+    private TextView hostMacLabel;
+    private String hostMac;
     private Button scanPortsButton;
     private ListView portList;
     private ArrayAdapter<Integer> adapter;
@@ -36,9 +38,11 @@ public class HostActivity extends Activity {
         this.hostNameLabel = (TextView) findViewById(R.id.hostName);
         this.scanPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
         this.portList = (ListView) findViewById(R.id.portList);
+        this.hostMacLabel = (TextView) findViewById(R.id.hostMac);
 
         if(savedInstanceState != null) {
             this.hostIp = savedInstanceState.getString("hostIp");
+            this.hostMac = savedInstanceState.getString("hostMac");
             this.hostName = savedInstanceState.getString("hostName");
             this.ports = savedInstanceState.getIntegerArrayList("ports");
             this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
@@ -48,14 +52,14 @@ public class HostActivity extends Activity {
         else if(savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             this.hostIp = extras.getString("HOST");
-            this.hostName = extras.getString("HOSTNAME");
+            this.hostMac = extras.getString("MAC");
         }
 
         this.hostIpLabel.setText(this.hostIp);
         this.hostNameLabel.setText(this.hostName);
 
         this.host = new Host(this, this.hostIp);
-        this.host.getMacAddress();
+        this.hostMacLabel.setText(this.hostMac);
 
         this.scanPortsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +81,7 @@ public class HostActivity extends Activity {
 
         savedState.putString("hostIp", this.hostIp);
         savedState.putString("hostName", this.hostName);
+        savedState.putString("hostMac", this.hostMac);
         savedState.putIntegerArrayList("ports", this.ports);
     }
 
@@ -101,5 +106,10 @@ public class HostActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void processFinish(ArrayList<Integer> output) {
+
     }
 }
