@@ -110,6 +110,16 @@ public class MainActivity extends Activity implements MainAsyncResponse {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+
+        if(this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
+            this.scanProgressDialog.dismiss();
+        }
+        this.scanProgressDialog = null;
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
@@ -157,14 +167,18 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
     @Override
     public void processFinish(ArrayList<Map<String, String>> output) {
-        SimpleAdapter adapter = new SimpleAdapter(this, output, android.R.layout.simple_list_item_2, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
-        ListView hostList = (ListView) this.findViewById(R.id.hostList);
-        hostList.setAdapter(adapter);
-        this.scanProgressDialog.dismiss();
+        if(this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
+            SimpleAdapter adapter = new SimpleAdapter(this, output, android.R.layout.simple_list_item_2, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
+            ListView hostList = (ListView) this.findViewById(R.id.hostList);
+            hostList.setAdapter(adapter);
+            this.scanProgressDialog.dismiss();
+        }
     }
 
     @Override
     public void processFinish(int output) {
-        this.scanProgressDialog.incrementProgressBy(output);
+        if(this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
+            this.scanProgressDialog.incrementProgressBy(output);
+        }
     }
 }
