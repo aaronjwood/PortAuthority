@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements AsyncResponse {
 
     private final static int TIMER_INTERVAL = 1500;
 
@@ -143,4 +143,8 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void processFinish(String output) {
+
+    }
 }
