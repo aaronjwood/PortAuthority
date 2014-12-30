@@ -2,6 +2,8 @@ package com.aaronjwood.portauthority.runnable;
 
 import android.util.Log;
 
+import com.aaronjwood.portauthority.AsyncResponse;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -13,11 +15,13 @@ public class ScanHostsRunnable implements Runnable {
     private String[] ipParts;
     private int start;
     private int stop;
+    private AsyncResponse delegate;
 
-    public ScanHostsRunnable(String[] ipParts, int start, int stop) {
+    public ScanHostsRunnable(String[] ipParts, int start, int stop, AsyncResponse delegate) {
         this.ipParts = ipParts;
         this.start = start;
         this.stop = stop;
+        this.delegate = delegate;
     }
 
     @Override
@@ -34,6 +38,9 @@ public class ScanHostsRunnable implements Runnable {
             }
             catch(IOException e) {
                 Log.e(this.TAG, e.getMessage());
+            }
+            finally {
+                this.delegate.processFinish(1);
             }
         }
     }

@@ -1,6 +1,8 @@
 package com.aaronjwood.portauthority;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +29,7 @@ public class MainActivity extends Activity implements AsyncResponse {
     private final static int TIMER_INTERVAL = 1500;
 
     private Wireless wifi;
+    private Discovery discovery = new Discovery();
 
     private Button discoverHosts;
     private ListView hostList;
@@ -35,6 +38,7 @@ public class MainActivity extends Activity implements AsyncResponse {
     private TextView signalStrength;
     private TextView ssid;
     private TextView bssid;
+    private ProgressDialog scanProgressDialog;
 
 
     @Override
@@ -78,8 +82,15 @@ public class MainActivity extends Activity implements AsyncResponse {
                     return;
                 }
 
-                Discovery discovery = new Discovery((Activity) v.getContext(), internalIp);
-                discovery.scanHosts();
+                scanProgressDialog = new ProgressDialog(MainActivity.this, AlertDialog.THEME_HOLO_DARK);
+                scanProgressDialog.setCancelable(false);
+                scanProgressDialog.setTitle("Scanning For Hosts");
+                scanProgressDialog.setProgressStyle(scanProgressDialog.STYLE_HORIZONTAL);
+                scanProgressDialog.setProgress(0);
+                scanProgressDialog.setMax(255);
+                scanProgressDialog.show();
+
+                discovery.scanHosts(internalIp, MainActivity.this);
             }
         });
 
@@ -144,7 +155,15 @@ public class MainActivity extends Activity implements AsyncResponse {
     }
 
     @Override
-    public void processFinish(String output) {
+    public void processFinish(ArrayList<Map<String, String>> output) {
+        SimpleAdapter adapter = new SimpleAdapter(this, output, android.R.layout.simple_list_item_2, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
+        ListView hostList = (ListView) this.findViewById(R.id.hostList);
+        hostList.setAdapter(adapter);
+        this.scanProgressDialog.dismiss();
+    }
 
+    @Override
+    public void processFinish(int output) {
+        this.scanProgressDialog.incrementProgressBy(output);
     }
 }

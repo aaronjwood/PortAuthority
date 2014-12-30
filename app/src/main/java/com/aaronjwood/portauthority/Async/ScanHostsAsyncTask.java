@@ -10,8 +10,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,29 +19,29 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class ScanHostsAsyncTask extends AsyncTask<Void, Void, ArrayList<Map<String, String>>> {
+public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<String, String>>> {
 
     private static final String TAG = "ScanHostsAsyncTask";
-    public AsyncResponse delegate;
-    private String ip;
+    private AsyncResponse delegate;
 
-    public ScanHostsAsyncTask(String ip) {
-        this.ip = ip;
+    public ScanHostsAsyncTask(AsyncResponse delegate) {
+        this.delegate = delegate;
     }
 
     @Override
-    protected ArrayList<Map<String, String>> doInBackground(Void... params) {
+    protected ArrayList<Map<String, String>> doInBackground(String... params) {
+        String ip = params[0];
         String parts[] = ip.split("\\.");
 
         ExecutorService executor = Executors.newFixedThreadPool(8);
-        executor.execute(new ScanHostsRunnable(parts, 1, 31));
-        executor.execute(new ScanHostsRunnable(parts, 32, 63));
-        executor.execute(new ScanHostsRunnable(parts, 64, 95));
-        executor.execute(new ScanHostsRunnable(parts, 96, 127));
-        executor.execute(new ScanHostsRunnable(parts, 128, 159));
-        executor.execute(new ScanHostsRunnable(parts, 160, 191));
-        executor.execute(new ScanHostsRunnable(parts, 192, 223));
-        executor.execute(new ScanHostsRunnable(parts, 224, 255));
+        executor.execute(new ScanHostsRunnable(parts, 1, 31, delegate));
+        executor.execute(new ScanHostsRunnable(parts, 32, 63, delegate));
+        executor.execute(new ScanHostsRunnable(parts, 64, 95, delegate));
+        executor.execute(new ScanHostsRunnable(parts, 96, 127, delegate));
+        executor.execute(new ScanHostsRunnable(parts, 128, 159, delegate));
+        executor.execute(new ScanHostsRunnable(parts, 160, 191, delegate));
+        executor.execute(new ScanHostsRunnable(parts, 192, 223, delegate));
+        executor.execute(new ScanHostsRunnable(parts, 224, 255, delegate));
         executor.shutdown();
 
         try {
@@ -63,30 +61,17 @@ public class ScanHostsAsyncTask extends AsyncTask<Void, Void, ArrayList<Map<Stri
             String line;
 
             while((line = reader.readLine()) != null) {
-                String[] l = line.split("\\s+");
+                String[] arpLine = line.split("\\s+");
 
-                final String ip = l[0];
-                String flag = l[2];
-                String macAddress = l[3];
+                String ip = arpLine[0];
+                String flag = arpLine[2];
+                String macAddress = arpLine[3];
 
                 if(!flag.equals("0x0") && !macAddress.equals("00:00:00:00:00:00")) {
-                    Thread thread = new Thread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            try {
-                                InetAddress add = InetAddress.getByName(ip);
-                                Map<String, String> entry = new HashMap<>();
-                                entry.put("First Line", ip);
-                                entry.put("Second Line", add.getHostName());
-                                result.add(entry);
-                            }
-                            catch(UnknownHostException e) {
-                                Log.e(TAG, e.getMessage());
-                            }
-                        }
-                    });
-                    thread.start();
+                    Map<String, String> entry = new HashMap<>();
+                    entry.put("First Line", ip);
+                    entry.put("Second Line", macAddress);
+                    result.add(entry);
                 }
             }
 
@@ -97,6 +82,8 @@ public class ScanHostsAsyncTask extends AsyncTask<Void, Void, ArrayList<Map<Stri
                     return lhs.get("First Line").compareTo(rhs.get("First Line"));
                 }
             });
+
+            delegate.processFinish(result);
         }
         catch(FileNotFoundException e) {
             Log.e(TAG, e.getMessage());
