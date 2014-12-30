@@ -5,8 +5,8 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import com.aaronjwood.portauthority.R;
 
@@ -16,7 +16,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -79,30 +83,47 @@ public class Discovery {
                     reader.readLine();
                     String line;
 
-                    ListView hostList = (ListView) activity.findViewById(R.id.hostList);
-                    ArrayAdapter<String> adapter = (ArrayAdapter<String>) hostList.getAdapter();
+                    final ArrayList<Map<String, String>> data = new ArrayList<>();
 
                     while((line = reader.readLine()) != null) {
                         String[] l = line.split("\\s+");
 
-                        String ip = l[0];
+                        final String ip = l[0];
                         String flag = l[2];
                         String macAddress = l[3];
 
                         if(!flag.equals("0x0") && !macAddress.equals("00:00:00:00:00:00")) {
-                            adapter.add(ip);
+                            Thread thread = new Thread(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    try {
+                                        InetAddress add = InetAddress.getByName(ip);
+                                        Map<String, String> entry = new HashMap<>();
+                                        entry.put("First Line", ip);
+                                        entry.put("Second Line", add.getHostName());
+                                        data.add(entry);
+                                    }
+                                    catch(UnknownHostException e) {
+                                        Log.e(TAG, e.getMessage());
+                                    }
+                                }
+                            });
+                            thread.start();
                         }
                     }
 
-                    adapter.sort(new Comparator<String>() {
+                    Collections.sort(data, new Comparator<Map<String, String>>() {
 
                         @Override
-                        public int compare(String lhs, String rhs) {
-                            return lhs.compareTo(rhs);
+                        public int compare(Map<String, String> lhs, Map<String, String> rhs) {
+                            return lhs.get("First Line").compareTo(rhs.get("First Line"));
                         }
                     });
 
-                    adapter.notifyDataSetChanged();
+                    SimpleAdapter adapter = new SimpleAdapter(activity.getApplicationContext(), data, android.R.layout.simple_list_item_2, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
+                    ListView hostList = (ListView) activity.findViewById(R.id.hostList);
+                    hostList.setAdapter(adapter);
                 }
                 catch(FileNotFoundException e) {
                     Log.e(TAG, e.getMessage());

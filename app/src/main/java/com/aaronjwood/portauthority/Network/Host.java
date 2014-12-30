@@ -15,10 +15,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -37,31 +35,6 @@ public class Host {
     public Host(Activity activity, String ip) {
         this.activity = activity;
         this.ip = ip;
-    }
-
-    public String getHostName() {
-        new AsyncTask<Void, Void, String>() {
-
-            @Override
-            protected String doInBackground(Void... params) {
-                try {
-                    InetAddress add = InetAddress.getByName(ip);
-                    return add.getHostName();
-                }
-                catch(UnknownHostException e) {
-                    Log.e(TAG, e.getMessage());
-                    return null;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(String result) {
-                TextView hostName = (TextView) activity.findViewById(R.id.hostName);
-                hostName.setText(result);
-            }
-
-        }.execute();
-        return null;
     }
 
     public void getMacAddress() {
@@ -102,6 +75,7 @@ public class Host {
         scanProgressDialog.show();
 
         new AsyncTask<Void, Void, ArrayList<Integer>>() {
+
             @Override
             protected ArrayList<Integer> doInBackground(Void... params) {
                 ExecutorService executor = Executors.newFixedThreadPool(8);

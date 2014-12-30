@@ -8,9 +8,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +19,8 @@ import com.aaronjwood.portauthority.Network.Discovery;
 import com.aaronjwood.portauthority.Network.Wireless;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends Activity {
 
@@ -33,9 +36,6 @@ public class MainActivity extends Activity {
     private TextView ssid;
     private TextView bssid;
 
-    private ArrayList<String> hosts = new ArrayList<>();
-    private ArrayAdapter<String> adapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,13 +49,6 @@ public class MainActivity extends Activity {
         this.discoverHosts = (Button) findViewById(R.id.discoverHosts);
         this.ssid = (TextView) findViewById(R.id.ssid);
         this.bssid = (TextView) findViewById(R.id.bssid);
-
-        if(savedInstanceState != null) {
-            this.hosts = savedInstanceState.getStringArrayList("hosts");
-            this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.hosts);
-            this.hostList.setAdapter(this.adapter);
-            this.adapter.notifyDataSetChanged();
-        }
 
         this.wifi = new Wireless(this);
         this.wifi.getExternalIpAddress();
@@ -77,6 +70,7 @@ public class MainActivity extends Activity {
         }, 0);
 
         this.discoverHosts.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 if(!wifi.isConnected()) {
@@ -84,22 +78,19 @@ public class MainActivity extends Activity {
                     return;
                 }
 
-                hosts.clear();
-
-                adapter = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_list_item_1, hosts);
-                hostList.setAdapter(adapter);
-
                 Discovery discovery = new Discovery((Activity) v.getContext(), internalIp);
                 discovery.scanHosts();
             }
         });
 
         this.hostList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selectedHost = (String) hostList.getItemAtPosition(position);
+                HashMap<String, String> map = (HashMap) hostList.getItemAtPosition(position);
                 Intent intent = new Intent(MainActivity.this, HostActivity.class);
-                intent.putExtra("HOST", selectedHost);
+                intent.putExtra("HOST", map.get("First Line"));
+                intent.putExtra("HOSTNAME", map.get("Second Line"));
                 startActivity(intent);
             }
         });
@@ -110,7 +101,26 @@ public class MainActivity extends Activity {
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
-        savedState.putStringArrayList("hosts", this.hosts);
+        ListAdapter adapter = this.hostList.getAdapter();
+        if(adapter != null) {
+            ArrayList<Map<String, String>> adapterData = new ArrayList<>();
+            for(int i = 0; i < adapter.getCount(); i++) {
+                HashMap<String, String> item = (HashMap) adapter.getItem(i);
+                adapterData.add(item);
+            }
+            savedState.putSerializable("hosts", adapterData);
+        }
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedState) {
+        super.onRestoreInstanceState(savedState);
+
+        ArrayList<Map<String, String>> hosts = (ArrayList) savedState.getSerializable("hosts");
+        if(hosts != null) {
+            SimpleAdapter newAdapter = new SimpleAdapter(this, hosts, android.R.layout.simple_list_item_2, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
+            this.hostList.setAdapter(newAdapter);
+        }
     }
 
     @Override

@@ -19,6 +19,8 @@ public class HostActivity extends Activity {
 
     private Host host;
     private TextView hostIpLabel;
+    private TextView hostNameLabel;
+    private String hostName;
     private String hostIp;
     private Button scanPortsButton;
     private ListView portList;
@@ -31,11 +33,13 @@ public class HostActivity extends Activity {
         setContentView(R.layout.activity_host);
 
         this.hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
+        this.hostNameLabel = (TextView) findViewById(R.id.hostName);
         this.scanPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
         this.portList = (ListView) findViewById(R.id.portList);
 
         if(savedInstanceState != null) {
             this.hostIp = savedInstanceState.getString("hostIp");
+            this.hostName = savedInstanceState.getString("hostName");
             this.ports = savedInstanceState.getIntegerArrayList("ports");
             this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
             this.portList.setAdapter(this.adapter);
@@ -44,12 +48,13 @@ public class HostActivity extends Activity {
         else if(savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             this.hostIp = extras.getString("HOST");
+            this.hostName = extras.getString("HOSTNAME");
         }
 
         this.hostIpLabel.setText(this.hostIp);
+        this.hostNameLabel.setText(this.hostName);
 
         this.host = new Host(this, this.hostIp);
-        this.host.getHostName();
         this.host.getMacAddress();
 
         this.scanPortsButton.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +76,7 @@ public class HostActivity extends Activity {
         super.onSaveInstanceState(savedState);
 
         savedState.putString("hostIp", this.hostIp);
+        savedState.putString("hostName", this.hostName);
         savedState.putIntegerArrayList("ports", this.ports);
     }
 
