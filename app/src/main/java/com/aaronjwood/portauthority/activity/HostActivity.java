@@ -29,6 +29,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     private TextView hostMacLabel;
     private String hostMac;
     private Button scanPortsButton;
+    private Button scanPortRangeButton;
     private ListView portList;
     private ArrayAdapter<Integer> adapter;
     private ArrayList<Integer> ports = new ArrayList<>();
@@ -42,6 +43,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         this.hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
         this.hostNameLabel = (TextView) findViewById(R.id.hostName);
         this.scanPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
+        this.scanPortRangeButton = (Button) findViewById(R.id.scanPortRange);
         this.portList = (ListView) findViewById(R.id.portList);
         this.hostMacLabel = (TextView) findViewById(R.id.hostMac);
 
