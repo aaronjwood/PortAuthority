@@ -1,4 +1,4 @@
-package com.aaronjwood.portauthority;
+package com.aaronjwood.portauthority.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,6 +17,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Discovery;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;

@@ -1,4 +1,4 @@
-package com.aaronjwood.portauthority;
+package com.aaronjwood.portauthority.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
