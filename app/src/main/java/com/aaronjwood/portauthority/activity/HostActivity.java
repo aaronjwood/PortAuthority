@@ -28,7 +28,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     private String hostIp;
     private TextView hostMacLabel;
     private String hostMac;
-    private Button scanPortsButton;
+    private Button scanWellKnownPortsButton;
     private Button scanPortRangeButton;
     private ListView portList;
     private ArrayAdapter<Integer> adapter;
@@ -42,7 +42,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
         this.hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
         this.hostNameLabel = (TextView) findViewById(R.id.hostName);
-        this.scanPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
+        this.scanWellKnownPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
         this.scanPortRangeButton = (Button) findViewById(R.id.scanPortRange);
         this.portList = (ListView) findViewById(R.id.portList);
         this.hostMacLabel = (TextView) findViewById(R.id.hostMac);
@@ -67,7 +67,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         this.hostIpLabel.setText(this.hostIp);
         this.hostMacLabel.setText(this.hostMac);
 
-        this.scanPortsButton.setOnClickListener(new View.OnClickListener() {
+        this.scanWellKnownPortsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 scanProgressDialog = new ProgressDialog(HostActivity.this, AlertDialog.THEME_HOLO_DARK);
