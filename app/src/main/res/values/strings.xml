@@ -16,5 +16,7 @@
     <string name="scanWellKnownPorts">Scan Well Known Ports</string>
     <string name="scanPortRange">Scan Port Range</string>
     <string name="openPorts">Open Ports</string>
+    <string name="portRangeStart">Start Port</string>
+    <string name="portRangeStop">Stop Port</string>
 
 </resources>

@@ -8,18 +8,48 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true">
 
-        <NumberPicker
-            android:id="@+id/portRangePickerStart"
+        <RelativeLayout
+            android:id="@+id/portRangeStartBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="80dp"
-            />
+            android:layout_marginRight="80dp">
 
-        <NumberPicker
-            android:id="@+id/portRangePickerStop"
+            <TextView
+                android:id="@+id/portRangeStartLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/portRangeStart"/>
+
+            <NumberPicker
+                android:id="@+id/portRangePickerStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/portRangeStartLabel"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/portRangePickerStart"/>
+            android:layout_toRightOf="@id/portRangeStartBox">
+
+            <TextView
+                android:id="@+id/portRangeStopLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/portRangeStop"/>
+
+            <NumberPicker
+                android:id="@+id/portRangePickerStop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/portRangeStopLabel"/>
+
+        </RelativeLayout>
+
 
     </RelativeLayout>
 
