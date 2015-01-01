@@ -3,8 +3,8 @@ package com.aaronjwood.portauthority.async;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.callable.ScanPortsCallable;
+import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
