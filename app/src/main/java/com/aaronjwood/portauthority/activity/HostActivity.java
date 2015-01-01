@@ -89,6 +89,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
             @Override
             public void onClick(View v) {
                 Dialog portRangeDialog = new Dialog(HostActivity.this);
+                portRangeDialog.setTitle("Select Port Range");
                 portRangeDialog.setContentView(R.layout.port_range);
                 portRangeDialog.show();
 
