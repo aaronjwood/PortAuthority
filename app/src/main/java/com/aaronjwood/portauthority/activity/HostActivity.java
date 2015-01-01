@@ -95,8 +95,10 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                 NumberPicker portRangePickerStart = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStart);
                 NumberPicker portRangePickerStop = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStop);
 
+                portRangePickerStart.setMinValue(1);
                 portRangePickerStart.setMaxValue(65535);
                 portRangePickerStart.setWrapSelectorWheel(false);
+                portRangePickerStop.setMinValue(1);
                 portRangePickerStop.setMaxValue(65535);
                 portRangePickerStop.setWrapSelectorWheel(false);
             }
