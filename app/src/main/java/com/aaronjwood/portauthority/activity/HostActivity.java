@@ -2,6 +2,7 @@ package com.aaronjwood.portauthority.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.aaronjwood.portauthority.R;
@@ -79,6 +81,24 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                 scanProgressDialog.show();
 
                 host.scanWellKnownPorts(hostIp, HostActivity.this);
+            }
+        });
+
+        this.scanPortRangeButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Dialog portRangeDialog = new Dialog(HostActivity.this);
+                portRangeDialog.setContentView(R.layout.port_range);
+                portRangeDialog.show();
+
+                NumberPicker portRangePickerStart = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStart);
+                NumberPicker portRangePickerStop = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStop);
+
+                portRangePickerStart.setMaxValue(65535);
+                portRangePickerStart.setWrapSelectorWheel(false);
+                portRangePickerStop.setMaxValue(65535);
+                portRangePickerStop.setWrapSelectorWheel(false);
             }
         });
 
