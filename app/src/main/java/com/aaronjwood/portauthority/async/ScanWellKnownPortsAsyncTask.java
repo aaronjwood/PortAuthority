@@ -23,29 +23,30 @@ public class ScanWellKnownPortsAsyncTask extends AsyncTask<String, Void, ArrayLi
 
     @Override
     protected ArrayList<Integer> doInBackground(String... params) {
+        final int NUM_THREADS = 64;
         String ip = params[0];
 
-        ExecutorService executor = Executors.newFixedThreadPool(8);
-        Future<ArrayList<Integer>> ports1 = executor.submit(new ScanPortsCallable(ip, 1, 128, delegate));
-        Future<ArrayList<Integer>> ports2 = executor.submit(new ScanPortsCallable(ip, 129, 257, delegate));
-        Future<ArrayList<Integer>> ports3 = executor.submit(new ScanPortsCallable(ip, 258, 386, delegate));
-        Future<ArrayList<Integer>> ports4 = executor.submit(new ScanPortsCallable(ip, 387, 515, delegate));
-        Future<ArrayList<Integer>> ports5 = executor.submit(new ScanPortsCallable(ip, 516, 644, delegate));
-        Future<ArrayList<Integer>> ports6 = executor.submit(new ScanPortsCallable(ip, 645, 773, delegate));
-        Future<ArrayList<Integer>> ports7 = executor.submit(new ScanPortsCallable(ip, 774, 902, delegate));
-        Future<ArrayList<Integer>> ports8 = executor.submit(new ScanPortsCallable(ip, 903, 1024, delegate));
+        ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
+
+        int chunk = 1024 / NUM_THREADS;
+        int previousStart = 1;
+        int previousStop = chunk;
+
+        ArrayList<Future<ArrayList<Integer>>> futures = new ArrayList<>();
+
+        for(int i = 0; i < NUM_THREADS; i++) {
+            futures.add(executor.submit(new ScanPortsCallable(ip, previousStart, previousStop, delegate)));
+            previousStart = previousStop + 1;
+            previousStop = previousStop + chunk;
+        }
+
         executor.shutdown();
 
         try {
             ArrayList<Integer> ports = new ArrayList<>();
-            ports.addAll(ports1.get());
-            ports.addAll(ports2.get());
-            ports.addAll(ports3.get());
-            ports.addAll(ports4.get());
-            ports.addAll(ports5.get());
-            ports.addAll(ports6.get());
-            ports.addAll(ports7.get());
-            ports.addAll(ports8.get());
+            for(Future<ArrayList<Integer>> future : futures) {
+                ports.addAll(future.get());
+            }
             return ports;
         }
         catch(InterruptedException e) {
