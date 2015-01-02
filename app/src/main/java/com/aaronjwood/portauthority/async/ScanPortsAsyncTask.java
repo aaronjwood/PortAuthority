@@ -3,16 +3,14 @@ package com.aaronjwood.portauthority.async;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.aaronjwood.portauthority.callable.ScanPortsCallable;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
+import com.aaronjwood.portauthority.runnable.ScanPortsRunnable;
 
-import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-public class ScanPortsAsyncTask extends AsyncTask<Object, Void, ArrayList<Integer>> {
+public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
 
     private static final String TAG = "ScanPortsAsyncTask";
     private HostAsyncResponse delegate;
@@ -22,7 +20,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, ArrayList<Intege
     }
 
     @Override
-    protected ArrayList<Integer> doInBackground(Object... params) {
+    protected Void doInBackground(Object... params) {
         final int NUM_THREADS = 500;
         String ip = (String) params[0];
         int startPort = (int) params[1];
@@ -34,15 +32,13 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, ArrayList<Intege
         int previousStart = startPort;
         int previousStop = chunk;
 
-        ArrayList<Future<ArrayList<Integer>>> futures = new ArrayList<>();
-
         for(int i = 0; i < NUM_THREADS; i++) {
             if(previousStop >= stopPort) {
                 previousStop = stopPort;
-                futures.add(executor.submit(new ScanPortsCallable(ip, previousStart, previousStop, delegate)));
+                executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, delegate));
                 break;
             }
-            futures.add(executor.submit(new ScanPortsCallable(ip, previousStart, previousStop, delegate)));
+            executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, delegate));
             previousStart = previousStop + 1;
             previousStop = previousStop + chunk;
         }
@@ -50,23 +46,14 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, ArrayList<Intege
         executor.shutdown();
 
         try {
-            ArrayList<Integer> ports = new ArrayList<>();
-            for(Future<ArrayList<Integer>> future : futures) {
-                ports.addAll(future.get());
-            }
-            return ports;
+            executor.awaitTermination(10, TimeUnit.MINUTES);
         }
         catch(InterruptedException e) {
             Log.e(TAG, e.getMessage());
         }
-        catch(ExecutionException e) {
-            Log.e(TAG, e.getMessage());
-        }
-        return null;
-    }
 
-    @Override
-    protected void onPostExecute(ArrayList<Integer> result) {
-        delegate.processFinish(result);
+        this.delegate.processFinish(true);
+
+        return null;
     }
 }

@@ -19,6 +19,7 @@ import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class HostActivity extends Activity implements HostAsyncResponse {
@@ -62,6 +63,9 @@ public class HostActivity extends Activity implements HostAsyncResponse {
             Bundle extras = getIntent().getExtras();
             this.hostIp = extras.getString("HOST");
             this.hostMac = extras.getString("MAC");
+
+            this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
+            this.portList.setAdapter(adapter);
         }
 
         this.host.getHostname(this.hostIp, this);
@@ -72,6 +76,8 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         this.scanWellKnownPortsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                HostActivity.this.ports.clear();
+
                 scanProgressDialog = new ProgressDialog(HostActivity.this, AlertDialog.THEME_HOLO_DARK);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning Well Known Ports");
@@ -117,6 +123,15 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         savedState.putIntegerArrayList("ports", this.ports);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if(this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
+            this.scanProgressDialog.dismiss();
+        }
+        this.scanProgressDialog = null;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -141,15 +156,30 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     }
 
     @Override
-    public void processFinish(ArrayList<Integer> output) {
-        this.scanProgressDialog.dismiss();
-        ArrayAdapter<Integer> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, output);
-        this.portList.setAdapter(adapter);
+    public void processFinish(final int output) {
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                if(output == 0) {
+                    if(scanProgressDialog != null && scanProgressDialog.isShowing()) {
+                        scanProgressDialog.incrementProgressBy(1);
+                    }
+                }
+                else {
+                    ports.add(output);
+                    Collections.sort(ports);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
 
     @Override
-    public void processFinish(int output) {
-        this.scanProgressDialog.incrementProgressBy(output);
+    public void processFinish(boolean output) {
+        if(output && this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
+            this.scanProgressDialog.dismiss();
+        }
     }
 
     @Override

@@ -6,8 +6,6 @@ import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class ScanHostsRunnable implements Runnable {
