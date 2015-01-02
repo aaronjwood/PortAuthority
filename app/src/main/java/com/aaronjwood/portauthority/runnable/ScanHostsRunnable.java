@@ -31,7 +31,7 @@ public class ScanHostsRunnable implements Runnable {
             InetAddress address;
             try {
                 address = InetAddress.getByName(newIp);
-                address.isReachable(100);
+                address.isReachable(50);
             }
             catch(UnknownHostException e) {
                 Log.e(this.TAG, e.getMessage());
