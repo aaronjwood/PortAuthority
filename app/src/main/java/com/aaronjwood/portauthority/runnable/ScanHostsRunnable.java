@@ -6,6 +6,8 @@ import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class ScanHostsRunnable implements Runnable {
@@ -30,8 +32,9 @@ public class ScanHostsRunnable implements Runnable {
             String newIp = this.ipParts[0] + "." + this.ipParts[1] + "." + this.ipParts[2] + "." + i;
             InetAddress address;
             try {
+
                 address = InetAddress.getByName(newIp);
-                address.isReachable(50);
+                address.isReachable(100);
             }
             catch(UnknownHostException e) {
                 Log.e(this.TAG, e.getMessage());

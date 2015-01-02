@@ -30,22 +30,31 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
 
     @Override
     protected ArrayList<Map<String, String>> doInBackground(String... params) {
+        final int NUM_THREADS = 16;
         String ip = params[0];
         String parts[] = ip.split("\\.");
 
-        ExecutorService executor = Executors.newFixedThreadPool(8);
-        executor.execute(new ScanHostsRunnable(parts, 1, 31, delegate));
-        executor.execute(new ScanHostsRunnable(parts, 32, 63, delegate));
-        executor.execute(new ScanHostsRunnable(parts, 64, 95, delegate));
-        executor.execute(new ScanHostsRunnable(parts, 96, 127, delegate));
-        executor.execute(new ScanHostsRunnable(parts, 128, 159, delegate));
-        executor.execute(new ScanHostsRunnable(parts, 160, 191, delegate));
-        executor.execute(new ScanHostsRunnable(parts, 192, 223, delegate));
-        executor.execute(new ScanHostsRunnable(parts, 224, 255, delegate));
+        ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
+
+        int chunk = (int) Math.ceil((double) 255 / NUM_THREADS);
+        int previousStart = 1;
+        int previousStop = chunk;
+
+        for(int i = 0; i < NUM_THREADS; i++) {
+            if(previousStop > 255) {
+                previousStop = 255;
+                executor.execute(new ScanHostsRunnable(parts, previousStart, previousStop, delegate));
+                break;
+            }
+            executor.execute(new ScanHostsRunnable(parts, previousStart, previousStop, delegate));
+            previousStart = previousStop + 1;
+            previousStop = previousStop + chunk;
+        }
+
         executor.shutdown();
 
         try {
-            executor.awaitTermination(5, TimeUnit.SECONDS);
+            executor.awaitTermination(10, TimeUnit.SECONDS);
         }
         catch(InterruptedException e) {
             Log.e(TAG, e.getMessage());
