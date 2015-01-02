@@ -32,7 +32,7 @@ public class ScanPortsCallable implements Callable<ArrayList<Integer>> {
         for(int i = this.startPort; i <= this.stopPort; i++) {
             try {
                 Socket socket = new Socket();
-                socket.connect(new InetSocketAddress(this.ip, i), 200);
+                socket.connect(new InetSocketAddress(this.ip, i), 1000);
                 socket.close();
                 ports.add(i);
             }

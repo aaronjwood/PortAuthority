@@ -23,7 +23,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, ArrayList<Intege
 
     @Override
     protected ArrayList<Integer> doInBackground(Object... params) {
-        final int NUM_THREADS = 128;
+        final int NUM_THREADS = 500;
         String ip = (String) params[0];
         int startPort = (int) params[1];
         int stopPort = (int) params[2];
