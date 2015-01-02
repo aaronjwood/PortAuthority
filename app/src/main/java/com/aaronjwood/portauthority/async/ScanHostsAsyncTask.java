@@ -41,7 +41,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
         int previousStop = chunk;
 
         for(int i = 0; i < NUM_THREADS; i++) {
-            if(previousStop > 255) {
+            if(previousStop >= 255) {
                 previousStop = 255;
                 executor.execute(new ScanHostsRunnable(parts, previousStart, previousStop, delegate));
                 break;
