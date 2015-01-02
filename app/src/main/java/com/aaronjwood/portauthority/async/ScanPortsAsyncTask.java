@@ -12,29 +12,36 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class ScanWellKnownPortsAsyncTask extends AsyncTask<String, Void, ArrayList<Integer>> {
+public class ScanPortsAsyncTask extends AsyncTask<Object, Void, ArrayList<Integer>> {
 
-    private static final String TAG = "ScanWellKnownPortsAsyncTask";
+    private static final String TAG = "ScanPortsAsyncTask";
     private HostAsyncResponse delegate;
 
-    public ScanWellKnownPortsAsyncTask(HostAsyncResponse delegate) {
+    public ScanPortsAsyncTask(HostAsyncResponse delegate) {
         this.delegate = delegate;
     }
 
     @Override
-    protected ArrayList<Integer> doInBackground(String... params) {
-        final int NUM_THREADS = 64;
-        String ip = params[0];
+    protected ArrayList<Integer> doInBackground(Object... params) {
+        final int NUM_THREADS = 128;
+        String ip = (String) params[0];
+        int startPort = (int) params[1];
+        int stopPort = (int) params[2];
 
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
 
-        int chunk = 1024 / NUM_THREADS;
-        int previousStart = 1;
+        int chunk = (int) Math.ceil((double) stopPort / NUM_THREADS);
+        int previousStart = startPort;
         int previousStop = chunk;
 
         ArrayList<Future<ArrayList<Integer>>> futures = new ArrayList<>();
 
         for(int i = 0; i < NUM_THREADS; i++) {
+            if(previousStop >= stopPort) {
+                previousStop = stopPort;
+                futures.add(executor.submit(new ScanPortsCallable(ip, previousStart, previousStop, delegate)));
+                break;
+            }
             futures.add(executor.submit(new ScanPortsCallable(ip, previousStart, previousStop, delegate)));
             previousStart = previousStop + 1;
             previousStop = previousStop + chunk;

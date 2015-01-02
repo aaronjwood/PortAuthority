@@ -80,7 +80,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                 scanProgressDialog.setMax(1024);
                 scanProgressDialog.show();
 
-                host.scanWellKnownPorts(hostIp, HostActivity.this);
+                host.scanPorts(hostIp, 1, 1024, HostActivity.this);
             }
         });
 
