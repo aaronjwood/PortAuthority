@@ -33,7 +33,7 @@ public class ScanPortsCallable implements Callable<ArrayList<Integer>> {
             try {
                 Socket socket = new Socket();
                 socket.setReuseAddress(true);
-                socket.connect(new InetSocketAddress(this.ip, i), 1000);
+                socket.connect(new InetSocketAddress(this.ip, i), 3000);
                 socket.close();
                 ports.add(i);
             }
