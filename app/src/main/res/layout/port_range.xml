@@ -51,6 +51,7 @@
         </RelativeLayout>
 
         <Button
+            android:id="@+id/startPortRangeScan"
             android:layout_below="@id/portRangeStartBox"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
