@@ -4,12 +4,6 @@ android {
     compileSdkVersion 21
     buildToolsVersion '21.1.2'
 
-    defaultConfig {
-        applicationId "com.aaronjwood.portauthority"
-        minSdkVersion 16
-        targetSdkVersion 21
-    }
-
     buildTypes {
         release {
             minifyEnabled true
@@ -23,11 +17,15 @@ android {
             applicationId "com.aaronjwood.portauthority.free"
             versionCode 1
             versionName "1.0.0"
+            minSdkVersion 16
+            targetSdkVersion 21
         }
         donate {
             applicationId "com.aaronjwood.portauthority.donate"
             versionCode 1
             versionName "1.0.0"
+            minSdkVersion 16
+            targetSdkVersion 21
         }
     }
 }
