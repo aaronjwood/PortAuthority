@@ -33,7 +33,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
         int previousStop = (startPort - 1)+ chunk;
 
         for(int i = 0; i < NUM_THREADS; i++) {
-            if(previousStop + 1 >= stopPort) {
+            if(previousStop >= stopPort) {
                 previousStop = stopPort;
                 executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, delegate));
                 break;
