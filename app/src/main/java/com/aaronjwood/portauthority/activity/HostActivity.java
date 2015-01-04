@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Host;
@@ -37,6 +38,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     private ArrayAdapter<Integer> adapter;
     private ArrayList<Integer> ports = new ArrayList<>();
     private ProgressDialog scanProgressDialog;
+    private Dialog portRangeDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +80,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
             public void onClick(View v) {
                 HostActivity.this.ports.clear();
 
-                scanProgressDialog = new ProgressDialog(HostActivity.this, AlertDialog.THEME_HOLO_DARK);
+                scanProgressDialog = new ProgressDialog(HostActivity.this);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning Well Known Ports");
                 scanProgressDialog.setProgressStyle(scanProgressDialog.STYLE_HORIZONTAL);
@@ -94,13 +96,14 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
             @Override
             public void onClick(View v) {
-                Dialog portRangeDialog = new Dialog(HostActivity.this);
+                HostActivity.this.portRangeDialog = new Dialog(HostActivity.this);
                 portRangeDialog.setTitle("Select Port Range");
                 portRangeDialog.setContentView(R.layout.port_range);
                 portRangeDialog.show();
 
-                NumberPicker portRangePickerStart = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStart);
-                NumberPicker portRangePickerStop = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStop);
+                final NumberPicker portRangePickerStart = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStart);
+                final NumberPicker portRangePickerStop = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStop);
+                Button startPortRangeScan = (Button) portRangeDialog.findViewById(R.id.startPortRangeScan);
 
                 portRangePickerStart.setMinValue(1);
                 portRangePickerStart.setMaxValue(65535);
@@ -108,6 +111,32 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                 portRangePickerStop.setMinValue(1);
                 portRangePickerStop.setMaxValue(65535);
                 portRangePickerStop.setWrapSelectorWheel(false);
+
+                startPortRangeScan.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        int startPort = portRangePickerStart.getValue();
+                        int stopPort = portRangePickerStop.getValue();
+
+                        if((startPort - stopPort >= 0)) {
+                            Toast.makeText(getApplicationContext(), "Please pick a valid port range", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        HostActivity.this.ports.clear();
+
+                        scanProgressDialog = new ProgressDialog(HostActivity.this);
+                        scanProgressDialog.setCancelable(false);
+                        scanProgressDialog.setTitle("Scanning Port " + startPort + " to " + stopPort);
+                        scanProgressDialog.setProgressStyle(scanProgressDialog.STYLE_HORIZONTAL);
+                        scanProgressDialog.setProgress(0);
+                        scanProgressDialog.setMax(stopPort - startPort + 1);
+                        scanProgressDialog.show();
+
+                        host.scanPorts(hostIp, startPort, stopPort, HostActivity.this);
+                    }
+                });
             }
         });
 
@@ -130,7 +159,11 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         if(this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.dismiss();
         }
+        if(this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
+            this.portRangeDialog.dismiss();
+        }
         this.scanProgressDialog = null;
+        this.portRangeDialog = null;
     }
 
     @Override
@@ -179,6 +212,9 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     public void processFinish(boolean output) {
         if(output && this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.dismiss();
+        }
+        if(output && this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
+            this.portRangeDialog.dismiss();
         }
     }
 

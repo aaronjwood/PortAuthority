@@ -28,12 +28,12 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
 
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
 
-        int chunk = (int) Math.ceil((double) stopPort / NUM_THREADS);
+        int chunk = (int) Math.ceil((double) (stopPort - startPort) / NUM_THREADS);
         int previousStart = startPort;
-        int previousStop = chunk;
+        int previousStop = (startPort - 1)+ chunk;
 
         for(int i = 0; i < NUM_THREADS; i++) {
-            if(previousStop >= stopPort) {
+            if(previousStop + 1 >= stopPort) {
                 previousStop = stopPort;
                 executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, delegate));
                 break;
