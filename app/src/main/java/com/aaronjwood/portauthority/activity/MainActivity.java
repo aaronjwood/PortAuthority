@@ -86,7 +86,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                     return;
                 }
 
-                scanProgressDialog = new ProgressDialog(MainActivity.this, AlertDialog.THEME_HOLO_DARK);
+                scanProgressDialog = new ProgressDialog(MainActivity.this);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning For Hosts");
                 scanProgressDialog.setProgressStyle(scanProgressDialog.STYLE_HORIZONTAL);
