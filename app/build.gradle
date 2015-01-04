@@ -17,6 +17,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
         }
     }
+
+    productFlavors {
+        free {
+            applicationId "com.aaronjwood.portauthority.free"
+            versionCode 1
+            versionName "1.0.0"
+        }
+        donate {
+            applicationId "com.aaronjwood.portauthority.donate"
+            versionCode 1
+            versionName "1.0.0"
+        }
+    }
 }
 
 dependencies {
