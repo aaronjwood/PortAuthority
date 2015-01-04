@@ -15,13 +15,9 @@ android {
     productFlavors {
         free {
             applicationId "com.aaronjwood.portauthority.free"
-            minSdkVersion 16
-            targetSdkVersion 21
         }
         donate {
             applicationId "com.aaronjwood.portauthority.donate"
-            minSdkVersion 16
-            targetSdkVersion 21
         }
     }
 }
