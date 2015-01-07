@@ -59,7 +59,13 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         this.bssid = (TextView) findViewById(R.id.bssid);
 
         this.wifi = new Wireless(this);
-        this.wifi.getExternalIpAddress(this);
+
+        if(this.wifi.isConnected()) {
+            this.wifi.getExternalIpAddress(this);
+        }
+        else {
+            this.externalIp.setText("No internet connection!");
+        }
 
         final String internalIp = this.wifi.getInternalIpAddress();
 
