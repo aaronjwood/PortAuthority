@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -65,6 +67,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
 
     protected void onPostExecute(final ArrayList<Map<String, String>> result) {
         try {
+            ExecutorService executor = Executors.newFixedThreadPool(1);
             BufferedReader reader = new BufferedReader(new FileReader("/proc/net/arp"));
             reader.readLine();
             String line;
@@ -72,23 +75,40 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
             while((line = reader.readLine()) != null) {
                 String[] arpLine = line.split("\\s+");
 
-                String ip = arpLine[0];
+                final String ip = arpLine[0];
                 String flag = arpLine[2];
-                String macAddress = arpLine[3];
+                final String macAddress = arpLine[3];
 
                 if(!flag.equals("0x0") && !macAddress.equals("00:00:00:00:00:00")) {
-                    Map<String, String> entry = new HashMap<>();
-                    entry.put("First Line", ip);
-                    entry.put("Second Line", macAddress);
-                    result.add(entry);
+                    executor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            InetAddress add;
+                            try {
+                                add = InetAddress.getByName(ip);
+                                String hostname = add.getHostName();
+
+                                Map<String, String> entry = new HashMap<>();
+                                entry.put("First Line", hostname);
+                                entry.put("Second Line", ip + " [" + macAddress + "]");
+                                result.add(entry);
+                            }
+                            catch(UnknownHostException e) {
+                                Log.e(TAG, e.getMessage());
+                            }
+                        }
+                    });
                 }
             }
+
+            executor.shutdown();
+            executor.awaitTermination(10, TimeUnit.SECONDS);
 
             Collections.sort(result, new Comparator<Map<String, String>>() {
 
                 @Override
                 public int compare(Map<String, String> lhs, Map<String, String> rhs) {
-                    return lhs.get("First Line").compareTo(rhs.get("First Line"));
+                    return lhs.get("Second Line").compareTo(rhs.get("Second Line"));
                 }
             });
 
@@ -98,6 +118,9 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
             Log.e(TAG, e.getMessage());
         }
         catch(IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        catch(InterruptedException e) {
             Log.e(TAG, e.getMessage());
         }
     }

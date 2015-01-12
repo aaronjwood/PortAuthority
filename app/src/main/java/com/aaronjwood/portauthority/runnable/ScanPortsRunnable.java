@@ -32,7 +32,7 @@ public class ScanPortsRunnable implements Runnable {
                 this.delegate.processFinish(0);
                 Socket socket = new Socket();
                 socket.setReuseAddress(true);
-                socket.connect(new InetSocketAddress(this.ip, i), 3000);
+                socket.connect(new InetSocketAddress(this.ip, i), 4000);
                 socket.close();
                 this.delegate.processFinish(i);
             }
