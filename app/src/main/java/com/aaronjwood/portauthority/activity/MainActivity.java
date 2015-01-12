@@ -109,9 +109,11 @@ public class MainActivity extends Activity implements MainAsyncResponse {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HashMap<String, String> map = (HashMap) hostList.getItemAtPosition(position);
                 Intent intent = new Intent(MainActivity.this, HostActivity.class);
-                String macAddress = map.get("Second Line").substring(0, map.get("Second Line").indexOf("[") - 1);
+                String firstLine = map.get("First Line");
+                String secondLine = map.get("Second Line");
+                String macAddress = map.get("Second Line").substring(secondLine.indexOf("[") + 1, secondLine.indexOf("]"));
 
-                intent.putExtra("HOST", map.get("First Line"));
+                intent.putExtra("HOST", firstLine);
                 intent.putExtra("MAC", macAddress);
                 startActivity(intent);
             }
