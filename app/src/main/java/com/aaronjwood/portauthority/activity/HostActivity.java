@@ -22,6 +22,7 @@ import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -206,11 +207,12 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                     }
                 }
                 else {
-                    BufferedReader reader = null;
-                    String line;
-                    String item = String.valueOf(output);
                     try {
-                        reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
+                        InputStream portsFile = getAssets().open("ports.csv");
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(portsFile));
+                        String line;
+                        String item = String.valueOf(output);
+
                         while((line = reader.readLine()) != null) {
                             String[] portInfo = line.split(",");
                             String name = portInfo[0];
@@ -223,6 +225,9 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                                     ports.add(item);
                                     Collections.sort(ports);
                                     adapter.notifyDataSetChanged();
+
+                                    portsFile.close();
+                                    reader.close();
                                     break;
                                 }
                             }
@@ -236,16 +241,6 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                     }
                     catch(IOException e) {
                         Log.e(TAG, e.getMessage());
-                    }
-                    finally {
-                        if(reader != null) {
-                            try {
-                                reader.close();
-                            }
-                            catch(IOException e) {
-                                Log.e(TAG, e.getMessage());
-                            }
-                        }
                     }
                 }
             }
