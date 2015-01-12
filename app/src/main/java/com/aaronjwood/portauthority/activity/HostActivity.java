@@ -220,6 +220,9 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                             try {
                                 if(output == Integer.parseInt(port)) {
                                     item = item + " - " + name;
+                                    ports.add(item);
+                                    Collections.sort(ports);
+                                    adapter.notifyDataSetChanged();
                                     break;
                                 }
                             }
@@ -244,9 +247,6 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                             }
                         }
                     }
-                    ports.add(item);
-                    Collections.sort(ports);
-                    adapter.notifyDataSetChanged();
                 }
             }
         });
