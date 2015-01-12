@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="deviceInfoLabel">Подаци о уређају</string>
+    <string name="app_name">Стручњак за портове</string>
+    <string name="action_settings">Поставке</string>
+    <string name="macAddress">МАЦ адреса</string>
+    <string name="internalIpLabel">Унутрашња ИП адреса</string>
+    <string name="externalIpLabel">Спољашња ИП адреса</string>
+    <string name="fetching">Добављам...</string>
+    <string name="signalLabel">Јачина сигнала</string>
+    <string name="hostDiscovery">Откриј домаћине</string>
+    <string name="ssid">ССИД</string>
+    <string name="bssid">БССИД</string>
+    <string name="hostname">Име домаћина</string>
+    <string name="scanWellKnownPorts">Скенирај познате портове</string>
+    <string name="scanPortRange">Скенирај распон портова</string>
+    <string name="openPorts">Отворени портови</string>
+    <string name="portRangeStart">Почетни</string>
+    <string name="portRangeStop">Крајњи</string>
+
+</resources>
