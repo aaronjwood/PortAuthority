@@ -28,10 +28,8 @@ public class ScanHostsRunnable implements Runnable {
     public void run() {
         for(int i = this.start; i <= this.stop; i++) {
             String newIp = this.ipParts[0] + "." + this.ipParts[1] + "." + this.ipParts[2] + "." + i;
-            InetAddress address;
             try {
-
-                address = InetAddress.getByName(newIp);
+                InetAddress address = InetAddress.getByName(newIp);
                 address.isReachable(100);
             }
             catch(UnknownHostException e) {
