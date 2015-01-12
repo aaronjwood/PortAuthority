@@ -83,9 +83,8 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            InetAddress add;
                             try {
-                                add = InetAddress.getByName(ip);
+                                InetAddress add = InetAddress.getByName(ip);
                                 String hostname = add.getHostName();
 
                                 Map<String, String> entry = new HashMap<>();
