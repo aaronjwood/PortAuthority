@@ -206,11 +206,11 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                     }
                 }
                 else {
-                    BufferedReader reader = null;
-                    String line;
-                    String item = String.valueOf(output);
                     try {
-                        reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
+                        String line;
+                        String item = String.valueOf(output);
+
                         while((line = reader.readLine()) != null) {
                             String[] portInfo = line.split(",");
                             String name = portInfo[0];
@@ -220,6 +220,11 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                             try {
                                 if(output == Integer.parseInt(port)) {
                                     item = item + " - " + name;
+                                    ports.add(item);
+                                    Collections.sort(ports);
+                                    adapter.notifyDataSetChanged();
+
+                                    reader.close();
                                     break;
                                 }
                             }
@@ -234,19 +239,6 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                     catch(IOException e) {
                         Log.e(TAG, e.getMessage());
                     }
-                    finally {
-                        if(reader != null) {
-                            try {
-                                reader.close();
-                            }
-                            catch(IOException e) {
-                                Log.e(TAG, e.getMessage());
-                            }
-                        }
-                    }
-                    ports.add(item);
-                    Collections.sort(ports);
-                    adapter.notifyDataSetChanged();
                 }
             }
         });

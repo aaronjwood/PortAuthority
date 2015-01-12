@@ -36,7 +36,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
         String ip = params[0];
         String parts[] = ip.split("\\.");
 
-        ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
+        ExecutorService executor = Executors.newCachedThreadPool();
 
         int chunk = (int) Math.ceil((double) 255 / NUM_THREADS);
         int previousStart = 1;
@@ -67,7 +67,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
 
     protected void onPostExecute(final ArrayList<Map<String, String>> result) {
         try {
-            ExecutorService executor = Executors.newFixedThreadPool(1);
+            ExecutorService executor = Executors.newCachedThreadPool();
             BufferedReader reader = new BufferedReader(new FileReader("/proc/net/arp"));
             reader.readLine();
             String line;
@@ -83,9 +83,8 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            InetAddress add;
                             try {
-                                add = InetAddress.getByName(ip);
+                                InetAddress add = InetAddress.getByName(ip);
                                 String hostname = add.getHostName();
 
                                 Map<String, String> entry = new HashMap<>();
@@ -100,6 +99,8 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
                     });
                 }
             }
+
+            reader.close();
 
             executor.shutdown();
             executor.awaitTermination(10, TimeUnit.SECONDS);
