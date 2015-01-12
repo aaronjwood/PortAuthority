@@ -101,6 +101,8 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
                 }
             }
 
+            reader.close();
+
             executor.shutdown();
             executor.awaitTermination(10, TimeUnit.SECONDS);
 
