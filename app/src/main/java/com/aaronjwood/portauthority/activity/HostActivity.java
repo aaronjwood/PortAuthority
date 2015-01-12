@@ -1,10 +1,10 @@
 package com.aaronjwood.portauthority.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,11 +19,17 @@ import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 
 
 public class HostActivity extends Activity implements HostAsyncResponse {
+
+    private static final String TAG = "HostActivity";
 
     private Host host = new Host();
     private TextView hostIpLabel;
@@ -35,8 +41,8 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     private Button scanWellKnownPortsButton;
     private Button scanPortRangeButton;
     private ListView portList;
-    private ArrayAdapter<Integer> adapter;
-    private ArrayList<Integer> ports = new ArrayList<>();
+    private ArrayAdapter<String> adapter;
+    private ArrayList<String> ports = new ArrayList<>();
     private ProgressDialog scanProgressDialog;
     private Dialog portRangeDialog;
 
@@ -56,7 +62,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
             this.hostIp = savedInstanceState.getString("hostIp");
             this.hostMac = savedInstanceState.getString("hostMac");
             this.hostName = savedInstanceState.getString("hostName");
-            this.ports = savedInstanceState.getIntegerArrayList("ports");
+            this.ports = savedInstanceState.getStringArrayList("ports");
             this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
             this.portList.setAdapter(this.adapter);
             this.adapter.notifyDataSetChanged();
@@ -149,7 +155,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         savedState.putString("hostIp", this.hostIp);
         savedState.putString("hostName", this.hostName);
         savedState.putString("hostMac", this.hostMac);
-        savedState.putIntegerArrayList("ports", this.ports);
+        savedState.putStringArrayList("ports", this.ports);
     }
 
     @Override
@@ -200,7 +206,45 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                     }
                 }
                 else {
-                    ports.add(output);
+                    BufferedReader reader = null;
+                    String line;
+                    String item = String.valueOf(output);
+                    try {
+                        reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
+                        while((line = reader.readLine()) != null) {
+                            String[] portInfo = line.split(",");
+                            String name = portInfo[0];
+                            String port = portInfo[1];
+                            String protocol = portInfo[2];
+
+                            try {
+                                if(output == Integer.parseInt(port)) {
+                                    item = item + " - " + name;
+                                    break;
+                                }
+                            }
+                            catch(NumberFormatException e) {
+                                continue;
+                            }
+                        }
+                    }
+                    catch(FileNotFoundException e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                    catch(IOException e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                    finally {
+                        if(reader != null) {
+                            try {
+                                reader.close();
+                            }
+                            catch(IOException e) {
+                                Log.e(TAG, e.getMessage());
+                            }
+                        }
+                    }
+                    ports.add(item);
                     Collections.sort(ports);
                     adapter.notifyDataSetChanged();
                 }
