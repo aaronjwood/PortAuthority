@@ -36,7 +36,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
         String ip = params[0];
         String parts[] = ip.split("\\.");
 
-        ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
+        ExecutorService executor = Executors.newCachedThreadPool();
 
         int chunk = (int) Math.ceil((double) 255 / NUM_THREADS);
         int previousStart = 1;
