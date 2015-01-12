@@ -208,8 +208,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                 }
                 else {
                     try {
-                        InputStream portsFile = getAssets().open("ports.csv");
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(portsFile));
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
                         String line;
                         String item = String.valueOf(output);
 
@@ -226,7 +225,6 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                                     Collections.sort(ports);
                                     adapter.notifyDataSetChanged();
 
-                                    portsFile.close();
                                     reader.close();
                                     break;
                                 }
