@@ -213,9 +213,17 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
                         while((line = reader.readLine()) != null) {
                             String[] portInfo = line.split(",");
-                            String name = portInfo[0];
-                            String port = portInfo[1];
-                            String protocol = portInfo[2];
+                            String name;
+                            String port;
+
+                            if(portInfo.length > 2) {
+                                name = portInfo[0];
+                                port = portInfo[1];
+                            }
+                            else {
+                                name = "unknown";
+                                port = null;
+                            }
 
                             try {
                                 if(output == Integer.parseInt(port)) {
