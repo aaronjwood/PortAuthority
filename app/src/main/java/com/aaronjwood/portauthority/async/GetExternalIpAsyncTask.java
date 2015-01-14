@@ -37,9 +37,11 @@ public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
         }
         catch(ClientProtocolException e) {
             Log.e(TAG, e.getMessage());
+            return "Couldn't get your external IP";
         }
         catch(IOException e) {
             Log.e(TAG, e.getMessage());
+            return "Couldn't get your external IP";
         }
 
         String ip = null;
@@ -50,9 +52,11 @@ public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
         }
         catch(ParseException e) {
             Log.e(TAG, e.getMessage());
+            return "Couldn't get your external IP";
         }
         catch(IOException e) {
             Log.e(TAG, e.getMessage());
+            return "Couldn't get your external IP";
         }
 
         return ip;
