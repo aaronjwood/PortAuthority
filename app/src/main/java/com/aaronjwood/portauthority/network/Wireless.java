@@ -15,42 +15,33 @@ import java.util.Locale;
 public class Wireless {
 
     private Activity activity;
-    private WifiManager wifi;
-    private WifiInfo wifiInfo;
-    private ConnectivityManager connection;
-    private NetworkInfo networkInfo;
 
     public Wireless(Activity activity) {
         this.activity = activity;
-        this.wifi = (WifiManager) this.activity.getSystemService(Context.WIFI_SERVICE);
-        this.wifiInfo = this.wifi.getConnectionInfo();
-        this.connection = (ConnectivityManager) this.activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        this.networkInfo = this.connection.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
     }
 
     public String getMacAddress() {
-        return this.wifiInfo.getMacAddress();
+        return this.getWifiInfo().getMacAddress();
     }
 
     public boolean isHidden() {
-        return this.wifiInfo.getHiddenSSID();
+        return this.getWifiInfo().getHiddenSSID();
     }
 
     public int getSignalStrength() {
-        this.wifiInfo = this.wifi.getConnectionInfo();
-        return this.wifiInfo.getRssi();
+        return this.getWifiInfo().getRssi();
     }
 
     public String getBSSID() {
-        return this.wifiInfo.getBSSID();
+        return this.getWifiInfo().getBSSID();
     }
 
     public String getSSID() {
-        return this.wifiInfo.getSSID();
+        return this.getWifiInfo().getSSID();
     }
 
     public String getInternalIpAddress() {
-        int ip = this.wifiInfo.getIpAddress();
+        int ip = this.getWifiInfo().getIpAddress();
         return String.format(Locale.getDefault(), "%d.%d.%d.%d", (ip & 0xff),
                 (ip >> 8 & 0xff), (ip >> 16 & 0xff), (ip >> 24 & 0xff));
     }
@@ -60,11 +51,27 @@ public class Wireless {
     }
 
     public int getLinkSpeed() {
-        return this.wifiInfo.getLinkSpeed();
+        return this.getWifiInfo().getLinkSpeed();
     }
 
     public boolean isConnected() {
-        return this.networkInfo.isConnected();
+        return this.getNetworkInfo().isConnected();
+    }
+
+    public WifiManager getWifiManager() {
+        return (WifiManager) this.activity.getSystemService(Context.WIFI_SERVICE);
+    }
+
+    private WifiInfo getWifiInfo() {
+        return this.getWifiManager().getConnectionInfo();
+    }
+
+    private ConnectivityManager getConnectivityManager() {
+        return (ConnectivityManager) this.activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+    }
+
+    private NetworkInfo getNetworkInfo() {
+        return this.getConnectivityManager().getNetworkInfo(ConnectivityManager.TYPE_WIFI);
     }
 
 }
