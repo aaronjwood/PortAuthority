@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Host;
+import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 import java.io.BufferedReader;
@@ -31,6 +32,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
     private static final String TAG = "HostActivity";
 
+    private Wireless wifi;
     private Host host = new Host();
     private TextView hostIpLabel;
     private TextView hostNameLabel;
@@ -76,6 +78,8 @@ public class HostActivity extends Activity implements HostAsyncResponse {
             this.portList.setAdapter(adapter);
         }
 
+        this.wifi = new Wireless(this);
+
         this.host.getHostname(this.hostIp, this);
 
         this.hostIpLabel.setText(this.hostIp);
@@ -84,6 +88,11 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         this.scanWellKnownPortsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!wifi.isConnected()) {
+                    Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 HostActivity.this.ports.clear();
 
                 scanProgressDialog = new ProgressDialog(HostActivity.this);
@@ -102,6 +111,11 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
             @Override
             public void onClick(View v) {
+                if(!wifi.isConnected()) {
+                    Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                
                 HostActivity.this.portRangeDialog = new Dialog(HostActivity.this);
                 portRangeDialog.setTitle("Select Port Range");
                 portRangeDialog.setContentView(R.layout.port_range);

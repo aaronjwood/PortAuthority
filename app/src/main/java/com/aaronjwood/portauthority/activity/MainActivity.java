@@ -35,7 +35,6 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
     private Wireless wifi;
     private Discovery discovery = new Discovery();
-
     private Button discoverHosts;
     private ListView hostList;
     private TextView macAddress;
