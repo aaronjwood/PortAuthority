@@ -63,7 +63,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
             this.wifi.getExternalIpAddress(this);
         }
         else {
-            this.externalIp.setText("No internet connection!");
+            this.externalIp.setText("No WiFI connection!");
         }
 
         final String internalIp = this.wifi.getInternalIpAddress();
