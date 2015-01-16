@@ -2,7 +2,11 @@ package com.aaronjwood.portauthority.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -41,7 +45,9 @@ public class MainActivity extends Activity implements MainAsyncResponse {
     private TextView ssid;
     private TextView bssid;
     private ProgressDialog scanProgressDialog;
-
+    private Handler mHandler = new Handler();
+    private BroadcastReceiver receiver;
+    private IntentFilter intentFilter = new IntentFilter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,36 +65,31 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
         this.wifi = new Wireless(this);
 
-        final String internalIp = this.wifi.getInternalIpAddress();
-
         this.macAddress.setText(this.wifi.getMacAddress());
 
-        if(this.wifi.isConnected()) {
-            this.wifi.getExternalIpAddress(this);
-            this.internalIp.setText(internalIp);
-            this.ssid.setText(this.wifi.getSSID());
-            this.bssid.setText(this.wifi.getBSSID());
-        }
-        else {
-            this.externalIp.setText("No WiFI connection");
-            this.internalIp.setText("No WiFi connection");
-            this.ssid.setText("No WiFi connection");
-            this.bssid.setText("No WiFi connection");
-        }
+        this.receiver = new BroadcastReceiver() {
 
-        final Handler mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() {
             @Override
-            public void run() {
-                if(wifi.isConnected()) {
-                    signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm");
+            public void onReceive(Context context, Intent intent) {
+                NetworkInfo info = intent.getParcelableExtra(wifi.getWifiManager().EXTRA_NETWORK_INFO);
+                if(info != null) {
+                    if(info.isConnected()) {
+                        getNetworkInfo();
+                    }
+                    else {
+                        mHandler.removeCallbacksAndMessages(null);
+                        MainActivity.this.internalIp.setText("No WiFi connection");
+                        externalIp.setText("No WiFi connection");
+                        signalStrength.setText("No WiFi connection");
+                        ssid.setText("No WiFi connection");
+                        bssid.setText("No WiFi connection");
+                    }
                 }
-                else {
-                    signalStrength.setText("No WiFi connection");
-                }
-                mHandler.postDelayed(this, TIMER_INTERVAL);
             }
-        }, 0);
+        };
+
+        this.intentFilter.addAction(this.wifi.getWifiManager().NETWORK_STATE_CHANGED_ACTION);
+        registerReceiver(receiver, this.intentFilter);
 
         this.discoverHosts.setOnClickListener(new View.OnClickListener() {
 
@@ -107,7 +108,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                 scanProgressDialog.setMax(255);
                 scanProgressDialog.show();
 
-                discovery.scanHosts(internalIp, MainActivity.this);
+                discovery.scanHosts(wifi.getInternalIpAddress(), MainActivity.this);
             }
         });
 
@@ -129,14 +130,37 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
     }
 
+    private void getNetworkInfo() {
+        this.mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm");
+                mHandler.postDelayed(this, TIMER_INTERVAL);
+            }
+        }, 0);
+        this.internalIp.setText(this.wifi.getInternalIpAddress());
+        this.wifi.getExternalIpAddress(this);
+        this.ssid.setText(this.wifi.getSSID());
+        this.bssid.setText(this.wifi.getBSSID());
+    }
+
     @Override
     public void onPause() {
         super.onPause();
+
+        unregisterReceiver(this.receiver);
 
         if(this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.dismiss();
         }
         this.scanProgressDialog = null;
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+
+        registerReceiver(this.receiver, this.intentFilter);
     }
 
     @Override
