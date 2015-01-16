@@ -59,25 +59,33 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
         this.wifi = new Wireless(this);
 
-        if(this.wifi.isConnected()) {
-            this.wifi.getExternalIpAddress(this);
-        }
-        else {
-            this.externalIp.setText("No WiFI connection!");
-        }
-
         final String internalIp = this.wifi.getInternalIpAddress();
 
         this.macAddress.setText(this.wifi.getMacAddress());
-        this.internalIp.setText(internalIp);
-        this.ssid.setText(this.wifi.getSSID());
-        this.bssid.setText(this.wifi.getBSSID());
+
+        if(this.wifi.isConnected()) {
+            this.wifi.getExternalIpAddress(this);
+            this.internalIp.setText(internalIp);
+            this.ssid.setText(this.wifi.getSSID());
+            this.bssid.setText(this.wifi.getBSSID());
+        }
+        else {
+            this.externalIp.setText("No WiFI connection");
+            this.internalIp.setText("No WiFi connection");
+            this.ssid.setText("No WiFi connection");
+            this.bssid.setText("No WiFi connection");
+        }
 
         final Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm");
+                if(wifi.isConnected()) {
+                    signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm");
+                }
+                else {
+                    signalStrength.setText("No WiFi connection");
+                }
                 mHandler.postDelayed(this, TIMER_INTERVAL);
             }
         }, 0);
