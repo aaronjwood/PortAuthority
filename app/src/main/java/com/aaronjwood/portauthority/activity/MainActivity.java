@@ -48,6 +48,11 @@ public class MainActivity extends Activity implements MainAsyncResponse {
     private BroadcastReceiver receiver;
     private IntentFilter intentFilter = new IntentFilter();
 
+    /**
+     * Activity created
+     *
+     * @param savedInstanceState Data from a saved state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +73,11 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
         this.receiver = new BroadcastReceiver() {
 
+            /**
+             * Detect if a network connection has been lost or established
+             * @param context
+             * @param intent
+             */
             @Override
             public void onReceive(Context context, Intent intent) {
                 NetworkInfo info = intent.getParcelableExtra(wifi.getWifiManager().EXTRA_NETWORK_INFO);
@@ -92,6 +102,10 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
         this.discoverHosts.setOnClickListener(new View.OnClickListener() {
 
+            /**
+             * Click handler to perform host discovery
+             * @param v
+             */
             @Override
             public void onClick(View v) {
                 if(!wifi.isConnected()) {
@@ -113,6 +127,13 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
         this.hostList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
+            /**
+             * Click handler to open the host activity for a specific host found on the network
+             * @param parent
+             * @param view
+             * @param position
+             * @param id
+             */
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HashMap<String, String> map = (HashMap) hostList.getItemAtPosition(position);
@@ -129,6 +150,9 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
     }
 
+    /**
+     * Gets network information about the device and updates various UI elements
+     */
     private void getNetworkInfo() {
         this.mHandler.postDelayed(new Runnable() {
             @Override
@@ -143,6 +167,9 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         this.bssid.setText(this.wifi.getBSSID());
     }
 
+    /**
+     * Activity paused
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -155,6 +182,9 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         this.scanProgressDialog = null;
     }
 
+    /**
+     * Activity restarted
+     */
     @Override
     public void onRestart() {
         super.onRestart();
@@ -162,6 +192,11 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         registerReceiver(this.receiver, this.intentFilter);
     }
 
+    /**
+     * Save the state of an activity
+     *
+     * @param savedState Data to save
+     */
     @Override
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
@@ -177,6 +212,11 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         }
     }
 
+    /**
+     * Activity state restored
+     *
+     * @param savedState Saved data from the saved state
+     */
     @Override
     public void onRestoreInstanceState(Bundle savedState) {
         super.onRestoreInstanceState(savedState);
@@ -208,6 +248,12 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Delegate to update the host list and dismiss the progress dialog
+     * Gets called when host discovery has finished
+     *
+     * @param output The list of hosts to bind to the list view
+     */
     @Override
     public void processFinish(ArrayList<Map<String, String>> output) {
         if(this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
@@ -218,6 +264,11 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         }
     }
 
+    /**
+     * Delegate to update the progress of the host discovery scan
+     *
+     * @param output The amount of progress to increment by
+     */
     @Override
     public void processFinish(int output) {
         if(this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
@@ -225,6 +276,11 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         }
     }
 
+    /**
+     * Delegate to handle setting the external IP in the UI
+     *
+     * @param output External IP
+     */
     @Override
     public void processFinish(String output) {
         this.externalIp.setText(output);

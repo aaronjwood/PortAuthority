@@ -48,6 +48,11 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     private ProgressDialog scanProgressDialog;
     private Dialog portRangeDialog;
 
+    /**
+     * Activity created
+     *
+     * @param savedInstanceState Data from a saved state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +91,11 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         this.hostMacLabel.setText(this.hostMac);
 
         this.scanWellKnownPortsButton.setOnClickListener(new View.OnClickListener() {
+
+            /**
+             * Click handler for scanning well known ports
+             * @param v
+             */
             @Override
             public void onClick(View v) {
                 if(!wifi.isConnected()) {
@@ -109,13 +119,17 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
         this.scanPortRangeButton.setOnClickListener(new View.OnClickListener() {
 
+            /**
+             * Click handler for scanning a port range
+             * @param v
+             */
             @Override
             public void onClick(View v) {
                 if(!wifi.isConnected()) {
                     Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                
+
                 HostActivity.this.portRangeDialog = new Dialog(HostActivity.this);
                 portRangeDialog.setTitle("Select Port Range");
                 portRangeDialog.setContentView(R.layout.port_range);
@@ -134,6 +148,10 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
                 startPortRangeScan.setOnClickListener(new View.OnClickListener() {
 
+                    /**
+                     * Click handler for starting a port range scan
+                     * @param v
+                     */
                     @Override
                     public void onClick(View v) {
                         int startPort = portRangePickerStart.getValue();
@@ -162,6 +180,11 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
     }
 
+    /**
+     * Save the state of the activity
+     *
+     * @param savedState Data to save
+     */
     @Override
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
@@ -172,6 +195,9 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         savedState.putStringArrayList("ports", this.ports);
     }
 
+    /**
+     * Activity paused
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -208,6 +234,13 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Delegate to handle open ports found
+     * An output of 0 means that we should update the progress dialog
+     * An output of anything else means it's an actual open port
+     *
+     * @param output Either a port or a special indication to increment progress
+     */
     @Override
     public void processFinish(final int output) {
         runOnUiThread(new Runnable() {
@@ -266,6 +299,11 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         });
     }
 
+    /**
+     * Delegate to determine if the progress dialog should be dismissed or not
+     *
+     * @param output True if the dialog should be dismissed
+     */
     @Override
     public void processFinish(boolean output) {
         if(output && this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
@@ -276,6 +314,11 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         }
     }
 
+    /**
+     * Delegate to handle setting the hostname in the UI
+     *
+     * @param output Hostname
+     */
     @Override
     public void processFinish(String output) {
         this.hostNameLabel.setText(output);
