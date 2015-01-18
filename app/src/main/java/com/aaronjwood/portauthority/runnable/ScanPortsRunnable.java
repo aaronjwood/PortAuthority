@@ -18,6 +18,14 @@ public class ScanPortsRunnable implements Runnable {
     private int stopPort;
     private HostAsyncResponse delegate;
 
+    /**
+     * Constructor to set the necessary data to perform a port scan
+     *
+     * @param ip        IP address
+     * @param startPort Port to start scanning at
+     * @param stopPort  Port to stop scanning at
+     * @param delegate  Called when this chunk of ports has finished scanning
+     */
     public ScanPortsRunnable(String ip, int startPort, int stopPort, HostAsyncResponse delegate) {
         this.ip = ip;
         this.startPort = startPort;
@@ -25,6 +33,9 @@ public class ScanPortsRunnable implements Runnable {
         this.delegate = delegate;
     }
 
+    /**
+     * Starts the port scan
+     */
     @Override
     public void run() {
         for(int i = this.startPort; i <= this.stopPort; i++) {
