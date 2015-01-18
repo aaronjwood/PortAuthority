@@ -26,10 +26,21 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
     private static final String TAG = "ScanHostsAsyncTask";
     private MainAsyncResponse delegate;
 
+    /**
+     * Constructor to set the delegate
+     *
+     * @param delegate Called when host discovery has finished
+     */
     public ScanHostsAsyncTask(MainAsyncResponse delegate) {
         this.delegate = delegate;
     }
 
+    /**
+     * Scans for active hosts on the network
+     *
+     * @param params IP address
+     * @return List to hold the active hosts
+     */
     @Override
     protected ArrayList<Map<String, String>> doInBackground(String... params) {
         final int NUM_THREADS = 16;
@@ -65,6 +76,11 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
         return new ArrayList<>();
     }
 
+    /**
+     * Scans the ARP table and adds active hosts to the list
+     *
+     * @param result List to hold the active hosts
+     */
     protected void onPostExecute(final ArrayList<Map<String, String>> result) {
         try {
             ExecutorService executor = Executors.newCachedThreadPool();
