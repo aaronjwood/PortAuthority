@@ -7,6 +7,12 @@ public class Discovery {
 
     private static final String TAG = "Discovery";
 
+    /**
+     * Starts the host scanning
+     *
+     * @param ip       IP address
+     * @param delegate Delegate to be called when the host scan is finished
+     */
     public void scanHosts(String ip, MainAsyncResponse delegate) {
         new ScanHostsAsyncTask(delegate).execute(ip);
     }
