@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Host;
+import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 import java.io.BufferedReader;
@@ -25,12 +26,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 
 
 public class HostActivity extends Activity implements HostAsyncResponse {
 
     private static final String TAG = "HostActivity";
 
+    private Wireless wifi;
     private Host host = new Host();
     private TextView hostIpLabel;
     private TextView hostNameLabel;
@@ -46,6 +49,11 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     private ProgressDialog scanProgressDialog;
     private Dialog portRangeDialog;
 
+    /**
+     * Activity created
+     *
+     * @param savedInstanceState Data from a saved state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,14 +84,26 @@ public class HostActivity extends Activity implements HostAsyncResponse {
             this.portList.setAdapter(adapter);
         }
 
+        this.wifi = new Wireless(this);
+
         this.host.getHostname(this.hostIp, this);
 
         this.hostIpLabel.setText(this.hostIp);
         this.hostMacLabel.setText(this.hostMac);
 
         this.scanWellKnownPortsButton.setOnClickListener(new View.OnClickListener() {
+
+            /**
+             * Click handler for scanning well known ports
+             * @param v
+             */
             @Override
             public void onClick(View v) {
+                if(!wifi.isConnected()) {
+                    Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 HostActivity.this.ports.clear();
 
                 scanProgressDialog = new ProgressDialog(HostActivity.this);
@@ -100,8 +120,17 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
         this.scanPortRangeButton.setOnClickListener(new View.OnClickListener() {
 
+            /**
+             * Click handler for scanning a port range
+             * @param v
+             */
             @Override
             public void onClick(View v) {
+                if(!wifi.isConnected()) {
+                    Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 HostActivity.this.portRangeDialog = new Dialog(HostActivity.this);
                 portRangeDialog.setTitle("Select Port Range");
                 portRangeDialog.setContentView(R.layout.port_range);
@@ -120,6 +149,10 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
                 startPortRangeScan.setOnClickListener(new View.OnClickListener() {
 
+                    /**
+                     * Click handler for starting a port range scan
+                     * @param v
+                     */
                     @Override
                     public void onClick(View v) {
                         int startPort = portRangePickerStart.getValue();
@@ -148,6 +181,11 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
     }
 
+    /**
+     * Save the state of the activity
+     *
+     * @param savedState Data to save
+     */
     @Override
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
@@ -158,6 +196,9 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         savedState.putStringArrayList("ports", this.ports);
     }
 
+    /**
+     * Activity paused
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -194,64 +235,29 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Delegate to handle incrementing the scan progress dialog
+     *
+     * @param output The amount of progress to increment
+     */
     @Override
     public void processFinish(final int output) {
         runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
-                if(output == 0) {
-                    if(scanProgressDialog != null && scanProgressDialog.isShowing()) {
-                        scanProgressDialog.incrementProgressBy(1);
-                    }
-                }
-                else {
-                    try {
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
-                        String line;
-                        String item = String.valueOf(output);
-
-                        while((line = reader.readLine()) != null) {
-                            String[] portInfo = line.split(",");
-                            String name;
-                            String port;
-
-                            if(portInfo.length > 2) {
-                                name = portInfo[0];
-                                port = portInfo[1];
-                            }
-                            else {
-                                name = "unknown";
-                                port = null;
-                            }
-
-                            try {
-                                if(output == Integer.parseInt(port)) {
-                                    item = item + " - " + name;
-                                    ports.add(item);
-                                    Collections.sort(ports);
-                                    adapter.notifyDataSetChanged();
-
-                                    reader.close();
-                                    break;
-                                }
-                            }
-                            catch(NumberFormatException e) {
-                                continue;
-                            }
-                        }
-                    }
-                    catch(FileNotFoundException e) {
-                        Log.e(TAG, e.getMessage());
-                    }
-                    catch(IOException e) {
-                        Log.e(TAG, e.getMessage());
-                    }
+                if(scanProgressDialog != null && scanProgressDialog.isShowing()) {
+                    scanProgressDialog.incrementProgressBy(output);
                 }
             }
         });
     }
 
+    /**
+     * Delegate to determine if the progress dialog should be dismissed or not
+     *
+     * @param output True if the dialog should be dismissed
+     */
     @Override
     public void processFinish(boolean output) {
         if(output && this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
@@ -262,6 +268,72 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         }
     }
 
+    /**
+     * Delegate to handle open ports
+     *
+     * @param output Contains the port number and associated banner (if any)
+     */
+    @Override
+    public void processFinish(Map<Integer, String> output) {
+        try {
+            int scannedPort = output.keySet().iterator().next();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
+            String line;
+            String item = String.valueOf(scannedPort);
+
+            while((line = reader.readLine()) != null) {
+                String[] portInfo = line.split(",");
+                String name;
+                String port;
+
+                if(portInfo.length > 2) {
+                    name = portInfo[0];
+                    port = portInfo[1];
+                }
+                else {
+                    name = "unknown";
+                    port = null;
+                }
+
+                try {
+                    if(scannedPort == Integer.parseInt(port)) {
+                        item = item + " - " + name;
+                        if(output.get(scannedPort) != null) {
+                            item += " (" + output.get(scannedPort) + ")";
+                        }
+                        ports.add(item);
+                        Collections.sort(ports);
+
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+
+                        reader.close();
+                        break;
+                    }
+                }
+                catch(NumberFormatException e) {
+                    continue;
+                }
+            }
+        }
+        catch(FileNotFoundException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        catch(IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    /**
+     * Delegate to handle setting the hostname in the UI
+     *
+     * @param output Hostname
+     */
     @Override
     public void processFinish(String output) {
         this.hostNameLabel.setText(output);

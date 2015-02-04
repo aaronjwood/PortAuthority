@@ -15,10 +15,22 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
     private static final String TAG = "ScanPortsAsyncTask";
     private HostAsyncResponse delegate;
 
+    /**
+     * Constructor to set the delegate
+     *
+     * @param delegate Called when a port scan has finished
+     */
     public ScanPortsAsyncTask(HostAsyncResponse delegate) {
         this.delegate = delegate;
     }
 
+    /**
+     * Chunks the ports selected for scanning and starts the process
+     * Chunked ports are scanned in parallel
+     *
+     * @param params IP address, start port, and stop port
+     * @return
+     */
     @Override
     protected Void doInBackground(Object... params) {
         final int NUM_THREADS = 500;
@@ -30,7 +42,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
 
         int chunk = (int) Math.ceil((double) (stopPort - startPort) / NUM_THREADS);
         int previousStart = startPort;
-        int previousStop = (startPort - 1)+ chunk;
+        int previousStop = (startPort - 1) + chunk;
 
         for(int i = 0; i < NUM_THREADS; i++) {
             if(previousStop >= stopPort) {

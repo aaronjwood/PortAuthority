@@ -22,10 +22,21 @@ public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
     private static final String EXTERNAL_IP_SERVICE = "http://whatismyip.akamai.com/";
     private MainAsyncResponse delegate;
 
+    /**
+     * Constructor to set the delegate
+     *
+     * @param delegate Called when the external IP has been fetched
+     */
     public GetExternalIpAsyncTask(MainAsyncResponse delegate) {
         this.delegate = delegate;
     }
 
+    /**
+     * Fetch the external IP address
+     *
+     * @param params
+     * @return External IP address
+     */
     @Override
     protected String doInBackground(Void... params) {
         HttpClient httpclient = new DefaultHttpClient();
@@ -62,6 +73,11 @@ public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
         return ip;
     }
 
+    /**
+     * Calls the delegate when the external IP has been fetched
+     *
+     * @param result External IP address
+     */
     @Override
     protected void onPostExecute(String result) {
         delegate.processFinish(result);
