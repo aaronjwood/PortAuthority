@@ -1,5 +1,7 @@
 package com.aaronjwood.portauthority.response;
 
+import java.util.Map;
+
 public interface HostAsyncResponse {
 
     /**
@@ -15,6 +17,13 @@ public interface HostAsyncResponse {
      * @param output
      */
     void processFinish(boolean output);
+
+    /**
+     * Delegate to handle Map outputs
+     *
+     * @param output
+     */
+    void processFinish(Map<Integer, String> output);
 
     /**
      * Delegate to handle string outputs

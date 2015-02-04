@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 
 
 public class HostActivity extends Activity implements HostAsyncResponse {
@@ -235,11 +236,9 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     }
 
     /**
-     * Delegate to handle open ports found
-     * An output of 0 means that we should update the progress dialog
-     * An output of anything else means it's an actual open port
+     * Delegate to handle incrementing the scan progress dialog
      *
-     * @param output Either a port or a special indication to increment progress
+     * @param output The amount of progress to increment
      */
     @Override
     public void processFinish(final int output) {
@@ -247,53 +246,8 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
             @Override
             public void run() {
-                if(output == 0) {
-                    if(scanProgressDialog != null && scanProgressDialog.isShowing()) {
-                        scanProgressDialog.incrementProgressBy(1);
-                    }
-                }
-                else {
-                    try {
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
-                        String line;
-                        String item = String.valueOf(output);
-
-                        while((line = reader.readLine()) != null) {
-                            String[] portInfo = line.split(",");
-                            String name;
-                            String port;
-
-                            if(portInfo.length > 2) {
-                                name = portInfo[0];
-                                port = portInfo[1];
-                            }
-                            else {
-                                name = "unknown";
-                                port = null;
-                            }
-
-                            try {
-                                if(output == Integer.parseInt(port)) {
-                                    item = item + " - " + name;
-                                    ports.add(item);
-                                    Collections.sort(ports);
-                                    adapter.notifyDataSetChanged();
-
-                                    reader.close();
-                                    break;
-                                }
-                            }
-                            catch(NumberFormatException e) {
-                                continue;
-                            }
-                        }
-                    }
-                    catch(FileNotFoundException e) {
-                        Log.e(TAG, e.getMessage());
-                    }
-                    catch(IOException e) {
-                        Log.e(TAG, e.getMessage());
-                    }
+                if(scanProgressDialog != null && scanProgressDialog.isShowing()) {
+                    scanProgressDialog.incrementProgressBy(output);
                 }
             }
         });
@@ -311,6 +265,67 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         }
         if(output && this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
             this.portRangeDialog.dismiss();
+        }
+    }
+
+    /**
+     * Delegate to handle open ports
+     *
+     * @param output Contains the port number and associated banner (if any)
+     */
+    @Override
+    public void processFinish(Map<Integer, String> output) {
+        try {
+            int scannedPort = output.keySet().iterator().next();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
+            String line;
+            String item = String.valueOf(scannedPort);
+
+            while((line = reader.readLine()) != null) {
+                String[] portInfo = line.split(",");
+                String name;
+                String port;
+
+                if(portInfo.length > 2) {
+                    name = portInfo[0];
+                    port = portInfo[1];
+                }
+                else {
+                    name = "unknown";
+                    port = null;
+                }
+
+                try {
+                    if(scannedPort == Integer.parseInt(port)) {
+                        item = item + " - " + name;
+                        if(output.get(scannedPort) != null) {
+                            item += " (" + output.get(scannedPort) + ")";
+                        }
+                        ports.add(item);
+                        Collections.sort(ports);
+
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+
+                        reader.close();
+                        break;
+                    }
+                }
+                catch(NumberFormatException e) {
+                    continue;
+                }
+            }
+        }
+        catch(FileNotFoundException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        catch(IOException e) {
+            Log.e(TAG, e.getMessage());
         }
     }
 
