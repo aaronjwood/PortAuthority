@@ -1,7 +1,5 @@
 package com.aaronjwood.portauthority.runnable;
 
-import android.util.Log;
-
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 import java.io.BufferedReader;
@@ -10,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.HashMap;
 
 public class ScanPortsRunnable implements Runnable {
@@ -88,11 +85,7 @@ public class ScanPortsRunnable implements Runnable {
 
                 this.delegate.processFinish(portData);
             }
-            catch(SocketException e) {
-                Log.e(TAG, e.getMessage());
-            }
-            catch(IOException e) {
-                Log.e(TAG, e.getMessage());
+            catch(IOException ignored) {
             }
         }
     }
