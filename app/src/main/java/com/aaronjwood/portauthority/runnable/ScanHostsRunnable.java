@@ -1,12 +1,9 @@
 package com.aaronjwood.portauthority.runnable;
 
-import android.util.Log;
-
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 public class ScanHostsRunnable implements Runnable {
 
@@ -43,11 +40,7 @@ public class ScanHostsRunnable implements Runnable {
                 InetAddress address = InetAddress.getByName(newIp);
                 address.isReachable(100);
             }
-            catch(UnknownHostException e) {
-                Log.e(this.TAG, e.getMessage());
-            }
-            catch(IOException e) {
-                Log.e(this.TAG, e.getMessage());
+            catch(IOException ignored) {
             }
             finally {
                 this.delegate.processFinish(1);
