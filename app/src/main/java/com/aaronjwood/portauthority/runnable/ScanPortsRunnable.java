@@ -1,7 +1,5 @@
 package com.aaronjwood.portauthority.runnable;
 
-import android.util.Log;
-
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 import java.io.BufferedReader;
@@ -10,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.HashMap;
 
 public class ScanPortsRunnable implements Runnable {
@@ -57,21 +54,21 @@ public class ScanPortsRunnable implements Runnable {
                     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                     out.println("GET / HTTP/1.1\r\n\r\n");
 
-                    String data = null;
+                    String data;
 
                     if(i == 22) {
                         data = in.readLine();
                     }
-                    else if(i == 80 || i == 443) {
+                    else {
                         in.read(buffer, 0, 1024);
                         data = new String(buffer).toLowerCase();
-                        if(data.indexOf("apache") != -1 || data.indexOf("httpd") != -1) {
+                        if(data.contains("apache") || data.contains("httpd")) {
                             data = "Apache";
                         }
-                        else if(data.indexOf("iis") != -1 || data.indexOf("microsoft") != -1) {
+                        else if(data.contains("iis") || data.contains("microsoft")) {
                             data = "IIS";
                         }
-                        else if(data.indexOf("nginx") != -1) {
+                        else if(data.contains("nginx")) {
                             data = "Nginx";
                         }
                     }
@@ -88,11 +85,7 @@ public class ScanPortsRunnable implements Runnable {
 
                 this.delegate.processFinish(portData);
             }
-            catch(SocketException e) {
-                Log.e(TAG, e.getMessage());
-            }
-            catch(IOException e) {
-                Log.e(TAG, e.getMessage());
+            catch(IOException ignored) {
             }
         }
     }

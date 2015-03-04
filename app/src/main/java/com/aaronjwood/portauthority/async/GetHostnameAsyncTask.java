@@ -1,7 +1,6 @@
 package com.aaronjwood.portauthority.async;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
@@ -35,8 +34,7 @@ public class GetHostnameAsyncTask extends AsyncTask<String, Void, String> {
             InetAddress add = InetAddress.getByName(ip);
             return add.getHostName();
         }
-        catch(UnknownHostException e) {
-            Log.e(TAG, e.getMessage());
+        catch(UnknownHostException ignored) {
         }
         return null;
     }

@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,7 +18,6 @@ import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -35,15 +31,10 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
     private Wireless wifi;
     private Host host = new Host();
-    private TextView hostIpLabel;
     private TextView hostNameLabel;
     private String hostName;
     private String hostIp;
-    private TextView hostMacLabel;
     private String hostMac;
-    private Button scanWellKnownPortsButton;
-    private Button scanPortRangeButton;
-    private ListView portList;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> ports = new ArrayList<>();
     private ProgressDialog scanProgressDialog;
@@ -59,12 +50,12 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host);
 
-        this.hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
+        TextView hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
         this.hostNameLabel = (TextView) findViewById(R.id.hostName);
-        this.scanWellKnownPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
-        this.scanPortRangeButton = (Button) findViewById(R.id.scanPortRange);
-        this.portList = (ListView) findViewById(R.id.portList);
-        this.hostMacLabel = (TextView) findViewById(R.id.hostMac);
+        Button scanWellKnownPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
+        Button scanPortRangeButton = (Button) findViewById(R.id.scanPortRange);
+        ListView portList = (ListView) findViewById(R.id.portList);
+        TextView hostMacLabel = (TextView) findViewById(R.id.hostMac);
 
         if(savedInstanceState != null) {
             this.hostIp = savedInstanceState.getString("hostIp");
@@ -72,7 +63,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
             this.hostName = savedInstanceState.getString("hostName");
             this.ports = savedInstanceState.getStringArrayList("ports");
             this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
-            this.portList.setAdapter(this.adapter);
+            portList.setAdapter(this.adapter);
             this.adapter.notifyDataSetChanged();
         }
         else if(savedInstanceState == null) {
@@ -81,17 +72,17 @@ public class HostActivity extends Activity implements HostAsyncResponse {
             this.hostMac = extras.getString("MAC");
 
             this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
-            this.portList.setAdapter(adapter);
+            portList.setAdapter(adapter);
         }
 
         this.wifi = new Wireless(this);
 
         this.host.getHostname(this.hostIp, this);
 
-        this.hostIpLabel.setText(this.hostIp);
-        this.hostMacLabel.setText(this.hostMac);
+        hostIpLabel.setText(this.hostIp);
+        hostMacLabel.setText(this.hostMac);
 
-        this.scanWellKnownPortsButton.setOnClickListener(new View.OnClickListener() {
+        scanWellKnownPortsButton.setOnClickListener(new View.OnClickListener() {
 
             /**
              * Click handler for scanning well known ports
@@ -109,7 +100,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                 scanProgressDialog = new ProgressDialog(HostActivity.this);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning Well Known Ports");
-                scanProgressDialog.setProgressStyle(scanProgressDialog.STYLE_HORIZONTAL);
+                scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 scanProgressDialog.setProgress(0);
                 scanProgressDialog.setMax(1024);
                 scanProgressDialog.show();
@@ -118,7 +109,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
             }
         });
 
-        this.scanPortRangeButton.setOnClickListener(new View.OnClickListener() {
+        scanPortRangeButton.setOnClickListener(new View.OnClickListener() {
 
             /**
              * Click handler for scanning a port range
@@ -168,7 +159,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                         scanProgressDialog = new ProgressDialog(HostActivity.this);
                         scanProgressDialog.setCancelable(false);
                         scanProgressDialog.setTitle("Scanning Port " + startPort + " to " + stopPort);
-                        scanProgressDialog.setProgressStyle(scanProgressDialog.STYLE_HORIZONTAL);
+                        scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                         scanProgressDialog.setProgress(0);
                         scanProgressDialog.setMax(stopPort - startPort + 1);
                         scanProgressDialog.show();
@@ -211,28 +202,6 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         }
         this.scanProgressDialog = null;
         this.portRangeDialog = null;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_host, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if(id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -295,37 +264,28 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                     port = null;
                 }
 
-                try {
-                    if(scannedPort == Integer.parseInt(port)) {
-                        item = item + " - " + name;
-                        if(output.get(scannedPort) != null) {
-                            item += " (" + output.get(scannedPort) + ")";
-                        }
-                        ports.add(item);
-                        Collections.sort(ports);
-
-                        runOnUiThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-
-                        reader.close();
-                        break;
+                if(scannedPort == Integer.parseInt(port)) {
+                    item = item + " - " + name;
+                    if(output.get(scannedPort) != null) {
+                        item += " (" + output.get(scannedPort) + ")";
                     }
-                }
-                catch(NumberFormatException e) {
-                    continue;
+                    ports.add(item);
+                    Collections.sort(ports);
+
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
+                    reader.close();
+                    break;
                 }
             }
         }
-        catch(FileNotFoundException e) {
-            Log.e(TAG, e.getMessage());
-        }
-        catch(IOException e) {
-            Log.e(TAG, e.getMessage());
+        catch(IOException | NumberFormatException ignored) {
         }
     }
 
