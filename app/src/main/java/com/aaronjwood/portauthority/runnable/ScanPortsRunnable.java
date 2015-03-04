@@ -62,16 +62,16 @@ public class ScanPortsRunnable implements Runnable {
                     if(i == 22) {
                         data = in.readLine();
                     }
-                    else if(i == 80 || i == 443) {
+                    else {
                         in.read(buffer, 0, 1024);
                         data = new String(buffer).toLowerCase();
-                        if(data.indexOf("apache") != -1 || data.indexOf("httpd") != -1) {
+                        if(data.contains("apache") || data.contains("httpd")) {
                             data = "Apache";
                         }
-                        else if(data.indexOf("iis") != -1 || data.indexOf("microsoft") != -1) {
+                        else if(data.contains("iis") || data.contains("microsoft")) {
                             data = "IIS";
                         }
-                        else if(data.indexOf("nginx") != -1) {
+                        else if(data.contains("nginx")) {
                             data = "Nginx";
                         }
                     }
