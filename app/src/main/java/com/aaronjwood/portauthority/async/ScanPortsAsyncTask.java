@@ -1,7 +1,6 @@
 package com.aaronjwood.portauthority.async;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.runnable.ScanPortsRunnable;
@@ -60,8 +59,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
         try {
             executor.awaitTermination(10, TimeUnit.MINUTES);
         }
-        catch(InterruptedException e) {
-            Log.e(TAG, e.getMessage());
+        catch(InterruptedException ignored) {
         }
 
         this.delegate.processFinish(true);
