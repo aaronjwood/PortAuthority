@@ -33,15 +33,10 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
     private Wireless wifi;
     private Host host = new Host();
-    private TextView hostIpLabel;
     private TextView hostNameLabel;
     private String hostName;
     private String hostIp;
-    private TextView hostMacLabel;
     private String hostMac;
-    private Button scanWellKnownPortsButton;
-    private Button scanPortRangeButton;
-    private ListView portList;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> ports = new ArrayList<>();
     private ProgressDialog scanProgressDialog;
@@ -57,12 +52,12 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host);
 
-        this.hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
+        TextView hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
         this.hostNameLabel = (TextView) findViewById(R.id.hostName);
-        this.scanWellKnownPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
-        this.scanPortRangeButton = (Button) findViewById(R.id.scanPortRange);
-        this.portList = (ListView) findViewById(R.id.portList);
-        this.hostMacLabel = (TextView) findViewById(R.id.hostMac);
+        Button scanWellKnownPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
+        Button scanPortRangeButton = (Button) findViewById(R.id.scanPortRange);
+        ListView portList = (ListView) findViewById(R.id.portList);
+        TextView hostMacLabel = (TextView) findViewById(R.id.hostMac);
 
         if(savedInstanceState != null) {
             this.hostIp = savedInstanceState.getString("hostIp");
@@ -70,7 +65,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
             this.hostName = savedInstanceState.getString("hostName");
             this.ports = savedInstanceState.getStringArrayList("ports");
             this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
-            this.portList.setAdapter(this.adapter);
+            portList.setAdapter(this.adapter);
             this.adapter.notifyDataSetChanged();
         }
         else if(savedInstanceState == null) {
@@ -79,17 +74,17 @@ public class HostActivity extends Activity implements HostAsyncResponse {
             this.hostMac = extras.getString("MAC");
 
             this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
-            this.portList.setAdapter(adapter);
+            portList.setAdapter(adapter);
         }
 
         this.wifi = new Wireless(this);
 
         this.host.getHostname(this.hostIp, this);
 
-        this.hostIpLabel.setText(this.hostIp);
-        this.hostMacLabel.setText(this.hostMac);
+        hostIpLabel.setText(this.hostIp);
+        hostMacLabel.setText(this.hostMac);
 
-        this.scanWellKnownPortsButton.setOnClickListener(new View.OnClickListener() {
+        scanWellKnownPortsButton.setOnClickListener(new View.OnClickListener() {
 
             /**
              * Click handler for scanning well known ports
@@ -107,7 +102,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                 scanProgressDialog = new ProgressDialog(HostActivity.this);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning Well Known Ports");
-                scanProgressDialog.setProgressStyle(scanProgressDialog.STYLE_HORIZONTAL);
+                scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 scanProgressDialog.setProgress(0);
                 scanProgressDialog.setMax(1024);
                 scanProgressDialog.show();
@@ -116,7 +111,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
             }
         });
 
-        this.scanPortRangeButton.setOnClickListener(new View.OnClickListener() {
+        scanPortRangeButton.setOnClickListener(new View.OnClickListener() {
 
             /**
              * Click handler for scanning a port range
@@ -166,7 +161,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                         scanProgressDialog = new ProgressDialog(HostActivity.this);
                         scanProgressDialog.setCancelable(false);
                         scanProgressDialog.setTitle("Scanning Port " + startPort + " to " + stopPort);
-                        scanProgressDialog.setProgressStyle(scanProgressDialog.STYLE_HORIZONTAL);
+                        scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                         scanProgressDialog.setProgress(0);
                         scanProgressDialog.setMax(stopPort - startPort + 1);
                         scanProgressDialog.show();

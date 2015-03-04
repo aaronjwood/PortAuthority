@@ -54,7 +54,7 @@ public class ScanPortsRunnable implements Runnable {
                     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                     out.println("GET / HTTP/1.1\r\n\r\n");
 
-                    String data = null;
+                    String data;
 
                     if(i == 22) {
                         data = in.readLine();
