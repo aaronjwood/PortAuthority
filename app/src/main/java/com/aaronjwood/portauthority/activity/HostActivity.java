@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -203,13 +202,6 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         }
         this.scanProgressDialog = null;
         this.portRangeDialog = null;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_host, menu);
-        return true;
     }
 
     /**

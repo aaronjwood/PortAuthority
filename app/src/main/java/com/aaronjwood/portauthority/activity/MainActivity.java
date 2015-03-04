@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -225,14 +224,6 @@ public class MainActivity extends Activity implements MainAsyncResponse {
             SimpleAdapter newAdapter = new SimpleAdapter(this, hosts, android.R.layout.simple_list_item_2, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
             this.hostList.setAdapter(newAdapter);
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
     }
 
     /**
