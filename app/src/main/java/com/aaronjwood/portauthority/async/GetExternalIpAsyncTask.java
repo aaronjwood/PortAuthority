@@ -1,7 +1,6 @@
 package com.aaronjwood.portauthority.async;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
@@ -47,26 +46,22 @@ public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
             response = httpclient.execute(httpget);
         }
         catch(ClientProtocolException e) {
-            Log.e(TAG, e.getMessage());
             return "Couldn't get your external IP";
         }
         catch(IOException e) {
-            Log.e(TAG, e.getMessage());
             return "Couldn't get your external IP";
         }
 
-        String ip = null;
+        String ip;
         HttpEntity entity = response.getEntity();
 
         try {
             ip = EntityUtils.toString(entity);
         }
         catch(ParseException e) {
-            Log.e(TAG, e.getMessage());
             return "Couldn't get your external IP";
         }
         catch(IOException e) {
-            Log.e(TAG, e.getMessage());
             return "Couldn't get your external IP";
         }
 
