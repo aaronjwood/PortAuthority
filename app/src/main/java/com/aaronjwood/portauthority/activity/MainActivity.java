@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -33,9 +34,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
     private Wireless wifi;
     private Discovery discovery = new Discovery();
-    private Button discoverHosts;
     private ListView hostList;
-    private TextView macAddress;
     private TextView internalIp;
     private TextView externalIp;
     private TextView signalStrength;
@@ -57,17 +56,17 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         setContentView(R.layout.activity_main);
 
         this.hostList = (ListView) findViewById(R.id.hostList);
-        this.macAddress = (TextView) findViewById(R.id.deviceMacAddress);
+        TextView macAddress = (TextView) findViewById(R.id.deviceMacAddress);
         this.internalIp = (TextView) findViewById(R.id.internalIpAddress);
         this.externalIp = (TextView) findViewById(R.id.externalIpAddress);
         this.signalStrength = (TextView) findViewById(R.id.signalStrength);
-        this.discoverHosts = (Button) findViewById(R.id.discoverHosts);
+        Button discoverHosts = (Button) findViewById(R.id.discoverHosts);
         this.ssid = (TextView) findViewById(R.id.ssid);
         this.bssid = (TextView) findViewById(R.id.bssid);
 
         this.wifi = new Wireless(this);
 
-        this.macAddress.setText(this.wifi.getMacAddress());
+        macAddress.setText(this.wifi.getMacAddress());
 
         this.receiver = new BroadcastReceiver() {
 
@@ -78,7 +77,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
              */
             @Override
             public void onReceive(Context context, Intent intent) {
-                NetworkInfo info = intent.getParcelableExtra(wifi.getWifiManager().EXTRA_NETWORK_INFO);
+                NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
                 if(info != null) {
                     if(info.isConnected()) {
                         getNetworkInfo();
@@ -95,10 +94,10 @@ public class MainActivity extends Activity implements MainAsyncResponse {
             }
         };
 
-        this.intentFilter.addAction(this.wifi.getWifiManager().NETWORK_STATE_CHANGED_ACTION);
+        this.intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         registerReceiver(receiver, this.intentFilter);
 
-        this.discoverHosts.setOnClickListener(new View.OnClickListener() {
+        discoverHosts.setOnClickListener(new View.OnClickListener() {
 
             /**
              * Click handler to perform host discovery
@@ -114,7 +113,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                 scanProgressDialog = new ProgressDialog(MainActivity.this);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning For Hosts");
-                scanProgressDialog.setProgressStyle(scanProgressDialog.STYLE_HORIZONTAL);
+                scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 scanProgressDialog.setProgress(0);
                 scanProgressDialog.setMax(255);
                 scanProgressDialog.show();
