@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +20,6 @@ import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -295,37 +293,28 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                     port = null;
                 }
 
-                try {
-                    if(scannedPort == Integer.parseInt(port)) {
-                        item = item + " - " + name;
-                        if(output.get(scannedPort) != null) {
-                            item += " (" + output.get(scannedPort) + ")";
-                        }
-                        ports.add(item);
-                        Collections.sort(ports);
-
-                        runOnUiThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-
-                        reader.close();
-                        break;
+                if(scannedPort == Integer.parseInt(port)) {
+                    item = item + " - " + name;
+                    if(output.get(scannedPort) != null) {
+                        item += " (" + output.get(scannedPort) + ")";
                     }
-                }
-                catch(NumberFormatException e) {
-                    continue;
+                    ports.add(item);
+                    Collections.sort(ports);
+
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
+                    reader.close();
+                    break;
                 }
             }
         }
-        catch(FileNotFoundException e) {
-            Log.e(TAG, e.getMessage());
-        }
-        catch(IOException e) {
-            Log.e(TAG, e.getMessage());
+        catch(IOException | NumberFormatException ignored) {
         }
     }
 
