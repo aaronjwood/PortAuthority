@@ -1,13 +1,11 @@
 package com.aaronjwood.portauthority.async;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -69,8 +67,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
         try {
             executor.awaitTermination(10, TimeUnit.SECONDS);
         }
-        catch(InterruptedException e) {
-            Log.e(TAG, e.getMessage());
+        catch(InterruptedException ignored) {
         }
 
         return new ArrayList<>();
@@ -108,8 +105,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
                                 entry.put("Second Line", ip + " [" + macAddress + "]");
                                 result.add(entry);
                             }
-                            catch(UnknownHostException e) {
-                                Log.e(TAG, e.getMessage());
+                            catch(UnknownHostException ignored) {
                             }
                         }
                     });
@@ -131,14 +127,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
 
             delegate.processFinish(result);
         }
-        catch(FileNotFoundException e) {
-            Log.e(TAG, e.getMessage());
-        }
-        catch(IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
-        catch(InterruptedException e) {
-            Log.e(TAG, e.getMessage());
+        catch(IOException | InterruptedException ignored) {
         }
     }
 }
