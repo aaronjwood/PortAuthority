@@ -13,7 +13,7 @@
         android:layout_alignBottom="@+id/bssidLabel"
         android:background="@color/icsblue"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp" />
+        android:layout_marginRight="5dp"/>
 
     <TextView
         android:id="@+id/programTitle"
@@ -46,7 +46,7 @@
         android:text="@string/macAddress"
         android:textColor="@color/white"
         android:layout_toStartOf="@+id/programTitle"
-        android:layout_toLeftOf="@+id/deviceMacAddress" />
+        android:layout_toLeftOf="@+id/deviceMacAddress"/>
 
     <TextView
         android:id="@+id/deviceMacAddress"
@@ -57,7 +57,7 @@
         android:textColor="@color/icsblue"
         android:layout_above="@+id/externalIpAddressLabel"
         android:layout_below="@+id/deviceInfoLabel"
-        android:layout_toLeftOf="@+id/textView" />
+        android:layout_toLeftOf="@+id/textView"/>
 
     <TextView
         android:id="@+id/internalIpAddressLabel"
@@ -70,7 +70,7 @@
         android:textColor="@color/white"
         android:layout_toRightOf="@+id/textView"
         android:layout_alignBottom="@+id/internalIpAddress"
-        android:layout_toLeftOf="@+id/internalIpAddress" />
+        android:layout_toLeftOf="@+id/internalIpAddress"/>
 
     <TextView
         android:id="@+id/internalIpAddress"
@@ -81,7 +81,7 @@
         android:textColor="@color/icsblue"
         android:layout_below="@+id/deviceInfoLabel"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"/>
 
     <View
         android:layout_width="match_parent"
@@ -111,7 +111,7 @@
         android:textColor="@color/icsblue"
         android:layout_below="@+id/internalIpAddressLabel"
         android:layout_toStartOf="@+id/textView"
-        android:layout_toLeftOf="@+id/textView" />
+        android:layout_toLeftOf="@+id/textView"/>
 
     <TextView
         android:id="@+id/signalStrengthLabel"
@@ -124,7 +124,7 @@
         android:text="@string/signalLabel"
         android:textColor="@color/white"
         android:layout_toRightOf="@+id/textView"
-        android:layout_toEndOf="@+id/textView" />
+        android:layout_toEndOf="@+id/textView"/>
 
     <TextView
         android:id="@+id/signalStrength"
@@ -152,7 +152,7 @@
         android:text="@string/ssid"
         android:textColor="@color/white"
         android:layout_toLeftOf="@+id/ssid"
-        android:layout_below="@id/externalIpAddress" />
+        android:layout_below="@id/externalIpAddress"/>
 
     <TextView
         android:id="@+id/ssid"
@@ -162,7 +162,7 @@
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:textColor="@color/icsblue"
-        android:layout_toLeftOf="@+id/textView" />
+        android:layout_toLeftOf="@+id/textView"/>
 
     <TextView
         android:id="@+id/bssidLabel"
@@ -175,7 +175,7 @@
         android:layout_below="@+id/signalStrengthLabel"
         android:layout_toRightOf="@+id/textView"
         android:layout_toLeftOf="@+id/bssid"
-        android:layout_toStartOf="@+id/bssid" />
+        android:layout_toStartOf="@+id/bssid"/>
 
     <TextView
         android:id="@+id/bssid"
@@ -185,7 +185,7 @@
         android:layout_below="@+id/signalStrengthLabel"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:textColor="@color/icsblue" />
+        android:textColor="@color/icsblue"/>
 
     <View
         android:layout_width="match_parent"
