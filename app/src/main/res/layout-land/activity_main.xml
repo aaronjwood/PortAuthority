@@ -1,0 +1,221 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black">
+
+    <TextView
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:singleLine="false"
+        android:layout_below="@+id/deviceInfoLabel"
+        android:layout_centerHorizontal="true"
+        android:layout_alignBottom="@+id/bssidLabel"
+        android:background="@color/icsblue"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp" />
+
+    <TextView
+        android:id="@+id/programTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="20dp"
+        android:textSize="30dp"
+        android:text="@string/app_name"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/deviceInfoLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/programTitle"
+        android:text="@string/deviceInfoLabel"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/icsblue"/>
+
+    <TextView
+        android:id="@+id/deviceMacAddressLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/deviceInfoLabel"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:text="@string/macAddress"
+        android:textColor="@color/white"
+        android:layout_toStartOf="@+id/programTitle"
+        android:layout_toLeftOf="@+id/deviceMacAddress" />
+
+    <TextView
+        android:id="@+id/deviceMacAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:textColor="@color/icsblue"
+        android:layout_above="@+id/externalIpAddressLabel"
+        android:layout_below="@+id/deviceInfoLabel"
+        android:layout_toLeftOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/internalIpAddressLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/deviceInfoLabel"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:text="@string/internalIpLabel"
+        android:textColor="@color/white"
+        android:layout_toRightOf="@+id/textView"
+        android:layout_alignBottom="@+id/internalIpAddress"
+        android:layout_toLeftOf="@+id/internalIpAddress" />
+
+    <TextView
+        android:id="@+id/internalIpAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:textColor="@color/icsblue"
+        android:layout_below="@+id/deviceInfoLabel"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/internalIpAddress"
+        android:background="@color/icsblue"/>
+
+    <TextView
+        android:id="@+id/externalIpAddressLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/internalIpAddressLabel"
+        android:layout_toLeftOf="@+id/externalIpAddress"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:text="@string/externalIpLabel"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/externalIpAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:text="@string/fetching"
+        android:textColor="@color/icsblue"
+        android:layout_below="@+id/internalIpAddressLabel"
+        android:layout_toStartOf="@+id/textView"
+        android:layout_toLeftOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/signalStrengthLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/internalIpAddressLabel"
+        android:layout_toLeftOf="@+id/signalStrength"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:text="@string/signalLabel"
+        android:textColor="@color/white"
+        android:layout_toRightOf="@+id/textView"
+        android:layout_toEndOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/signalStrength"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/internalIpAddressLabel"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:textColor="@color/icsblue"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/signalStrength"
+        android:background="@color/icsblue"/>
+
+    <TextView
+        android:id="@+id/ssidLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:text="@string/ssid"
+        android:textColor="@color/white"
+        android:layout_toLeftOf="@+id/ssid"
+        android:layout_below="@id/externalIpAddress" />
+
+    <TextView
+        android:id="@+id/ssid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/externalIpAddressLabel"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:textColor="@color/icsblue"
+        android:layout_toLeftOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/bssidLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:text="@string/bssid"
+        android:textColor="@color/white"
+        android:layout_below="@+id/signalStrengthLabel"
+        android:layout_toRightOf="@+id/textView"
+        android:layout_toLeftOf="@+id/bssid"
+        android:layout_toStartOf="@+id/bssid" />
+
+    <TextView
+        android:id="@+id/bssid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/signalStrengthLabel"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:textColor="@color/icsblue" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/bssid"
+        android:background="@color/icsblue"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/bssidLabel"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/hostList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:cacheColorHint="@color/white"></ListView>
+
+        <Button
+            android:id="@+id/discoverHosts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button"
+            android:textSize="14dp"
+            android:minHeight="1dp"
+            android:minWidth="1dp"
+            android:text="@string/hostDiscovery"
+            android:textColor="@drawable/button_text"/>
+    </LinearLayout>
+
+</RelativeLayout>
