@@ -98,7 +98,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
                         public void run() {
                             try {
                                 InetAddress add = InetAddress.getByName(ip);
-                                String hostname = add.getHostName();
+                                String hostname = add.getCanonicalHostName();
 
                                 Map<String, String> entry = new HashMap<>();
                                 entry.put("First Line", hostname);
