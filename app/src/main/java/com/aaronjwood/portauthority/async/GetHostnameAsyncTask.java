@@ -32,7 +32,7 @@ public class GetHostnameAsyncTask extends AsyncTask<String, Void, String> {
         String ip = params[0];
         try {
             InetAddress add = InetAddress.getByName(ip);
-            return add.getHostName();
+            return add.getCanonicalHostName();
         }
         catch(UnknownHostException ignored) {
         }
