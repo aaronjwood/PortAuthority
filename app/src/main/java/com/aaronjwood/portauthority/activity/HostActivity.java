@@ -304,7 +304,12 @@ public class HostActivity extends Activity implements HostAsyncResponse {
      */
     @Override
     public void processFinish(String output) {
-        this.hostNameLabel.setText(output);
+        if(output != null) {
+            this.hostNameLabel.setText(output);
+        }
+        else {
+            this.hostNameLabel.setText("Couldn't get hostname");
+        }
     }
 
     /**
