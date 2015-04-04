@@ -277,13 +277,14 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                     if(output.get(scannedPort) != null) {
                         item += " (" + output.get(scannedPort) + ")";
                     }
-                    ports.add(item);
-                    Collections.sort(ports);
 
+                    final String finalItem = item;
                     runOnUiThread(new Runnable() {
 
                         @Override
                         public void run() {
+                            ports.add(finalItem);
+                            Collections.sort(ports);
                             adapter.notifyDataSetChanged();
                         }
                     });
