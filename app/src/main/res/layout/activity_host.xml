@@ -90,7 +90,8 @@
         android:layout_below="@id/hostMacLabel"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:textColor="@color/icsblue" />
+        android:textColor="@color/icsblue"
+        android:text="@string/fetching" />
 
     <View
         android:layout_width="match_parent"
@@ -118,7 +119,8 @@
         android:layout_below="@id/hostMacVendorLabel"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:textColor="@color/icsblue" />
+        android:textColor="@color/icsblue"
+        android:text="@string/fetching" />
 
     <View
         android:layout_width="match_parent"
