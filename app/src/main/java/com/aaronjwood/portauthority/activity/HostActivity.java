@@ -17,6 +17,9 @@ import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -35,6 +38,8 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     private String hostName;
     private String hostIp;
     private String hostMac;
+    private TextView hostMacVendor;
+    private TextView hostMacType;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> ports = new ArrayList<>();
     private ProgressDialog scanProgressDialog;
@@ -52,6 +57,8 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
         TextView hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
         this.hostNameLabel = (TextView) findViewById(R.id.hostName);
+        this.hostMacVendor = (TextView) findViewById(R.id.hostMacVendor);
+        this.hostMacType = (TextView) findViewById(R.id.hostMacType);
         Button scanWellKnownPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
         Button scanPortRangeButton = (Button) findViewById(R.id.scanPortRange);
         ListView portList = (ListView) findViewById(R.id.portList);
@@ -78,6 +85,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         this.wifi = new Wireless(this);
 
         this.host.getHostname(this.hostIp, this);
+        this.host.getMacInfo(this.hostMac, this);
 
         hostIpLabel.setText(this.hostIp);
         hostMacLabel.setText(this.hostMac);
@@ -296,6 +304,41 @@ public class HostActivity extends Activity implements HostAsyncResponse {
      */
     @Override
     public void processFinish(String output) {
-        this.hostNameLabel.setText(output);
+        if(output != null) {
+            this.hostNameLabel.setText(output);
+        }
+        else {
+            this.hostNameLabel.setText("Couldn't get hostname");
+        }
+    }
+
+    /**
+     * Delegate to handle setting additional MAC information in the UI
+     *
+     * @param output Additional MAC information
+     */
+    @Override
+    public void processFinish(JSONObject output) {
+        if(output != null) {
+            try {
+                String vendor = output.getString("company");
+                String type = output.getString("type");
+
+                this.hostMacVendor.setText(vendor);
+                this.hostMacType.setText((type));
+            }
+            catch(JSONException e) {
+                String parseError = "Couldn't parse additional MAC information";
+
+                this.hostMacVendor.setText(parseError);
+                this.hostMacType.setText(parseError);
+            }
+        }
+        else {
+            String fetchError = "Couldn't get additional MAC information";
+
+            this.hostMacVendor.setText(fetchError);
+            this.hostMacType.setText(fetchError);
+        }
     }
 }
