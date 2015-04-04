@@ -1,6 +1,7 @@
 package com.aaronjwood.portauthority.network;
 
 import com.aaronjwood.portauthority.async.GetHostnameAsyncTask;
+import com.aaronjwood.portauthority.async.GetMacInfoAsyncTask;
 import com.aaronjwood.portauthority.async.ScanPortsAsyncTask;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
@@ -28,6 +29,16 @@ public class Host {
      */
     public void getHostname(String ip, HostAsyncResponse delegate) {
         new GetHostnameAsyncTask(delegate).execute(ip);
+    }
+
+    /**
+     * Fetches additional MAC address information for the specified host
+     *
+     * @param mac      MAC address
+     * @param delegate Delegate to be called when the MAC address information has been fetched
+     */
+    public void getMacInfo(String mac, HostAsyncResponse delegate) {
+        new GetMacInfoAsyncTask(delegate).execute(mac);
     }
 
 }
