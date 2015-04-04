@@ -18,5 +18,7 @@
     <string name="openPorts">Отворени портови</string>
     <string name="portRangeStart">Почетни</string>
     <string name="portRangeStop">Крајњи</string>
+    <string name="macType">МАЦ Тип</string>
+    <string name="macVendor">МАЦ продавце</string>
 
 </resources>
