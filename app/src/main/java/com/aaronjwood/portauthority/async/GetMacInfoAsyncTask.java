@@ -55,11 +55,16 @@ public class GetMacInfoAsyncTask extends AsyncTask<String, Void, JSONObject> {
             return null;
         }
 
-        String macInfo;
         HttpEntity entity = response.getEntity();
 
         try {
-            return new JSONObject(EntityUtils.toString(entity));
+
+            //Since we don't want to use JSONArray here lets just make the response an object and not an array ourselves
+            //JSONArray requires API 19 and up. Maybe look into changing the minimum API level in the future but not now...
+            String macJson = EntityUtils.toString(entity);
+            macJson = macJson.substring(1, macJson.length() - 1);
+
+            return new JSONObject(macJson);
         }
         catch(JSONException e) {
             return null;
