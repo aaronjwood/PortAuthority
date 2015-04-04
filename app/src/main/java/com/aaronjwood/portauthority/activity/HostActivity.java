@@ -44,6 +44,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     private ArrayList<String> ports = new ArrayList<>();
     private ProgressDialog scanProgressDialog;
     private Dialog portRangeDialog;
+    private int scanProgress;
 
     /**
      * Activity created
@@ -219,12 +220,15 @@ public class HostActivity extends Activity implements HostAsyncResponse {
      */
     @Override
     public void processFinish(final int output) {
+        this.scanProgress += output;
         runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
                 if(scanProgressDialog != null && scanProgressDialog.isShowing()) {
-                    scanProgressDialog.incrementProgressBy(output);
+                    if(scanProgress % 50 == 0) {
+                        scanProgressDialog.setProgress(scanProgress);
+                    }
                 }
             }
         });
@@ -239,6 +243,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     public void processFinish(boolean output) {
         if(output && this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.dismiss();
+            this.scanProgress = 0;
         }
         if(output && this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
             this.portRangeDialog.dismiss();
