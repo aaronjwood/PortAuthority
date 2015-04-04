@@ -37,7 +37,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
         int startPort = (int) params[1];
         int stopPort = (int) params[2];
 
-        ExecutorService executor = Executors.newCachedThreadPool();
+        ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
 
         int chunk = (int) Math.ceil((double) (stopPort - startPort) / NUM_THREADS);
         int previousStart = startPort;
