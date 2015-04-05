@@ -19,7 +19,7 @@ import java.io.IOException;
 public class GetMacInfoAsyncTask extends AsyncTask<String, Void, JSONObject> {
 
     private static final String TAG = "GetMacInfoAsyncTask";
-    private static final String MAC_INFO_SERVICE = "http://www.macvendorlookup.com/api/v2/";
+    private static final String MAC_INFO_SERVICE = "https://www.macvendorlookup.com/api/v2/";
     private HostAsyncResponse delegate;
 
     /**
