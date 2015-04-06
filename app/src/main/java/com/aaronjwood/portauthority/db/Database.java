@@ -81,7 +81,12 @@ public class Database {
      */
     public Cursor queryDatabase(String dbName, String query, String[] args) {
         SQLiteDatabase db = this.openDatabase(dbName);
-        return db.rawQuery(query, args);
+        if(db != null) {
+            return db.rawQuery(query, args);
+        }
+        else {
+            return null;
+        }
     }
 
 }
