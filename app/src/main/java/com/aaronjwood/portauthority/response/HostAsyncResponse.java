@@ -1,7 +1,5 @@
 package com.aaronjwood.portauthority.response;
 
-import org.json.JSONObject;
-
 import java.util.Map;
 
 public interface HostAsyncResponse {
@@ -33,11 +31,4 @@ public interface HostAsyncResponse {
      * @param output
      */
     void processFinish(String output);
-
-    /**
-     * Delegate to handle JSONObject outputs
-     *
-     * @param output
-     */
-    void processFinish(JSONObject output);
 }
