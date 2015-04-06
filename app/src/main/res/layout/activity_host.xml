@@ -34,7 +34,8 @@
         android:layout_below="@id/hostIpLabel"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:textColor="@color/icsblue"/>
+        android:textColor="@color/icsblue"
+        android:text="@string/fetching"/>
 
     <View
         android:layout_width="match_parent"
