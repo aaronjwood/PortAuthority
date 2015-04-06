@@ -106,7 +106,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
             @Override
             public void onClick(View v) {
                 if(!wifi.isConnected()) {
-                    Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "You're not connected to a WiFi network!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
