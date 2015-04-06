@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -50,9 +49,7 @@ public class Database {
             output.close();
             input.close();
         }
-        catch(IOException e) {
-            Log.e(TAG, e.toString());
-            Log.e(TAG, e.toString());
+        catch(IOException ignored) {
         }
     }
 
