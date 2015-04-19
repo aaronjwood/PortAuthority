@@ -1,8 +1,11 @@
 package com.aaronjwood.portauthority.network;
 
+import android.app.Activity;
+import android.database.Cursor;
+
 import com.aaronjwood.portauthority.async.GetHostnameAsyncTask;
-import com.aaronjwood.portauthority.async.GetMacInfoAsyncTask;
 import com.aaronjwood.portauthority.async.ScanPortsAsyncTask;
+import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 public class Host {
@@ -32,13 +35,20 @@ public class Host {
     }
 
     /**
-     * Fetches additional MAC address information for the specified host
+     * Fetches the MAC vendor from the database
      *
      * @param mac      MAC address
-     * @param delegate Delegate to be called when the MAC address information has been fetched
+     * @param activity The calling activity
      */
-    public void getMacInfo(String mac, HostAsyncResponse delegate) {
-        new GetMacInfoAsyncTask(delegate).execute(mac);
+    public String getMacVendor(String mac, Activity activity) {
+        Database db = new Database(activity);
+        Cursor cursor = db.queryDatabase("oui.db", "SELECT vendor FROM oui WHERE mac LIKE ?", new String[]{mac});
+        if(cursor != null && cursor.moveToFirst()) {
+            return cursor.getString(cursor.getColumnIndex("vendor"));
+        }
+        else {
+            return "Vendor not in database";
+        }
     }
 
 }
