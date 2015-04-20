@@ -39,6 +39,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     private ArrayList<String> ports = new ArrayList<>();
     private ProgressDialog scanProgressDialog;
     private Dialog portRangeDialog;
+    private int scanProgress;
 
     /**
      * Activity created
@@ -217,15 +218,16 @@ public class HostActivity extends Activity implements HostAsyncResponse {
      */
     @Override
     public void processFinish(final int output) {
-        runOnUiThread(new Runnable() {
+        this.scanProgress += output;
+        if(scanProgressDialog != null && scanProgressDialog.isShowing() && this.scanProgress % 50 == 0) {
+            runOnUiThread(new Runnable() {
 
-            @Override
-            public void run() {
-                if(scanProgressDialog != null && scanProgressDialog.isShowing()) {
-                    scanProgressDialog.incrementProgressBy(output);
+                @Override
+                public void run() {
+                    scanProgressDialog.setProgress(scanProgress);
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -237,6 +239,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     public void processFinish(boolean output) {
         if(output && this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.dismiss();
+            this.scanProgress = 0;
         }
         if(output && this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
             this.portRangeDialog.dismiss();
@@ -275,13 +278,14 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                     if(output.get(scannedPort) != null) {
                         item += " (" + output.get(scannedPort) + ")";
                     }
-                    ports.add(item);
-                    Collections.sort(ports);
 
+                    final String finalItem = item;
                     runOnUiThread(new Runnable() {
 
                         @Override
                         public void run() {
+                            ports.add(finalItem);
+                            Collections.sort(ports);
                             adapter.notifyDataSetChanged();
                         }
                     });
