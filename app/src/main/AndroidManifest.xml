@@ -6,8 +6,8 @@
           android:versionName="1.5.0">
 
     <uses-sdk
-        android:minSdkVersion="16"
-        android:targetSdkVersion="21"/>
+        android:minSdkVersion="14"
+        android:targetSdkVersion="22"/>
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
