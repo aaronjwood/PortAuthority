@@ -41,11 +41,11 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
      */
     @Override
     protected ArrayList<Map<String, String>> doInBackground(String... params) {
-        final int NUM_THREADS = 16;
+        final int NUM_THREADS = 8;
         String ip = params[0];
         String parts[] = ip.split("\\.");
 
-        ExecutorService executor = Executors.newCachedThreadPool();
+        ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
 
         int chunk = (int) Math.ceil((double) 255 / NUM_THREADS);
         int previousStart = 1;

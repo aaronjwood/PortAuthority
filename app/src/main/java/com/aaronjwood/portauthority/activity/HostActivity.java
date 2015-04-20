@@ -17,9 +17,6 @@ import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,12 +35,11 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     private String hostName;
     private String hostIp;
     private String hostMac;
-    private TextView hostMacVendor;
-    private TextView hostMacType;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> ports = new ArrayList<>();
     private ProgressDialog scanProgressDialog;
     private Dialog portRangeDialog;
+    private int scanProgress;
 
     /**
      * Activity created
@@ -57,8 +53,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
         TextView hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
         this.hostNameLabel = (TextView) findViewById(R.id.hostName);
-        this.hostMacVendor = (TextView) findViewById(R.id.hostMacVendor);
-        this.hostMacType = (TextView) findViewById(R.id.hostMacType);
+        TextView hostMacVendor = (TextView) findViewById(R.id.hostMacVendor);
         Button scanWellKnownPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
         Button scanPortRangeButton = (Button) findViewById(R.id.scanPortRange);
         ListView portList = (ListView) findViewById(R.id.portList);
@@ -85,7 +80,11 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         this.wifi = new Wireless(this);
 
         this.host.getHostname(this.hostIp, this);
-        this.host.getMacInfo(this.hostMac, this);
+
+        String mac = this.hostMac.replace(":", "");
+        mac = mac.substring(0, 6);
+
+        hostMacVendor.setText(this.host.getMacVendor(mac, this));
 
         hostIpLabel.setText(this.hostIp);
         hostMacLabel.setText(this.hostMac);
@@ -219,15 +218,16 @@ public class HostActivity extends Activity implements HostAsyncResponse {
      */
     @Override
     public void processFinish(final int output) {
-        runOnUiThread(new Runnable() {
+        this.scanProgress += output;
+        if(scanProgressDialog != null && scanProgressDialog.isShowing() && this.scanProgress % 50 == 0) {
+            runOnUiThread(new Runnable() {
 
-            @Override
-            public void run() {
-                if(scanProgressDialog != null && scanProgressDialog.isShowing()) {
-                    scanProgressDialog.incrementProgressBy(output);
+                @Override
+                public void run() {
+                    scanProgressDialog.setProgress(scanProgress);
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -239,6 +239,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     public void processFinish(boolean output) {
         if(output && this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.dismiss();
+            this.scanProgress = 0;
         }
         if(output && this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
             this.portRangeDialog.dismiss();
@@ -277,13 +278,14 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                     if(output.get(scannedPort) != null) {
                         item += " (" + output.get(scannedPort) + ")";
                     }
-                    ports.add(item);
-                    Collections.sort(ports);
 
+                    final String finalItem = item;
                     runOnUiThread(new Runnable() {
 
                         @Override
                         public void run() {
+                            ports.add(finalItem);
+                            Collections.sort(ports);
                             adapter.notifyDataSetChanged();
                         }
                     });
@@ -309,36 +311,6 @@ public class HostActivity extends Activity implements HostAsyncResponse {
         }
         else {
             this.hostNameLabel.setText("Couldn't get hostname");
-        }
-    }
-
-    /**
-     * Delegate to handle setting additional MAC information in the UI
-     *
-     * @param output Additional MAC information
-     */
-    @Override
-    public void processFinish(JSONObject output) {
-        if(output != null) {
-            try {
-                String vendor = output.getString("company");
-                String type = output.getString("type");
-
-                this.hostMacVendor.setText(vendor);
-                this.hostMacType.setText((type));
-            }
-            catch(JSONException e) {
-                String parseError = "Couldn't parse additional MAC information";
-
-                this.hostMacVendor.setText(parseError);
-                this.hostMacType.setText(parseError);
-            }
-        }
-        else {
-            String fetchError = "Couldn't get additional MAC information";
-
-            this.hostMacVendor.setText(fetchError);
-            this.hostMacType.setText(fetchError);
         }
     }
 }

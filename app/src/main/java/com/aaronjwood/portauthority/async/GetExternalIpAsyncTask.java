@@ -6,7 +6,6 @@ import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -18,7 +17,7 @@ import java.io.IOException;
 public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
 
     private static final String TAG = "GetExternalIpAsyncTask";
-    private static final String EXTERNAL_IP_SERVICE = "http://whatismyip.akamai.com/";
+    private static final String EXTERNAL_IP_SERVICE = "https://ipinfo.io/ip";
     private MainAsyncResponse delegate;
 
     /**
@@ -40,10 +39,11 @@ public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
     protected String doInBackground(Void... params) {
         HttpClient httpclient = new DefaultHttpClient();
         HttpGet httpget = new HttpGet(EXTERNAL_IP_SERVICE);
-        HttpResponse response = null;
 
         try {
-            response = httpclient.execute(httpget);
+            HttpResponse response = httpclient.execute(httpget);
+            HttpEntity entity = response.getEntity();
+            return EntityUtils.toString(entity).trim();
         }
         catch(ClientProtocolException e) {
             return "Couldn't get your external IP";
@@ -51,21 +51,6 @@ public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
         catch(IOException e) {
             return "Couldn't get your external IP";
         }
-
-        String ip;
-        HttpEntity entity = response.getEntity();
-
-        try {
-            ip = EntityUtils.toString(entity);
-        }
-        catch(ParseException e) {
-            return "Couldn't get your external IP";
-        }
-        catch(IOException e) {
-            return "Couldn't get your external IP";
-        }
-
-        return ip;
     }
 
     /**
