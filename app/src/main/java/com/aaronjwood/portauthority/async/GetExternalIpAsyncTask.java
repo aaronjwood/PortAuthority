@@ -39,12 +39,9 @@ public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
     protected String doInBackground(Void... params) {
         HttpClient httpclient = new DefaultHttpClient();
         HttpGet httpget = new HttpGet(EXTERNAL_IP_SERVICE);
-        HttpResponse response;
-        String ip;
 
         try {
-            response = httpclient.execute(httpget);
-
+            HttpResponse response = httpclient.execute(httpget);
             HttpEntity entity = response.getEntity();
             return EntityUtils.toString(entity).trim();
         }
