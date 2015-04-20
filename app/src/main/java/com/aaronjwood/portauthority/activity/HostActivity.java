@@ -219,17 +219,15 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     @Override
     public void processFinish(final int output) {
         this.scanProgress += output;
-        runOnUiThread(new Runnable() {
+        if(scanProgressDialog != null && scanProgressDialog.isShowing() && this.scanProgress % 50 == 0) {
+            runOnUiThread(new Runnable() {
 
-            @Override
-            public void run() {
-                if(scanProgressDialog != null && scanProgressDialog.isShowing()) {
-                    if(scanProgress % 50 == 0) {
-                        scanProgressDialog.setProgress(scanProgress);
-                    }
+                @Override
+                public void run() {
+                    scanProgressDialog.setProgress(scanProgress);
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
