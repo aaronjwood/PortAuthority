@@ -1,19 +1,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/black">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="1dp"
         android:layout_height="wrap_content"
-        android:id="@+id/textView"
-        android:singleLine="false"
+        android:layout_alignBottom="@+id/bssidLabel"
         android:layout_below="@+id/deviceInfoLabel"
         android:layout_centerHorizontal="true"
-        android:layout_alignBottom="@+id/bssidLabel"
-        android:background="@color/icsblue"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"/>
+        android:layout_marginRight="5dp"
+        android:background="@color/icsblue"
+        android:singleLine="false" />
 
     <TextView
         android:id="@+id/programTitle"
@@ -21,19 +21,19 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:paddingBottom="20dp"
-        android:textSize="30dp"
         android:text="@string/app_name"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white"
+        android:textSize="30dp" />
 
     <TextView
         android:id="@+id/deviceInfoLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/programTitle"
+        android:layout_centerHorizontal="true"
         android:text="@string/deviceInfoLabel"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/icsblue"/>
+        android:textColor="@color/icsblue" />
 
     <TextView
         android:id="@+id/deviceMacAddressLabel"
@@ -41,53 +41,53 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/deviceInfoLabel"
+        android:layout_toLeftOf="@+id/deviceMacAddress"
+        android:layout_toStartOf="@+id/programTitle"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:text="@string/macAddress"
-        android:textColor="@color/white"
-        android:layout_toStartOf="@+id/programTitle"
-        android:layout_toLeftOf="@+id/deviceMacAddress"/>
+        android:textColor="@color/white" />
 
     <TextView
         android:id="@+id/deviceMacAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
-        android:textColor="@color/icsblue"
         android:layout_above="@+id/externalIpAddressLabel"
         android:layout_below="@+id/deviceInfoLabel"
-        android:layout_toLeftOf="@+id/textView"/>
+        android:layout_toLeftOf="@+id/textView"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:textColor="@color/icsblue" />
 
     <TextView
         android:id="@+id/internalIpAddressLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/internalIpAddress"
         android:layout_below="@+id/deviceInfoLabel"
+        android:layout_toLeftOf="@+id/internalIpAddress"
+        android:layout_toRightOf="@+id/textView"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:text="@string/internalIpLabel"
-        android:textColor="@color/white"
-        android:layout_toRightOf="@+id/textView"
-        android:layout_alignBottom="@+id/internalIpAddress"
-        android:layout_toLeftOf="@+id/internalIpAddress"/>
+        android:textColor="@color/white" />
 
     <TextView
         android:id="@+id/internalIpAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/deviceInfoLabel"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:textColor="@color/icsblue"
-        android:layout_below="@+id/deviceInfoLabel"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:textColor="@color/icsblue" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/internalIpAddress"
-        android:background="@color/icsblue"/>
+        android:background="@color/icsblue" />
 
     <TextView
         android:id="@+id/externalIpAddressLabel"
@@ -99,32 +99,32 @@
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:text="@string/externalIpLabel"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white" />
 
     <TextView
         android:id="@+id/externalIpAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/internalIpAddressLabel"
+        android:layout_toLeftOf="@+id/textView"
+        android:layout_toStartOf="@+id/textView"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:text="@string/fetching"
-        android:textColor="@color/icsblue"
-        android:layout_below="@+id/internalIpAddressLabel"
-        android:layout_toStartOf="@+id/textView"
-        android:layout_toLeftOf="@+id/textView"/>
+        android:textColor="@color/icsblue" />
 
     <TextView
         android:id="@+id/signalStrengthLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/internalIpAddressLabel"
+        android:layout_toEndOf="@+id/textView"
         android:layout_toLeftOf="@+id/signalStrength"
+        android:layout_toRightOf="@+id/textView"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:text="@string/signalLabel"
-        android:textColor="@color/white"
-        android:layout_toRightOf="@+id/textView"
-        android:layout_toEndOf="@+id/textView"/>
+        android:textColor="@color/white" />
 
     <TextView
         android:id="@+id/signalStrength"
@@ -134,48 +134,48 @@
         android:layout_below="@+id/internalIpAddressLabel"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:textColor="@color/icsblue"/>
+        android:textColor="@color/icsblue" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/signalStrength"
-        android:background="@color/icsblue"/>
+        android:background="@color/icsblue" />
 
     <TextView
         android:id="@+id/ssidLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_below="@id/externalIpAddress"
+        android:layout_toLeftOf="@+id/ssid"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:text="@string/ssid"
-        android:textColor="@color/white"
-        android:layout_toLeftOf="@+id/ssid"
-        android:layout_below="@id/externalIpAddress"/>
+        android:textColor="@color/white" />
 
     <TextView
         android:id="@+id/ssid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/externalIpAddressLabel"
+        android:layout_toLeftOf="@+id/textView"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:textColor="@color/icsblue"
-        android:layout_toLeftOf="@+id/textView"/>
+        android:textColor="@color/icsblue" />
 
     <TextView
         android:id="@+id/bssidLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/signalStrengthLabel"
+        android:layout_toLeftOf="@+id/bssid"
+        android:layout_toRightOf="@+id/textView"
+        android:layout_toStartOf="@+id/bssid"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:text="@string/bssid"
-        android:textColor="@color/white"
-        android:layout_below="@+id/signalStrengthLabel"
-        android:layout_toRightOf="@+id/textView"
-        android:layout_toLeftOf="@+id/bssid"
-        android:layout_toStartOf="@+id/bssid"/>
+        android:textColor="@color/white" />
 
     <TextView
         android:id="@+id/bssid"
@@ -185,13 +185,13 @@
         android:layout_below="@+id/signalStrengthLabel"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:textColor="@color/icsblue"/>
+        android:textColor="@color/icsblue" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/bssid"
-        android:background="@color/icsblue"/>
+        android:background="@color/icsblue" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -211,11 +211,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/button"
-            android:textSize="14dp"
             android:minHeight="1dp"
             android:minWidth="1dp"
             android:text="@string/hostDiscovery"
-            android:textColor="@drawable/button_text"/>
+            android:textColor="@drawable/button_text"
+            android:textSize="14dp" />
     </LinearLayout>
 
 </RelativeLayout>
