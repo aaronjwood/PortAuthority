@@ -48,39 +48,38 @@ public class ScanPortsRunnable implements Runnable {
 
                 char[] buffer = new char[1024];
                 HashMap<Integer, String> portData = new HashMap<>();
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String data = null;
 
-                if(i == 80 || i == 443 || i == 22) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                    out.println("GET / HTTP/1.1\r\n\r\n");
-
-                    String data;
-
-                    if(i == 22) {
-                        data = in.readLine();
-                    }
-                    else {
-                        in.read(buffer, 0, 1024);
-                        data = new String(buffer).toLowerCase();
-                        if(data.contains("apache") || data.contains("httpd")) {
-                            data = "Apache";
-                        }
-                        else if(data.contains("iis") || data.contains("microsoft")) {
-                            data = "IIS";
-                        }
-                        else if(data.contains("nginx")) {
-                            data = "Nginx";
-                        }
-                    }
-
-                    portData.put(i, data);
-                    out.close();
+                if(i == 22) {
+                    data = in.readLine();
                     in.close();
                 }
-                else {
-                    portData.put(i, null);
+                else if(i == 80 || i == 443) {
+                    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                    out.println("GET / HTTP/1.1");
+                    out.println("Host: " + this.ip);
+                    out.println("");
+
+                    in.read(buffer, 0, 1024);
+                    out.close();
+                    in.close();
+                    data = new String(buffer).toLowerCase();
+                    if(data.contains("apache") || data.contains("httpd")) {
+                        data = "Apache";
+                    }
+                    else if(data.contains("iis") || data.contains("microsoft")) {
+                        data = "IIS";
+                    }
+                    else if(data.contains("nginx")) {
+                        data = "Nginx";
+                    }
+                    else {
+                        data = null;
+                    }
                 }
 
+                portData.put(i, data);
                 socket.close();
 
                 this.delegate.processFinish(portData);
