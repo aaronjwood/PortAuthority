@@ -1,9 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/black"
-                tools:context="com.aaronjwood.portauthority.activity.HostActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context="com.aaronjwood.portauthority.activity.HostActivity">
 
     <TextView
         android:id="@+id/hostIpLabel"
@@ -12,7 +12,7 @@
         android:layout_centerHorizontal="true"
         android:paddingBottom="10dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/icsblue"/>
+        android:textColor="@color/icsblue" />
 
     <TextView
         android:id="@+id/hostNameLabel"
@@ -24,25 +24,25 @@
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:text="@string/hostname"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white" />
 
     <TextView
         android:id="@+id/hostName"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:gravity="end"
         android:layout_alignParentRight="true"
         android:layout_below="@id/hostIpLabel"
+        android:gravity="end"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:textColor="@color/icsblue"
-        android:text="@string/fetching"/>
+        android:text="@string/fetching"
+        android:textColor="@color/icsblue" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/hostName"
-        android:background="@color/icsblue"/>
+        android:background="@color/icsblue" />
 
     <TextView
         android:id="@+id/hostMacLabel"
@@ -54,7 +54,7 @@
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:text="@string/macAddress"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white" />
 
     <TextView
         android:id="@+id/hostMac"
@@ -64,13 +64,13 @@
         android:layout_below="@id/hostNameLabel"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:textColor="@color/icsblue"/>
+        android:textColor="@color/icsblue" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/hostMac"
-        android:background="@color/icsblue"/>
+        android:background="@color/icsblue" />
 
     <TextView
         android:id="@+id/hostMacVendorLabel"
@@ -82,36 +82,36 @@
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:text="@string/macVendor"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white" />
 
     <TextView
         android:id="@+id/hostMacVendor"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:gravity="end"
         android:layout_alignParentRight="true"
         android:layout_below="@id/hostMacLabel"
+        android:gravity="end"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:textColor="@color/icsblue"/>
+        android:textColor="@color/icsblue" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/hostMacVendor"
-        android:background="@color/icsblue"/>
+        android:background="@color/icsblue" />
 
     <TextView
         android:id="@+id/portListLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
         android:layout_below="@id/hostMacVendor"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
         android:text="@string/openPorts"
-        android:textColor="@color/icsblue"/>
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/icsblue" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -134,26 +134,26 @@
                 android:id="@+id/scanWellKnownPorts"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginRight="5dp"
                 android:layout_weight="1"
-                android:textSize="14dp"
+                android:background="@drawable/button"
                 android:minHeight="1dp"
                 android:minWidth="1dp"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/button"
                 android:text="@string/scanWellKnownPorts"
-                android:textColor="@drawable/button_text"/>
+                android:textColor="@drawable/button_text"
+                android:textSize="14dp" />
 
             <Button
                 android:id="@+id/scanPortRange"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textSize="14dp"
+                android:background="@drawable/button"
                 android:minHeight="1dp"
                 android:minWidth="1dp"
-                android:background="@drawable/button"
                 android:text="@string/scanPortRange"
-                android:textColor="@drawable/button_text"/>
+                android:textColor="@drawable/button_text"
+                android:textSize="14dp" />
         </LinearLayout>
     </LinearLayout>
 
