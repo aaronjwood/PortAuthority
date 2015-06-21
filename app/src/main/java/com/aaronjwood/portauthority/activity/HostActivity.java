@@ -253,12 +253,18 @@ public class HostActivity extends Activity implements HostAsyncResponse {
      */
     @Override
     public void processFinish(Map<Integer, String> output) {
+        int scannedPort = output.keySet().iterator().next();
+        BufferedReader reader = null;
         try {
-            int scannedPort = output.keySet().iterator().next();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
-            String line;
-            String item = String.valueOf(scannedPort);
+            reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
+        }
+        catch(IOException e) {
+            Toast.makeText(getApplicationContext(), "Can't open port data file!", Toast.LENGTH_SHORT).show();
+        }
+        String line;
+        String item = String.valueOf(scannedPort);
 
+        try {
             while((line = reader.readLine()) != null) {
                 String[] portInfo = line.split(",");
                 String name;
@@ -273,7 +279,16 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                     port = null;
                 }
 
-                if(scannedPort == Integer.parseInt(port)) {
+                int filePort;
+
+                try {
+                    filePort = Integer.parseInt(port);
+                }
+                catch(NumberFormatException e) {
+                    continue;
+                }
+
+                if(scannedPort == filePort) {
                     item = item + " - " + name;
                     if(output.get(scannedPort) != null) {
                         item += " (" + output.get(scannedPort) + ")";
@@ -295,7 +310,8 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                 }
             }
         }
-        catch(IOException | NumberFormatException ignored) {
+        catch(IOException e) {
+            Toast.makeText(getApplicationContext(), "Error reading from port data file!", Toast.LENGTH_SHORT).show();
         }
     }
 
