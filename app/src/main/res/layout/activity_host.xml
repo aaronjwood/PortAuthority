@@ -7,16 +7,16 @@
 
     <TextView
         android:id="@+id/hostIpLabel"
-        android:singleLine="true"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:scrollHorizontally="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
         android:paddingBottom="5dp"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/icsblue" />
 
@@ -45,6 +45,7 @@
         android:textColor="@color/icsblue" />
 
     <View
+        android:id="@+id/hostNameSeparator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/hostName"
@@ -55,7 +56,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/hostNameLabel"
+        android:layout_below="@id/hostNameSeparator"
         android:layout_toLeftOf="@+id/hostMac"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
@@ -67,12 +68,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/hostNameLabel"
+        android:layout_below="@id/hostNameSeparator"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:textColor="@color/icsblue" />
 
     <View
+        android:id="@+id/macAddressSeparator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/hostMac"
@@ -83,7 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/hostMacLabel"
+        android:layout_below="@id/macAddressSeparator"
         android:layout_toLeftOf="@+id/hostMacVendor"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
@@ -95,13 +97,14 @@
         android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/hostMacLabel"
+        android:layout_below="@id/macAddressSeparator"
         android:gravity="end"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:textColor="@color/icsblue" />
 
     <View
+        android:id="@+id/macVendorSeparator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/hostMacVendor"
