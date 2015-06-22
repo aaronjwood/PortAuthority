@@ -254,12 +254,13 @@ public class HostActivity extends Activity implements HostAsyncResponse {
     @Override
     public void processFinish(Map<Integer, String> output) {
         int scannedPort = output.keySet().iterator().next();
-        BufferedReader reader = null;
+        BufferedReader reader;
         try {
             reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
         }
         catch(IOException e) {
             Toast.makeText(getApplicationContext(), "Can't open port data file!", Toast.LENGTH_SHORT).show();
+            return;
         }
         String line;
         String item = String.valueOf(scannedPort);
@@ -281,6 +282,7 @@ public class HostActivity extends Activity implements HostAsyncResponse {
 
                 int filePort;
 
+                //Watch out for inconsistent formatting of the CSV file we're reading!
                 try {
                     filePort = Integer.parseInt(port);
                 }
@@ -306,13 +308,33 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                     });
 
                     reader.close();
-                    break;
+
+                    //Make sure to return so that we don't fall through and add the port again!
+                    return;
                 }
             }
         }
         catch(IOException e) {
             Toast.makeText(getApplicationContext(), "Error reading from port data file!", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        //If a port couldn't be found in the port data file then make sure it's still caught and added to the list of open ports
+        item = item + " - unknown";
+        if(output.get(scannedPort) != null) {
+            item += " (" + output.get(scannedPort) + ")";
+        }
+
+        final String finalItem = item;
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                ports.add(finalItem);
+                Collections.sort(ports);
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     /**
