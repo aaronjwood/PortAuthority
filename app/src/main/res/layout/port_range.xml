@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -19,14 +19,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="@string/portRangeStart"/>
+                android:text="@string/portRangeStart" />
 
             <NumberPicker
                 android:id="@+id/portRangePickerStart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/portRangeStartLabel"
-                />
+                android:layout_below="@id/portRangeStartLabel" />
 
         </RelativeLayout>
 
@@ -40,26 +39,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="@string/portRangeStop"/>
+                android:text="@string/portRangeStop" />
 
             <NumberPicker
                 android:id="@+id/portRangePickerStop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/portRangeStopLabel"/>
+                android:layout_below="@id/portRangeStopLabel" />
 
         </RelativeLayout>
 
         <Button
             android:id="@+id/startPortRangeScan"
-            android:layout_below="@id/portRangeStartBox"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/portRangeStartBox"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
             android:text="@string/scanPortRange"
-            />
+            android:theme="?android:attr/buttonBarButtonStyle" />
 
     </RelativeLayout>
 

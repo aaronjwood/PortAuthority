@@ -1,9 +1,9 @@
 package com.aaronjwood.portauthority.activity;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Map;
 
 
-public class HostActivity extends Activity implements HostAsyncResponse {
+public class HostActivity extends AppCompatActivity implements HostAsyncResponse {
 
     private static final String TAG = "HostActivity";
 
@@ -155,7 +155,6 @@ public class HostActivity extends Activity implements HostAsyncResponse {
                     public void onClick(View v) {
                         int startPort = portRangePickerStart.getValue();
                         int stopPort = portRangePickerStop.getValue();
-
                         if((startPort - stopPort >= 0)) {
                             Toast.makeText(getApplicationContext(), "Please pick a valid port range", Toast.LENGTH_SHORT).show();
                             return;
