@@ -59,7 +59,7 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
         ListView portList = (ListView) findViewById(R.id.portList);
         TextView hostMacLabel = (TextView) findViewById(R.id.hostMac);
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             this.hostIp = savedInstanceState.getString("hostIp");
             this.hostMac = savedInstanceState.getString("hostMac");
             this.hostName = savedInstanceState.getString("hostName");
@@ -67,8 +67,7 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
             this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
             portList.setAdapter(this.adapter);
             this.adapter.notifyDataSetChanged();
-        }
-        else if(savedInstanceState == null) {
+        } else if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             this.hostIp = extras.getString("HOST");
             this.hostMac = extras.getString("MAC");
@@ -97,14 +96,14 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
              */
             @Override
             public void onClick(View v) {
-                if(!wifi.isConnected()) {
+                if (!wifi.isConnected()) {
                     Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 HostActivity.this.ports.clear();
 
-                scanProgressDialog = new ProgressDialog(HostActivity.this);
+                scanProgressDialog = new ProgressDialog(HostActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning Well Known Ports");
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -124,12 +123,12 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
              */
             @Override
             public void onClick(View v) {
-                if(!wifi.isConnected()) {
+                if (!wifi.isConnected()) {
                     Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                HostActivity.this.portRangeDialog = new Dialog(HostActivity.this);
+                HostActivity.this.portRangeDialog = new Dialog(HostActivity.this, R.style.DialogTheme);
                 portRangeDialog.setTitle("Select Port Range");
                 portRangeDialog.setContentView(R.layout.port_range);
                 portRangeDialog.show();
@@ -155,14 +154,14 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                     public void onClick(View v) {
                         int startPort = portRangePickerStart.getValue();
                         int stopPort = portRangePickerStop.getValue();
-                        if((startPort - stopPort >= 0)) {
+                        if ((startPort - stopPort >= 0)) {
                             Toast.makeText(getApplicationContext(), "Please pick a valid port range", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
                         HostActivity.this.ports.clear();
 
-                        scanProgressDialog = new ProgressDialog(HostActivity.this);
+                        scanProgressDialog = new ProgressDialog(HostActivity.this, R.style.DialogTheme);
                         scanProgressDialog.setCancelable(false);
                         scanProgressDialog.setTitle("Scanning Port " + startPort + " to " + stopPort);
                         scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -200,10 +199,10 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
     public void onPause() {
         super.onPause();
 
-        if(this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
+        if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.dismiss();
         }
-        if(this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
+        if (this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
             this.portRangeDialog.dismiss();
         }
         this.scanProgressDialog = null;
@@ -218,7 +217,7 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
     @Override
     public void processFinish(final int output) {
         this.scanProgress += output;
-        if(scanProgressDialog != null && scanProgressDialog.isShowing() && this.scanProgress % 50 == 0) {
+        if (scanProgressDialog != null && scanProgressDialog.isShowing() && this.scanProgress % 50 == 0) {
             runOnUiThread(new Runnable() {
 
                 @Override
@@ -236,11 +235,11 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
      */
     @Override
     public void processFinish(boolean output) {
-        if(output && this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
+        if (output && this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.dismiss();
             this.scanProgress = 0;
         }
-        if(output && this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
+        if (output && this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
             this.portRangeDialog.dismiss();
         }
     }
@@ -256,8 +255,7 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
         BufferedReader reader;
         try {
             reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             Toast.makeText(getApplicationContext(), "Can't open port data file!", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -265,16 +263,15 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
         String item = String.valueOf(scannedPort);
 
         try {
-            while((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 String[] portInfo = line.split(",");
                 String name;
                 String port;
 
-                if(portInfo.length > 2) {
+                if (portInfo.length > 2) {
                     name = portInfo[0];
                     port = portInfo[1];
-                }
-                else {
+                } else {
                     name = "unknown";
                     port = null;
                 }
@@ -284,14 +281,13 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                 //Watch out for inconsistent formatting of the CSV file we're reading!
                 try {
                     filePort = Integer.parseInt(port);
-                }
-                catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     continue;
                 }
 
-                if(scannedPort == filePort) {
+                if (scannedPort == filePort) {
                     item = item + " - " + name;
-                    if(output.get(scannedPort) != null) {
+                    if (output.get(scannedPort) != null) {
                         item += " (" + output.get(scannedPort) + ")";
                     }
 
@@ -312,15 +308,14 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                     return;
                 }
             }
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             Toast.makeText(getApplicationContext(), "Error reading from port data file!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         //If a port couldn't be found in the port data file then make sure it's still caught and added to the list of open ports
         item = item + " - unknown";
-        if(output.get(scannedPort) != null) {
+        if (output.get(scannedPort) != null) {
             item += " (" + output.get(scannedPort) + ")";
         }
 
@@ -343,10 +338,9 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
      */
     @Override
     public void processFinish(String output) {
-        if(output != null) {
+        if (output != null) {
             this.hostNameLabel.setText(output);
-        }
-        else {
+        } else {
             this.hostNameLabel.setText("Couldn't get hostname");
         }
     }

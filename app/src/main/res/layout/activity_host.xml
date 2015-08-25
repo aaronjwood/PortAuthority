@@ -143,7 +143,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:theme="?android:attr/buttonBarButtonStyle"
+                android:theme="?attr/buttonBarButtonStyle"
                 android:id="@+id/scanWellKnownPorts"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -157,7 +157,7 @@
                 android:textSize="14sp" />
 
             <Button
-                android:theme="?android:attr/buttonBarButtonStyle"
+                android:theme="?attr/buttonBarButtonStyle"
                 android:id="@+id/scanPortRange"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
