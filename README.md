@@ -8,3 +8,7 @@ Port Authority has no ads and will *never* have ads. It requires extremely limit
 
 Like the application and the work I put into it?
 Consider purchasing the donate version https://play.google.com/store/apps/details?id=com.aaronjwood.portauthority.donate
+
+# Contributing
+
+Contributions of any kind are welcome! Please submit any pull requests to the development branch. This means that modifications need to be done either on a new branch based off of development or on the development branch directly.
