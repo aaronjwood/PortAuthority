@@ -24,7 +24,7 @@
         android:paddingBottom="20dp"
         android:text="@string/app_name"
         android:textColor="@color/white"
-        android:textSize="30dp" />
+        android:textSize="30sp" />
 
     <TextView
         android:id="@+id/deviceInfoLabel"
@@ -216,7 +216,7 @@
             android:minWidth="1dp"
             android:text="@string/hostDiscovery"
             android:textColor="@drawable/button_text"
-            android:textSize="14dp" />
+            android:textSize="14sp" />
     </LinearLayout>
 
 </RelativeLayout>
