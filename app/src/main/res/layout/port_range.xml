@@ -1,67 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:theme="@style/DialogTheme">
 
-    <RelativeLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true">
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:padding="6dp">
 
-        <RelativeLayout
-            android:id="@+id/portRangeStartBox"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="80dp">
+            android:orientation="vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
 
-            <TextView
-                android:id="@+id/portRangeStartLabel"
+            <LinearLayout
+                android:id="@+id/portRangeStartBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="@string/portRangeStart"/>
+                android:orientation="vertical">
 
-            <NumberPicker
-                android:id="@+id/portRangePickerStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/portRangeStartLabel"
-                />
+                <TextView
+                    android:id="@+id/portRangeStartLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    android:padding="8dp"
+                    android:text="@string/portRangeStart" />
 
-        </RelativeLayout>
+                <NumberPicker
+                    android:id="@+id/portRangePickerStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+        </LinearLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/portRangeStartBox">
+            android:orientation="vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
 
             <TextView
                 android:id="@+id/portRangeStopLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="@string/portRangeStop"/>
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:padding="8dp"
+                android:text="@string/portRangeStop" />
 
             <NumberPicker
                 android:id="@+id/portRangePickerStop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/portRangeStopLabel"/>
+                android:layout_gravity="center_horizontal" />
+        </LinearLayout>
+    </LinearLayout>
 
-        </RelativeLayout>
+    <Button
+        android:id="@+id/startPortRangeScan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/button"
+        android:text="@string/scanPortRange"
+        android:textColor="@drawable/button_text" />
 
-        <Button
-            android:id="@+id/startPortRangeScan"
-            android:layout_below="@id/portRangeStartBox"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/scanPortRange"
-            />
+</LinearLayout>
 
-    </RelativeLayout>
-
-
-</RelativeLayout>

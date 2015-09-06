@@ -110,7 +110,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                     return;
                 }
 
-                scanProgressDialog = new ProgressDialog(MainActivity.this);
+                scanProgressDialog = new ProgressDialog(MainActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning For Hosts");
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -220,7 +220,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
         ArrayList<Map<String, String>> hosts = (ArrayList) savedState.getSerializable("hosts");
         if(hosts != null) {
-            SimpleAdapter newAdapter = new SimpleAdapter(this, hosts, android.R.layout.simple_list_item_2, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
+            SimpleAdapter newAdapter = new SimpleAdapter(this, hosts, R.layout.host_list_item, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
             this.hostList.setAdapter(newAdapter);
         }
     }
@@ -234,7 +234,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
     @Override
     public void processFinish(ArrayList<Map<String, String>> output) {
         if(this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
-            SimpleAdapter adapter = new SimpleAdapter(this, output, android.R.layout.simple_list_item_2, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
+            SimpleAdapter adapter = new SimpleAdapter(this, output, R.layout.host_list_item, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
             ListView hostList = (ListView) this.findViewById(R.id.hostList);
             hostList.setAdapter(adapter);
             this.scanProgressDialog.dismiss();
