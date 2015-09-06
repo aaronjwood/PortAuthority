@@ -43,13 +43,12 @@ public class Database {
             OutputStream output = new FileOutputStream(this.activity.getApplicationInfo().dataDir + "/" + dbName);
             byte[] buffer = new byte[1024];
             int length;
-            while((length = input.read(buffer)) > 0) {
+            while ((length = input.read(buffer)) > 0) {
                 output.write(buffer, 0, length);
             }
             output.close();
             input.close();
-        }
-        catch(IOException ignored) {
+        } catch (IOException ignored) {
         }
     }
 
@@ -60,13 +59,12 @@ public class Database {
      * @return Database connection
      */
     private SQLiteDatabase openDatabase(String dbName) {
-        if(!this.checkDatabase(dbName)) {
+        if (!this.checkDatabase(dbName)) {
             this.copyDatabase(dbName);
         }
         try {
             return SQLiteDatabase.openDatabase(this.activity.getApplicationInfo().dataDir + "/" + dbName, null, SQLiteDatabase.OPEN_READONLY);
-        }
-        catch(SQLiteException e) {
+        } catch (SQLiteException e) {
             return null;
         }
     }
@@ -81,10 +79,9 @@ public class Database {
      */
     public Cursor queryDatabase(String dbName, String query, String[] args) {
         SQLiteDatabase db = this.openDatabase(dbName);
-        if(db != null) {
+        if (db != null) {
             return db.rawQuery(query, args);
-        }
-        else {
+        } else {
             return null;
         }
     }

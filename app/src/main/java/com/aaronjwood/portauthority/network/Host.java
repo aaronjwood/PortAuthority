@@ -43,10 +43,9 @@ public class Host {
     public String getMacVendor(String mac, Activity activity) {
         Database db = new Database(activity);
         Cursor cursor = db.queryDatabase("oui.db", "SELECT vendor FROM oui WHERE mac LIKE ?", new String[]{mac});
-        if(cursor != null && cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             return cursor.getString(cursor.getColumnIndex("vendor"));
-        }
-        else {
+        } else {
             return "Vendor not in database";
         }
     }
