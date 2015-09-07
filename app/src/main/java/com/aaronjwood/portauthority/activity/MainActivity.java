@@ -170,14 +170,22 @@ public class MainActivity extends Activity implements MainAsyncResponse {
     public void onPause() {
         super.onPause();
 
-        if(this.receiver != null) {
-            unregisterReceiver(this.receiver);
-        }
-
         if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.dismiss();
         }
         this.scanProgressDialog = null;
+    }
+
+    /**
+     * Activity destroyed
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (this.receiver != null) {
+            unregisterReceiver(this.receiver);
+        }
     }
 
     /**
