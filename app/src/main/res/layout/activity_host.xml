@@ -138,13 +138,14 @@
             android:layout_weight="1"></ListView>
 
         <LinearLayout
+            style="?attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            style="?attr/buttonBarButtonStyle">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/scanWellKnownPorts"
+                style="?attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginRight="5dp"
@@ -154,11 +155,11 @@
                 android:minWidth="1dp"
                 android:text="@string/scanWellKnownPorts"
                 android:textColor="@drawable/button_text"
-                android:textSize="14sp"
-                style="?attr/buttonBarButtonStyle" />
+                android:textSize="14sp" />
 
             <Button
                 android:id="@+id/scanPortRange"
+                style="?attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -167,8 +168,7 @@
                 android:minWidth="1dp"
                 android:text="@string/scanPortRange"
                 android:textColor="@drawable/button_text"
-                android:textSize="14sp"
-                style="?attr/buttonBarButtonStyle" />
+                android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>
 
