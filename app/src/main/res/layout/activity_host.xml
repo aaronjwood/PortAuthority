@@ -140,7 +140,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            style="?attr/buttonBarButtonStyle">
 
             <Button
                 android:id="@+id/scanWellKnownPorts"
@@ -154,7 +155,7 @@
                 android:text="@string/scanWellKnownPorts"
                 android:textColor="@drawable/button_text"
                 android:textSize="14sp"
-                android:theme="?attr/buttonBarButtonStyle" />
+                style="?attr/buttonBarButtonStyle" />
 
             <Button
                 android:id="@+id/scanPortRange"
@@ -167,7 +168,7 @@
                 android:text="@string/scanPortRange"
                 android:textColor="@drawable/button_text"
                 android:textSize="14sp"
-                android:theme="?attr/buttonBarButtonStyle" />
+                style="?attr/buttonBarButtonStyle" />
         </LinearLayout>
     </LinearLayout>
 
