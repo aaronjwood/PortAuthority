@@ -14,12 +14,14 @@
         android:id="@android:id/text1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp" />
+        android:textColor="@color/white"
+        android:textSize="22sp" />
 
     <TextView
         android:id="@android:id/text2"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/icsblue"
         android:textSize="14sp" />
 
 </LinearLayout>
