@@ -276,6 +276,10 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                     port = null;
                 }
 
+                if (name.equals("")) {
+                    name = "unknown";
+                }
+
                 int filePort;
 
                 //Watch out for inconsistent formatting of the CSV file we're reading!
