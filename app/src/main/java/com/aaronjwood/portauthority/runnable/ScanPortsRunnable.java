@@ -43,7 +43,6 @@ public class ScanPortsRunnable implements Runnable {
             try {
                 this.delegate.processFinish(1);
                 Socket socket = new Socket();
-                socket.setReuseAddress(true);
                 socket.setPerformancePreferences(1, 0, 0);
                 socket.setTcpNoDelay(true);
                 socket.connect(new InetSocketAddress(this.ip, i), 3500);
