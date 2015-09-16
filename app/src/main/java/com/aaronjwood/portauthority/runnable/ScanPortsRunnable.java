@@ -47,7 +47,6 @@ public class ScanPortsRunnable implements Runnable {
                 socket.setTcpNoDelay(true);
                 socket.connect(new InetSocketAddress(this.ip, i), 3500);
 
-                char[] buffer = new char[1024];
                 HashMap<Integer, String> portData = new HashMap<>();
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String data = null;
@@ -61,6 +60,7 @@ public class ScanPortsRunnable implements Runnable {
                     out.println("Host: " + this.ip);
                     out.println("");
 
+                    char[] buffer = new char[1024];
                     in.read(buffer, 0, 1024);
                     out.close();
                     in.close();
