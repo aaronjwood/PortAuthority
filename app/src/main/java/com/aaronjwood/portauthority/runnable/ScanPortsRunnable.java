@@ -48,17 +48,17 @@ public class ScanPortsRunnable implements Runnable {
                 socket.connect(new InetSocketAddress(this.ip, i), 3500);
 
                 HashMap<Integer, String> portData = new HashMap<>();
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                BufferedReader in;
                 String data = null;
 
                 if (i == 22) {
+                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     data = in.readLine();
                     in.close();
                 } else if (i == 80 || i == 443) {
+                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                    out.println("GET / HTTP/1.1");
-                    out.println("Host: " + this.ip);
-                    out.println("");
+                    out.println("GET / HTTP/1.1\r\nHost: " + this.ip + "\r\n");
 
                     char[] buffer = new char[1024];
                     in.read(buffer, 0, 1024);
