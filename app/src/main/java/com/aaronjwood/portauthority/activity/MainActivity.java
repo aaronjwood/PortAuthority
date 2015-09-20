@@ -78,11 +78,10 @@ public class MainActivity extends Activity implements MainAsyncResponse {
             @Override
             public void onReceive(Context context, Intent intent) {
                 NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                if(info != null) {
-                    if(info.isConnected()) {
+                if (info != null) {
+                    if (info.isConnected()) {
                         getNetworkInfo();
-                    }
-                    else {
+                    } else {
                         mHandler.removeCallbacksAndMessages(null);
                         MainActivity.this.internalIp.setText("No WiFi connection");
                         externalIp.setText("No WiFi connection");
@@ -105,7 +104,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
              */
             @Override
             public void onClick(View v) {
-                if(!wifi.isConnected()) {
+                if (!wifi.isConnected()) {
                     Toast.makeText(getApplicationContext(), "You're not connected to a WiFi network!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -171,12 +170,22 @@ public class MainActivity extends Activity implements MainAsyncResponse {
     public void onPause() {
         super.onPause();
 
-        unregisterReceiver(this.receiver);
-
-        if(this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
+        if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.dismiss();
         }
         this.scanProgressDialog = null;
+    }
+
+    /**
+     * Activity destroyed
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (this.receiver != null) {
+            unregisterReceiver(this.receiver);
+        }
     }
 
     /**
@@ -199,9 +208,9 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         super.onSaveInstanceState(savedState);
 
         ListAdapter adapter = this.hostList.getAdapter();
-        if(adapter != null) {
+        if (adapter != null) {
             ArrayList<Map<String, String>> adapterData = new ArrayList<>();
-            for(int i = 0; i < adapter.getCount(); i++) {
+            for (int i = 0; i < adapter.getCount(); i++) {
                 HashMap<String, String> item = (HashMap) adapter.getItem(i);
                 adapterData.add(item);
             }
@@ -219,7 +228,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         super.onRestoreInstanceState(savedState);
 
         ArrayList<Map<String, String>> hosts = (ArrayList) savedState.getSerializable("hosts");
-        if(hosts != null) {
+        if (hosts != null) {
             SimpleAdapter newAdapter = new SimpleAdapter(this, hosts, R.layout.host_list_item, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
             this.hostList.setAdapter(newAdapter);
         }
@@ -233,7 +242,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
      */
     @Override
     public void processFinish(ArrayList<Map<String, String>> output) {
-        if(this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
+        if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             SimpleAdapter adapter = new SimpleAdapter(this, output, R.layout.host_list_item, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
             ListView hostList = (ListView) this.findViewById(R.id.hostList);
             hostList.setAdapter(adapter);
@@ -248,7 +257,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
      */
     @Override
     public void processFinish(int output) {
-        if(this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
+        if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.incrementProgressBy(output);
         }
     }

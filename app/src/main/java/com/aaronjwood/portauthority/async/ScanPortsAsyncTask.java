@@ -43,8 +43,8 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
         int previousStart = startPort;
         int previousStop = (startPort - 1) + chunk;
 
-        for(int i = 0; i < NUM_THREADS; i++) {
-            if(previousStop >= stopPort) {
+        for (int i = 0; i < NUM_THREADS; i++) {
+            if (previousStop >= stopPort) {
                 previousStop = stopPort;
                 executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, delegate));
                 break;
@@ -58,8 +58,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
 
         try {
             executor.awaitTermination(10, TimeUnit.MINUTES);
-        }
-        catch(InterruptedException ignored) {
+        } catch (InterruptedException ignored) {
         }
 
         this.delegate.processFinish(true);

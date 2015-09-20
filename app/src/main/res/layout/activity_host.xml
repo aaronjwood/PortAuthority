@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context="com.aaronjwood.portauthority.activity.HostActivity"
-    android:padding="@dimen/activity_default_margin">
+    android:padding="@dimen/activity_default_margin"
+    tools:context="com.aaronjwood.portauthority.activity.HostActivity">
 
     <TextView
         android:id="@+id/hostIpLabel"
@@ -35,17 +35,17 @@
 
     <TextView
         android:id="@+id/hostName"
-        android:layout_width="280dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/portListLabel"
         android:layout_alignParentRight="true"
+        android:layout_alignStart="@+id/portListLabel"
         android:layout_below="@id/hostIpLabel"
         android:gravity="end"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:text="@string/fetching"
-        android:textColor="@color/icsblue"
-        android:layout_alignLeft="@+id/portListLabel"
-        android:layout_alignStart="@+id/portListLabel" />
+        android:textColor="@color/icsblue" />
 
     <View
         android:id="@+id/hostNameSeparator"
@@ -97,7 +97,7 @@
 
     <TextView
         android:id="@+id/hostMacVendor"
-        android:layout_width="280dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@id/macAddressSeparator"
@@ -135,16 +135,18 @@
             android:id="@+id/portList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"></ListView>
+            android:layout_weight="1"
+            android:cacheColorHint="@color/black"></ListView>
 
         <LinearLayout
+            style="?attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Button
-                android:theme="?attr/buttonBarButtonStyle"
                 android:id="@+id/scanWellKnownPorts"
+                style="?attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginRight="5dp"
@@ -157,8 +159,8 @@
                 android:textSize="14sp" />
 
             <Button
-                android:theme="?attr/buttonBarButtonStyle"
                 android:id="@+id/scanPortRange"
+                style="?attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

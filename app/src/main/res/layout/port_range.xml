@@ -18,28 +18,22 @@
             android:orientation="vertical"
             android:paddingLeft="16dp"
             android:paddingRight="16dp">
-
-            <LinearLayout
-                android:id="@+id/portRangeStartBox"
+            
+            <TextView
+                android:id="@+id/portRangeStartLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:padding="8dp"
+                android:text="@string/portRangeStart" />
 
-                <TextView
-                    android:id="@+id/portRangeStartLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center_horizontal"
-                    android:padding="8dp"
-                    android:text="@string/portRangeStart" />
+            <NumberPicker
+                android:id="@+id/portRangePickerStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal" />
 
-                <NumberPicker
-                    android:id="@+id/portRangePickerStart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal" />
-            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout

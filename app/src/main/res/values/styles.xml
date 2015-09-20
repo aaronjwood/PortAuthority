@@ -17,8 +17,6 @@
         <item name="colorPrimaryDark">@color/black</item>
         <item name="colorAccent">@color/icsblue</item>
         <item name="android:background">#000000</item>
-        <item name="android:windowNoTitle">false</item>
-        <item name="android:titleTextColor">@color/white</item>
         <item name="android:gravity">center</item>
     </style>
 </resources>

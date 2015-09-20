@@ -35,7 +35,7 @@ public class ScanHostsRunnable implements Runnable {
      */
     @Override
     public void run() {
-        for(int i = this.start; i <= this.stop; i++) {
+        for (int i = this.start; i <= this.stop; i++) {
             String newIp = this.ipParts[0] + "." + this.ipParts[1] + "." + this.ipParts[2] + "." + i;
             try {
                 Socket socket = new Socket();
@@ -43,10 +43,8 @@ public class ScanHostsRunnable implements Runnable {
                 socket.setPerformancePreferences(1, 0, 0);
                 socket.setTcpNoDelay(true);
                 socket.connect(new InetSocketAddress(newIp, 7), 100);
-            }
-            catch(IOException ignored) {
-            }
-            finally {
+            } catch (IOException ignored) {
+            } finally {
                 this.delegate.processFinish(1);
             }
         }

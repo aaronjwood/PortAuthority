@@ -202,10 +202,11 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:cacheColorHint="@color/white"></ListView>
+            android:cacheColorHint="@color/black"></ListView>
 
         <Button
             android:id="@+id/discoverHosts"
+            style="?attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/button"
@@ -213,8 +214,7 @@
             android:minWidth="1dp"
             android:text="@string/hostDiscovery"
             android:textColor="@drawable/button_text"
-            android:textSize="14sp"
-            android:theme="?attr/buttonBarButtonStyle" />
+            android:textSize="14sp" />
     </LinearLayout>
 
 </RelativeLayout>

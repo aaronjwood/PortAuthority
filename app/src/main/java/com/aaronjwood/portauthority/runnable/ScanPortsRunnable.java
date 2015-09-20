@@ -39,44 +39,39 @@ public class ScanPortsRunnable implements Runnable {
      */
     @Override
     public void run() {
-        for(int i = this.startPort; i <= this.stopPort; i++) {
+        for (int i = this.startPort; i <= this.stopPort; i++) {
             try {
                 this.delegate.processFinish(1);
                 Socket socket = new Socket();
-                socket.setReuseAddress(true);
                 socket.setPerformancePreferences(1, 0, 0);
                 socket.setTcpNoDelay(true);
                 socket.connect(new InetSocketAddress(this.ip, i), 3500);
 
-                char[] buffer = new char[1024];
                 HashMap<Integer, String> portData = new HashMap<>();
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                BufferedReader in;
                 String data = null;
 
-                if(i == 22) {
+                if (i == 22) {
+                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     data = in.readLine();
                     in.close();
-                }
-                else if(i == 80 || i == 443) {
+                } else if (i == 80 || i == 443) {
+                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                    out.println("GET / HTTP/1.1");
-                    out.println("Host: " + this.ip);
-                    out.println("");
+                    out.println("GET / HTTP/1.1\r\nHost: " + this.ip + "\r\n");
 
+                    char[] buffer = new char[1024];
                     in.read(buffer, 0, 1024);
                     out.close();
                     in.close();
                     data = new String(buffer).toLowerCase();
-                    if(data.contains("apache") || data.contains("httpd")) {
+                    if (data.contains("apache") || data.contains("httpd")) {
                         data = "Apache";
-                    }
-                    else if(data.contains("iis") || data.contains("microsoft")) {
+                    } else if (data.contains("iis") || data.contains("microsoft")) {
                         data = "IIS";
-                    }
-                    else if(data.contains("nginx")) {
+                    } else if (data.contains("nginx")) {
                         data = "Nginx";
-                    }
-                    else {
+                    } else {
                         data = null;
                     }
                 }
@@ -85,8 +80,7 @@ public class ScanPortsRunnable implements Runnable {
                 socket.close();
 
                 this.delegate.processFinish(portData);
-            }
-            catch(IOException ignored) {
+            } catch (IOException ignored) {
             }
         }
     }

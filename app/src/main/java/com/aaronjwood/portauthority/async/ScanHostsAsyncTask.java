@@ -51,8 +51,8 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
         int previousStart = 1;
         int previousStop = chunk;
 
-        for(int i = 0; i < NUM_THREADS; i++) {
-            if(previousStop >= 255) {
+        for (int i = 0; i < NUM_THREADS; i++) {
+            if (previousStop >= 255) {
                 previousStop = 255;
                 executor.execute(new ScanHostsRunnable(parts, previousStart, previousStop, delegate));
                 break;
@@ -66,8 +66,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
 
         try {
             executor.awaitTermination(10, TimeUnit.SECONDS);
-        }
-        catch(InterruptedException ignored) {
+        } catch (InterruptedException ignored) {
         }
 
         return new ArrayList<>();
@@ -85,14 +84,14 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
             reader.readLine();
             String line;
 
-            while((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 String[] arpLine = line.split("\\s+");
 
                 final String ip = arpLine[0];
                 String flag = arpLine[2];
                 final String macAddress = arpLine[3];
 
-                if(!flag.equals("0x0") && !macAddress.equals("00:00:00:00:00:00")) {
+                if (!flag.equals("0x0") && !macAddress.equals("00:00:00:00:00:00")) {
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -104,8 +103,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
                                 entry.put("First Line", hostname);
                                 entry.put("Second Line", ip + " [" + macAddress + "]");
                                 result.add(entry);
-                            }
-                            catch(UnknownHostException ignored) {
+                            } catch (UnknownHostException ignored) {
                             }
                         }
                     });
@@ -126,8 +124,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
             });
 
             delegate.processFinish(result);
-        }
-        catch(IOException | InterruptedException ignored) {
+        } catch (IOException | InterruptedException ignored) {
         }
     }
 }
