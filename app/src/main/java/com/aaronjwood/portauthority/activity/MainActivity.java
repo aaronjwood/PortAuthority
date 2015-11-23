@@ -58,65 +58,30 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final DrawerLayout leftDrawer = (DrawerLayout) findViewById(R.id.mainLeftDrawer);
-        findViewById(R.id.mainLeftDrawerIcon).setOnClickListener(new View.OnClickListener() {
-
-            /**
-             * Open the left drawer when the users taps on the icon
-             * @param v
-             */
-            @Override
-            public void onClick(View v) {
-                leftDrawer.openDrawer(Gravity.LEFT);
-            }
-        });
-
-        //Fill the left drawer
-        ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
-        leftDrawerList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<String>() {{
-            add("Scan External Host");
-        }}));
+        this.setupDrawer();
 
         this.hostList = (ListView) findViewById(R.id.hostList);
-        TextView macAddress = (TextView) findViewById(R.id.deviceMacAddress);
         this.internalIp = (TextView) findViewById(R.id.internalIpAddress);
         this.externalIp = (TextView) findViewById(R.id.externalIpAddress);
         this.signalStrength = (TextView) findViewById(R.id.signalStrength);
-        Button discoverHosts = (Button) findViewById(R.id.discoverHosts);
+
         this.ssid = (TextView) findViewById(R.id.ssid);
         this.bssid = (TextView) findViewById(R.id.bssid);
 
         this.wifi = new Wireless(this);
 
+        TextView macAddress = (TextView) findViewById(R.id.deviceMacAddress);
         macAddress.setText(this.wifi.getMacAddress());
 
-        this.receiver = new BroadcastReceiver() {
+        this.setupReceivers();
+        this.setupHostDiscovery();
+    }
 
-            /**
-             * Detect if a network connection has been lost or established
-             * @param context
-             * @param intent
-             */
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                if (info != null) {
-                    if (info.isConnected()) {
-                        getNetworkInfo();
-                    } else {
-                        mHandler.removeCallbacksAndMessages(null);
-                        MainActivity.this.internalIp.setText("No WiFi connection");
-                        externalIp.setText("No WiFi connection");
-                        signalStrength.setText("No WiFi connection");
-                        ssid.setText("No WiFi connection");
-                        bssid.setText("No WiFi connection");
-                    }
-                }
-            }
-        };
-
-        this.intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        registerReceiver(receiver, this.intentFilter);
+    /**
+     * Sets up event handlers and functionality for host discovery
+     */
+    private void setupHostDiscovery() {
+        Button discoverHosts = (Button) findViewById(R.id.discoverHosts);
 
         discoverHosts.setOnClickListener(new View.OnClickListener() {
 
@@ -165,7 +130,63 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                 startActivity(intent);
             }
         });
+    }
 
+    /**
+     * Sets up and registers receivers
+     */
+    private void setupReceivers() {
+        this.receiver = new BroadcastReceiver() {
+
+            /**
+             * Detect if a network connection has been lost or established
+             * @param context
+             * @param intent
+             */
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                if (info != null) {
+                    if (info.isConnected()) {
+                        getNetworkInfo();
+                    } else {
+                        mHandler.removeCallbacksAndMessages(null);
+                        MainActivity.this.internalIp.setText("No WiFi connection");
+                        externalIp.setText("No WiFi connection");
+                        signalStrength.setText("No WiFi connection");
+                        ssid.setText("No WiFi connection");
+                        bssid.setText("No WiFi connection");
+                    }
+                }
+            }
+        };
+
+        this.intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        registerReceiver(receiver, this.intentFilter);
+    }
+
+    /**
+     * Sets up event handlers and items for the left drawer
+     */
+    private void setupDrawer() {
+        final DrawerLayout leftDrawer = (DrawerLayout) findViewById(R.id.mainLeftDrawer);
+        findViewById(R.id.mainLeftDrawerIcon).setOnClickListener(new View.OnClickListener() {
+
+            /**
+             * Open the left drawer when the users taps on the icon
+             * @param v
+             */
+            @Override
+            public void onClick(View v) {
+                leftDrawer.openDrawer(Gravity.LEFT);
+            }
+        });
+
+        //Fill the left drawer
+        ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
+        leftDrawerList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<String>() {{
+            add("Scan External Host");
+        }}));
     }
 
     /**
