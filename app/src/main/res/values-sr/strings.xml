@@ -9,7 +9,7 @@
     <string name="externalIpLabel">Спољашња ИП адреса</string>
     <string name="fetching">Добављам...</string>
     <string name="signalLabel">Јачина сигнала</string>
-    <string name="hostDiscovery">Откриј домаћине</string>
+    <string name="hostDiscovery">Откријте ЛАН Домаћини</string>
     <string name="ssid">ССИД</string>
     <string name="bssid">БССИД</string>
     <string name="hostname">Име домаћина</string>

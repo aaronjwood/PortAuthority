@@ -10,7 +10,7 @@
     <string name="externalIpLabel">External IP Address</string>
     <string name="fetching">Fetching...</string>
     <string name="signalLabel">Signal Strength</string>
-    <string name="hostDiscovery">Discover Hosts</string>
+    <string name="hostDiscovery">Discover LAN Hosts</string>
     <string name="ssid">SSID</string>
     <string name="bssid">BSSID</string>
     <string name="hostname">Hostname</string>
