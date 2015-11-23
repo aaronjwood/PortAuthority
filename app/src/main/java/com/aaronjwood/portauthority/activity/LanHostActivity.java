@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 
 
@@ -298,7 +299,16 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
                         @Override
                         public void run() {
                             ports.add(finalItem);
-                            Collections.sort(ports);
+                            Collections.sort(ports, new Comparator<String>() {
+
+                                @Override
+                                public int compare(String lhs, String rhs) {
+                                    int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
+                                    int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
+
+                                    return left - right;
+                                }
+                            });
                             adapter.notifyDataSetChanged();
                         }
                     });
@@ -326,7 +336,16 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
             @Override
             public void run() {
                 ports.add(finalItem);
-                Collections.sort(ports);
+                Collections.sort(ports, new Comparator<String>() {
+
+                    @Override
+                    public int compare(String lhs, String rhs) {
+                        int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
+                        int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
+
+                        return left - right;
+                    }
+                });
                 adapter.notifyDataSetChanged();
             }
         });
