@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -54,6 +55,12 @@ public class MainActivity extends Activity implements MainAsyncResponse {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Fill the left drawer
+        ListView leftDrawer = (ListView) findViewById(R.id.mainLeftDrawerList);
+        leftDrawer.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<String>() {{
+            add("Scan External Host");
+        }}));
 
         this.hostList = (ListView) findViewById(R.id.hostList);
         TextView macAddress = (TextView) findViewById(R.id.deviceMacAddress);
