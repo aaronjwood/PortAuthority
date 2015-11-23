@@ -7,7 +7,7 @@
     <string name="macAddress">МАЦ адреса</string>
     <string name="internalIpLabel">Унутрашња ИП адреса</string>
     <string name="externalIpLabel">Спољашња ИП адреса</string>
-    <string name="fetching">Добављам...</string>
+    <string name="fetching">Добављам…</string>
     <string name="signalLabel">Јачина сигнала</string>
     <string name="hostDiscovery">Откријте ЛАН Домаћини</string>
     <string name="ssid">ССИД</string>

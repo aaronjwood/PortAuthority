@@ -8,7 +8,7 @@
     <string name="macVendor">MAC Vendor</string>
     <string name="internalIpLabel">Internal IP Address</string>
     <string name="externalIpLabel">External IP Address</string>
-    <string name="fetching">Fetching...</string>
+    <string name="fetching">Fetching…</string>
     <string name="signalLabel">Signal Strength</string>
     <string name="hostDiscovery">Discover LAN Hosts</string>
     <string name="ssid">SSID</string>
