@@ -52,8 +52,6 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
         TextView hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
         this.hostNameLabel = (TextView) findViewById(R.id.hostName);
         TextView hostMacVendor = (TextView) findViewById(R.id.hostMacVendor);
-        Button scanWellKnownPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
-        Button scanPortRangeButton = (Button) findViewById(R.id.scanPortRange);
         ListView portList = (ListView) findViewById(R.id.portList);
         TextView hostMacLabel = (TextView) findViewById(R.id.hostMac);
 
@@ -75,16 +73,22 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
         }
 
         this.wifi = new Wireless(this);
-
         this.host.getHostname(this.hostIp, this);
 
-        String mac = this.hostMac.replace(":", "");
-        mac = mac.substring(0, 6);
-
-        hostMacVendor.setText(this.host.getMacVendor(mac, this));
+        hostMacVendor.setText(this.host.getMacVendor(hostMac.replace(":", "").substring(0, 6), this));
 
         hostIpLabel.setText(this.hostIp);
         hostMacLabel.setText(this.hostMac);
+
+        this.setupPortScan();
+    }
+
+    /**
+     * Sets up event handlers and functionality for various port scanning features
+     */
+    private void setupPortScan() {
+        Button scanWellKnownPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
+        Button scanPortRangeButton = (Button) findViewById(R.id.scanPortRange);
 
         scanWellKnownPortsButton.setOnClickListener(new View.OnClickListener() {
 
@@ -172,7 +176,6 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
                 });
             }
         });
-
     }
 
     /**
