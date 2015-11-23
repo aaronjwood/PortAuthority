@@ -213,7 +213,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:cacheColorHint="@color/black"></ListView>
+                android:cacheColorHint="@color/black" />
 
             <Button
                 android:id="@+id/discoverHosts"
@@ -238,7 +238,5 @@
         android:background="#111"
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
-        android:dividerHeight="0dp">
-
-    </ListView>
+        android:dividerHeight="0dp" />
 </android.support.v4.widget.DrawerLayout>
