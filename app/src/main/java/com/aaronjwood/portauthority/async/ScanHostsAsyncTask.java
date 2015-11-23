@@ -20,8 +20,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<String, String>>> {
-
-    private static final String TAG = "ScanHostsAsyncTask";
     private MainAsyncResponse delegate;
 
     /**

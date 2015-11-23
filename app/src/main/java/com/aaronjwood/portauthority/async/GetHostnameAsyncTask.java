@@ -8,8 +8,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class GetHostnameAsyncTask extends AsyncTask<String, Void, String> {
-
-    private static final String TAG = "GetHostnameAsyncTask";
     private HostAsyncResponse delegate;
 
     /**

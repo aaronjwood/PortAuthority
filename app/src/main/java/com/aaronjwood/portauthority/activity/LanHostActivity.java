@@ -26,9 +26,6 @@ import java.util.Map;
 
 
 public class LanHostActivity extends AppCompatActivity implements HostAsyncResponse {
-
-    private static final String TAG = "LanHostActivity";
-
     private Wireless wifi;
     private Host host = new Host();
     private TextView hostNameLabel;

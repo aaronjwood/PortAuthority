@@ -7,9 +7,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class ScanHostsRunnable implements Runnable {
-
-    private static final String TAG = "ScanHostsRunnable";
-
     private String[] ipParts;
     private int start;
     private int stop;

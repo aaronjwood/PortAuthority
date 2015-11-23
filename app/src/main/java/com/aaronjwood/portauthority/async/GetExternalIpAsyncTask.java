@@ -15,8 +15,6 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 
 public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
-
-    private static final String TAG = "GetExternalIpAsyncTask";
     private static final String EXTERNAL_IP_SERVICE = "https://ipinfo.io/ip";
     private MainAsyncResponse delegate;
 

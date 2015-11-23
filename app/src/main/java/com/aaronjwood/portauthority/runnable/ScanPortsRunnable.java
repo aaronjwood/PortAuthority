@@ -11,9 +11,6 @@ import java.net.Socket;
 import java.util.HashMap;
 
 public class ScanPortsRunnable implements Runnable {
-
-    private static final String TAG = "ScanPortsRunnable";
-
     private String ip;
     private int startPort;
     private int stopPort;

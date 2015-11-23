@@ -10,8 +10,6 @@ import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 public class Host {
 
-    private static final String TAG = "Host";
-
     /**
      * Starts a port scan
      *

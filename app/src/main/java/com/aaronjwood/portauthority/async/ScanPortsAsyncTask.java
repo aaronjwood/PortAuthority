@@ -10,8 +10,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
-
-    private static final String TAG = "ScanPortsAsyncTask";
     private HostAsyncResponse delegate;
 
     /**

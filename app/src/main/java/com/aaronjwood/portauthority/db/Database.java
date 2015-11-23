@@ -12,9 +12,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class Database {
-
-    private static final String TAG = "Database";
-
     private Activity activity;
 
     public Database(Activity activity) {

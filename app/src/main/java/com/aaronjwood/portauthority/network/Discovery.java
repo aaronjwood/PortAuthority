@@ -5,8 +5,6 @@ import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
 public class Discovery {
 
-    private static final String TAG = "Discovery";
-
     /**
      * Starts the host scanning
      *
