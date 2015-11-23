@@ -10,6 +10,8 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -56,9 +58,22 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final DrawerLayout leftDrawer = (DrawerLayout) findViewById(R.id.mainLeftDrawer);
+        findViewById(R.id.mainLeftDrawerIcon).setOnClickListener(new View.OnClickListener() {
+
+            /**
+             * Open the left drawer when the users taps on the icon
+             * @param v
+             */
+            @Override
+            public void onClick(View v) {
+                leftDrawer.openDrawer(Gravity.LEFT);
+            }
+        });
+
         //Fill the left drawer
-        ListView leftDrawer = (ListView) findViewById(R.id.mainLeftDrawerList);
-        leftDrawer.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<String>() {{
+        ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
+        leftDrawerList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<String>() {{
             add("Scan External Host");
         }}));
 
