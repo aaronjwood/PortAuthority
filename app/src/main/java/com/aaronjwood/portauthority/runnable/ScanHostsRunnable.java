@@ -36,7 +36,6 @@ public class ScanHostsRunnable implements Runnable {
             String ip = this.ipParts[0] + "." + this.ipParts[1] + "." + this.ipParts[2] + "." + i;
             try {
                 Socket socket = new Socket();
-                socket.setReuseAddress(true);
                 socket.setPerformancePreferences(1, 0, 0);
                 socket.setTcpNoDelay(true);
                 socket.connect(new InetSocketAddress(ip, 7), 100);
