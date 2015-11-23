@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/black"
     android:padding="@dimen/activity_default_margin"
-    tools:context="com.aaronjwood.portauthority.activity.HostActivity">
+    tools:context=".activity.LanHostActivity">
 
     <TextView
         android:id="@+id/hostIpLabel"

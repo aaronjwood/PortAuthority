@@ -25,9 +25,9 @@ import java.util.Collections;
 import java.util.Map;
 
 
-public class HostActivity extends AppCompatActivity implements HostAsyncResponse {
+public class LanHostActivity extends AppCompatActivity implements HostAsyncResponse {
 
-    private static final String TAG = "HostActivity";
+    private static final String TAG = "LanHostActivity";
 
     private Wireless wifi;
     private Host host = new Host();
@@ -101,9 +101,9 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                     return;
                 }
 
-                HostActivity.this.ports.clear();
+                LanHostActivity.this.ports.clear();
 
-                scanProgressDialog = new ProgressDialog(HostActivity.this, R.style.DialogTheme);
+                scanProgressDialog = new ProgressDialog(LanHostActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning Well Known Ports");
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -111,7 +111,7 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                 scanProgressDialog.setMax(1024);
                 scanProgressDialog.show();
 
-                host.scanPorts(hostIp, 1, 1024, HostActivity.this);
+                host.scanPorts(hostIp, 1, 1024, LanHostActivity.this);
             }
         });
 
@@ -128,7 +128,7 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                     return;
                 }
 
-                HostActivity.this.portRangeDialog = new Dialog(HostActivity.this, R.style.DialogTheme);
+                LanHostActivity.this.portRangeDialog = new Dialog(LanHostActivity.this, R.style.DialogTheme);
                 portRangeDialog.setTitle("Select Port Range");
                 portRangeDialog.setContentView(R.layout.port_range);
                 portRangeDialog.show();
@@ -159,9 +159,9 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                             return;
                         }
 
-                        HostActivity.this.ports.clear();
+                        LanHostActivity.this.ports.clear();
 
-                        scanProgressDialog = new ProgressDialog(HostActivity.this, R.style.DialogTheme);
+                        scanProgressDialog = new ProgressDialog(LanHostActivity.this, R.style.DialogTheme);
                         scanProgressDialog.setCancelable(false);
                         scanProgressDialog.setTitle("Scanning Port " + startPort + " to " + stopPort);
                         scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -169,7 +169,7 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                         scanProgressDialog.setMax(stopPort - startPort + 1);
                         scanProgressDialog.show();
 
-                        host.scanPorts(hostIp, startPort, stopPort, HostActivity.this);
+                        host.scanPorts(hostIp, startPort, stopPort, LanHostActivity.this);
                     }
                 });
             }
