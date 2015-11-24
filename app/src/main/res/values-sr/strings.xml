@@ -20,5 +20,6 @@
     <string name="portRangeStop">Крајњи</string>
     <string name="macVendor">МАЦ продавце</string>
     <string name="noWifi">Не Ви-Фи повезивање</string>
+    <string name="resolvingNames">Решавање днс / НетБИОС имена…</string>
 
 </resources>
