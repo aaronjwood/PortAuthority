@@ -23,6 +23,7 @@ import jcifs.netbios.NbtAddress;
 
 public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
     private MainAsyncResponse delegate;
+    private final int NUM_THREADS = 8;
 
     /**
      * Constructor to set the delegate
@@ -41,7 +42,6 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
      */
     @Override
     protected Void doInBackground(String... params) {
-        final int NUM_THREADS = 8;
         String ip = params[0];
         String parts[] = ip.split("\\.");
 
@@ -77,11 +77,10 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
     protected final void onProgressUpdate(final Void... params) {
         try {
             final List<Map<String, String>> result = Collections.synchronizedList(new ArrayList<Map<String, String>>());
-            ExecutorService executor = Executors.newCachedThreadPool();
+            ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
             BufferedReader reader = new BufferedReader(new FileReader("/proc/net/arp"));
             reader.readLine();
             String line;
-            int i = 0;
 
             while ((line = reader.readLine()) != null) {
                 String[] arpLine = line.split("\\s+");
@@ -91,13 +90,14 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
                 final String macAddress = arpLine[3];
 
                 if (!flag.equals("0x0") && !macAddress.equals("00:00:00:00:00:00")) {
-                    final int finalI = i;
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
+                            String hostname = null;
+
                             try {
                                 InetAddress add = InetAddress.getByName(ip);
-                                String hostname = add.getCanonicalHostName();
+                                hostname = add.getCanonicalHostName();
 
                                 Map<String, String> entry = new HashMap<>();
                                 entry.put("First Line", hostname);
@@ -110,17 +110,24 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
                             try {
                                 NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
                                 final String netbiosName = netbios[0].getHostName();
-                                result.set(finalI, new HashMap<String, String>() {{
-                                    put("First Line", netbiosName);
+
+                                final String finalHostname = hostname;
+                                Map<String, String> item = new HashMap<String, String>() {{
+                                    put("First Line", finalHostname);
                                     put("Second Line", ip + " [" + macAddress + "]");
-                                }});
-                                delegate.processFinish(result);
+                                }};
+
+                                if (result.contains(item)) {
+                                    result.set(result.indexOf(item), new HashMap<String, String>() {{
+                                        put("First Line", netbiosName);
+                                        put("Second Line", ip + " [" + macAddress + "]");
+                                    }});
+                                    delegate.processFinish(result);
+                                }
                             } catch (UnknownHostException ignored) {
-                                return;
                             }
                         }
                     });
-                    i++;
                 }
             }
 
