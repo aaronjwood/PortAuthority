@@ -26,7 +26,6 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
      * Chunked ports are scanned in parallel
      *
      * @param params IP address, start port, and stop port
-     * @return
      */
     @Override
     protected Void doInBackground(Object... params) {

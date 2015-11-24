@@ -38,7 +38,6 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
      * Scans for active hosts on the network
      *
      * @param params IP address
-     * @return List to hold the active hosts
      */
     @Override
     protected Void doInBackground(String... params) {
@@ -73,6 +72,12 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
         return null;
     }
 
+    /**
+     * Scans the ARP table and updates the list with hosts on the network
+     * Resolves both DNS and NetBIOS
+     *
+     * @param params
+     */
     @Override
     protected final void onProgressUpdate(final Void... params) {
         try {
