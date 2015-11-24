@@ -19,5 +19,6 @@
     <string name="openPorts">Open Ports</string>
     <string name="portRangeStart">Start Port</string>
     <string name="portRangeStop">Stop Port</string>
+    <string name="noWifi">No WiFi connection</string>
 
 </resources>
