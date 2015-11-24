@@ -12,14 +12,16 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<String, String>>> {
+import jcifs.netbios.NbtAddress;
+
+public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
     private MainAsyncResponse delegate;
 
     /**
@@ -38,7 +40,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
      * @return List to hold the active hosts
      */
     @Override
-    protected ArrayList<Map<String, String>> doInBackground(String... params) {
+    protected Void doInBackground(String... params) {
         final int NUM_THREADS = 8;
         String ip = params[0];
         String parts[] = ip.split("\\.");
@@ -67,20 +69,19 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
         } catch (InterruptedException ignored) {
         }
 
-        return new ArrayList<>();
+        publishProgress();
+        return null;
     }
 
-    /**
-     * Scans the ARP table and adds active hosts to the list
-     *
-     * @param result List to hold the active hosts
-     */
-    protected void onPostExecute(final ArrayList<Map<String, String>> result) {
+    @Override
+    protected final void onProgressUpdate(final Void... params) {
         try {
+            final List<Map<String, String>> result = Collections.synchronizedList(new ArrayList<Map<String, String>>());
             ExecutorService executor = Executors.newCachedThreadPool();
             BufferedReader reader = new BufferedReader(new FileReader("/proc/net/arp"));
             reader.readLine();
             String line;
+            int i = 0;
 
             while ((line = reader.readLine()) != null) {
                 String[] arpLine = line.split("\\s+");
@@ -90,6 +91,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
                 final String macAddress = arpLine[3];
 
                 if (!flag.equals("0x0") && !macAddress.equals("00:00:00:00:00:00")) {
+                    final int finalI = i;
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -101,28 +103,30 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
                                 entry.put("First Line", hostname);
                                 entry.put("Second Line", ip + " [" + macAddress + "]");
                                 result.add(entry);
+                                delegate.processFinish(result);
                             } catch (UnknownHostException ignored) {
+                            }
+
+                            try {
+                                NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
+                                final String netbiosName = netbios[0].getHostName();
+                                result.set(finalI, new HashMap<String, String>() {{
+                                    put("First Line", netbiosName);
+                                    put("Second Line", ip + " [" + macAddress + "]");
+                                }});
+                                delegate.processFinish(result);
+                            } catch (UnknownHostException ignored) {
+                                return;
                             }
                         }
                     });
+                    i++;
                 }
             }
 
             reader.close();
-
             executor.shutdown();
-            executor.awaitTermination(10, TimeUnit.SECONDS);
-
-            Collections.sort(result, new Comparator<Map<String, String>>() {
-
-                @Override
-                public int compare(Map<String, String> lhs, Map<String, String> rhs) {
-                    return lhs.get("Second Line").compareTo(rhs.get("Second Line"));
-                }
-            });
-
-            delegate.processFinish(result);
-        } catch (IOException | InterruptedException ignored) {
+        } catch (IOException ignored) {
         }
     }
 }

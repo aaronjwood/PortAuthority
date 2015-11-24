@@ -29,6 +29,7 @@ import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends Activity implements MainAsyncResponse {
@@ -284,13 +285,21 @@ public class MainActivity extends Activity implements MainAsyncResponse {
      * @param output The list of hosts to bind to the list view
      */
     @Override
-    public void processFinish(ArrayList<Map<String, String>> output) {
-        if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
-            SimpleAdapter adapter = new SimpleAdapter(this, output, R.layout.host_list_item, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
-            ListView hostList = (ListView) this.findViewById(R.id.hostList);
-            hostList.setAdapter(adapter);
-            this.scanProgressDialog.dismiss();
-        }
+    public void processFinish(final List<Map<String, String>> output) {
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), output, R.layout.host_list_item, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
+                ListView hostList = (ListView) findViewById(R.id.hostList);
+                hostList.setAdapter(adapter);
+
+                if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
+                    scanProgressDialog.dismiss();
+                    Toast.makeText(getApplicationContext(), R.string.resolvingNames, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     /**
