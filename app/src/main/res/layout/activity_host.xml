@@ -22,44 +22,11 @@
         android:textColor="@color/icsblue" />
 
     <TextView
-        android:id="@+id/hostNameLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/hostIpLabel"
-        android:layout_toLeftOf="@+id/hostName"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
-        android:text="@string/hostname"
-        android:textColor="@color/white" />
-
-    <TextView
-        android:id="@+id/hostName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/portListLabel"
-        android:layout_alignParentRight="true"
-        android:layout_alignStart="@+id/portListLabel"
-        android:layout_below="@id/hostIpLabel"
-        android:gravity="end"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
-        android:text="@string/fetching"
-        android:textColor="@color/icsblue" />
-
-    <View
-        android:id="@+id/hostNameSeparator"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/hostName"
-        android:background="@color/icsblue" />
-
-    <TextView
         android:id="@+id/hostMacLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/hostNameSeparator"
+        android:layout_below="@id/hostIpLabel"
         android:layout_toLeftOf="@+id/hostMac"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
@@ -71,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/hostNameSeparator"
+        android:layout_below="@id/hostIpLabel"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:textColor="@color/icsblue" />

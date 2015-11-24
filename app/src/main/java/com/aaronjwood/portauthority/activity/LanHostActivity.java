@@ -29,7 +29,6 @@ import java.util.Map;
 public class LanHostActivity extends AppCompatActivity implements HostAsyncResponse {
     private Wireless wifi;
     private Host host = new Host();
-    private TextView hostNameLabel;
     private String hostName;
     private String hostIp;
     private String hostMac;
@@ -50,7 +49,6 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
         setContentView(R.layout.activity_host);
 
         TextView hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
-        this.hostNameLabel = (TextView) findViewById(R.id.hostName);
         TextView hostMacVendor = (TextView) findViewById(R.id.hostMacVendor);
         ListView portList = (ListView) findViewById(R.id.portList);
         TextView hostMacLabel = (TextView) findViewById(R.id.hostMac);
@@ -73,7 +71,6 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
         }
 
         this.wifi = new Wireless(this);
-        this.host.getHostname(this.hostIp, this);
 
         hostMacVendor.setText(this.host.getMacVendor(hostMac.replace(":", "").substring(0, 6), this));
 
@@ -352,19 +349,5 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
                 adapter.notifyDataSetChanged();
             }
         });
-    }
-
-    /**
-     * Delegate to handle setting the hostname in the UI
-     *
-     * @param output Hostname
-     */
-    @Override
-    public void processFinish(String output) {
-        if (output != null) {
-            this.hostNameLabel.setText(output);
-        } else {
-            this.hostNameLabel.setText("Couldn't get hostname");
-        }
     }
 }

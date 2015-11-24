@@ -24,11 +24,4 @@ public interface HostAsyncResponse {
      * @param output
      */
     void processFinish(Map<Integer, String> output);
-
-    /**
-     * Delegate to handle string outputs
-     *
-     * @param output
-     */
-    void processFinish(String output);
 }
