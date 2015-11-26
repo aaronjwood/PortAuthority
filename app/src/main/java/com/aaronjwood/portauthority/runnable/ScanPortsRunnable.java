@@ -52,7 +52,7 @@ public class ScanPortsRunnable implements Runnable {
                     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     data = in.readLine();
                     in.close();
-                } else if (i == 80 || i == 443) {
+                } else if (i == 80 || i == 443 || i == 8080) {
                     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                     out.println("GET / HTTP/1.1\r\nHost: " + this.ip + "\r\n");
