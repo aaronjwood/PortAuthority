@@ -28,6 +28,8 @@ import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -286,6 +288,17 @@ public class MainActivity extends Activity implements MainAsyncResponse {
      */
     @Override
     public void processFinish(final List<Map<String, String>> output) {
+        Collections.sort(output, new Comparator<Map<String, String>>() {
+
+            @Override
+            public int compare(Map<String, String> lhs, Map<String, String> rhs) {
+                int left = Integer.parseInt(lhs.get("Second Line").substring(lhs.get("Second Line").lastIndexOf(".") + 1, lhs.get("Second Line").indexOf("[") - 1));
+                int right = Integer.parseInt(rhs.get("Second Line").substring(rhs.get("Second Line").lastIndexOf(".") + 1, rhs.get("Second Line").indexOf("[") - 1));
+
+                return left - right;
+            }
+        });
+
         runOnUiThread(new Runnable() {
 
             @Override
