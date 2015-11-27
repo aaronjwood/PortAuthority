@@ -42,7 +42,7 @@ public class ScanPortsRunnable implements Runnable {
                 Socket socket = new Socket();
                 socket.setPerformancePreferences(1, 0, 0);
                 socket.setTcpNoDelay(true);
-                socket.connect(new InetSocketAddress(this.ip, i), 3500);
+                socket.connect(new InetSocketAddress(this.ip, i), 4000);
 
                 HashMap<Integer, String> portData = new HashMap<>();
                 BufferedReader in;
