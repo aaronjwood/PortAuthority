@@ -249,7 +249,6 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
      */
     @Override
     public void processFinish(Map<Integer, String> output) {
-        int scannedPort = output.keySet().iterator().next();
         BufferedReader reader;
         try {
             reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
@@ -258,6 +257,7 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
             return;
         }
         String line;
+        int scannedPort = output.keySet().iterator().next();
         String item = String.valueOf(scannedPort);
 
         try {
