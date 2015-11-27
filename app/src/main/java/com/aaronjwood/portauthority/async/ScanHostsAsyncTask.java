@@ -22,7 +22,7 @@ import jcifs.netbios.NbtAddress;
 
 public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
     private MainAsyncResponse delegate;
-    private final int NUM_THREADS = 8;
+    private final int NUM_THREADS = 16;
 
     /**
      * Constructor to set the delegate
