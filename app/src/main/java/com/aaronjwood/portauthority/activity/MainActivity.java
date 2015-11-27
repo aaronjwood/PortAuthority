@@ -309,7 +309,6 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
                 if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
                     scanProgressDialog.dismiss();
-                    Toast.makeText(getApplicationContext(), R.string.resolvingNames, Toast.LENGTH_LONG).show();
                 }
             }
         });
