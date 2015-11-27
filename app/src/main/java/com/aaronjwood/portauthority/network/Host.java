@@ -31,7 +31,10 @@ public class Host {
         Database db = new Database(activity);
         Cursor cursor = db.queryDatabase("oui.db", "SELECT vendor FROM oui WHERE mac LIKE ?", new String[]{mac});
         if (cursor != null && cursor.moveToFirst()) {
-            return cursor.getString(cursor.getColumnIndex("vendor"));
+            String value = cursor.getString(cursor.getColumnIndex("vendor"));
+            cursor.close();
+            db.close();
+            return value;
         } else {
             return "Vendor not in database";
         }

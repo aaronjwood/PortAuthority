@@ -13,6 +13,7 @@ import java.io.OutputStream;
 
 public class Database {
     private Activity activity;
+    private SQLiteDatabase db;
 
     public Database(Activity activity) {
         this.activity = activity;
@@ -55,14 +56,14 @@ public class Database {
      * @param dbName The database to open a connection to
      * @return Database connection
      */
-    private SQLiteDatabase openDatabase(String dbName) {
+    private void openDatabase(String dbName) {
         if (!this.checkDatabase(dbName)) {
             this.copyDatabase(dbName);
         }
         try {
-            return SQLiteDatabase.openDatabase(this.activity.getApplicationInfo().dataDir + "/" + dbName, null, SQLiteDatabase.OPEN_READONLY);
+            this.db = SQLiteDatabase.openDatabase(this.activity.getApplicationInfo().dataDir + "/" + dbName, null, SQLiteDatabase.OPEN_READONLY);
         } catch (SQLiteException e) {
-            return null;
+            this.db = null;
         }
     }
 
@@ -75,12 +76,19 @@ public class Database {
      * @return Cursor for iterating over results
      */
     public Cursor queryDatabase(String dbName, String query, String[] args) {
-        SQLiteDatabase db = this.openDatabase(dbName);
-        if (db != null) {
+        this.openDatabase(dbName);
+        if (this.db != null) {
             return db.rawQuery(query, args);
         } else {
             return null;
         }
+    }
+
+    /**
+     * Closes the database handle
+     */
+    public void close() {
+        this.db.close();
     }
 
 }
