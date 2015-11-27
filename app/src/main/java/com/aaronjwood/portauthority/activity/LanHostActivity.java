@@ -215,15 +215,16 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
     @Override
     public void processFinish(final int output) {
         this.scanProgress += output;
-        if (scanProgressDialog != null && scanProgressDialog.isShowing() && this.scanProgress % 50 == 0) {
-            runOnUiThread(new Runnable() {
 
-                @Override
-                public void run() {
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                if (scanProgressDialog != null && scanProgressDialog.isShowing() && scanProgress % 50 == 0) {
                     scanProgressDialog.setProgress(scanProgress);
                 }
-            });
-        }
+            }
+        });
     }
 
     /**
