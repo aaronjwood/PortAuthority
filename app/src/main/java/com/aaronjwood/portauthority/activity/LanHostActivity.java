@@ -50,7 +50,7 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_host);
+        setContentView(R.layout.activity_lanhost);
 
         TextView hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
         TextView hostMacVendor = (TextView) findViewById(R.id.hostMacVendor);
