@@ -93,7 +93,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
                 String flag = arpLine[2];
                 final String macAddress = arpLine[3];
 
-                if (!flag.equals("0x0") && !macAddress.equals("00:00:00:00:00:00")) {
+                if (!"0x0".equals(flag) && !"00:00:00:00:00:00".equals(macAddress)) {
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
