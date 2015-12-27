@@ -275,7 +275,7 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
                     port = null;
                 }
 
-                if (name.equals("")) {
+                if (name.isEmpty()) {
                     name = "unknown";
                 }
 
