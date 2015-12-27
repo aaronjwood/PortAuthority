@@ -1,0 +1,87 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:padding="@dimen/activity_default_margin"
+    tools:context=".activity.WanHostActivity">
+
+    <EditText
+        android:id="@+id/hostAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:hint="@string/wanHostHint"
+        android:inputType="textUri"
+        android:paddingBottom="5dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/icsblue" />
+
+    <View
+        android:id="@+id/macVendorSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/hostAddress"
+        android:background="@color/icsblue" />
+
+    <TextView
+        android:id="@+id/portListLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/hostAddress"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:text="@string/openPorts"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/icsblue" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/portListLabel"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/portList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:cacheColorHint="@color/black" />
+
+        <LinearLayout
+            style="?attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/scanWellKnownPorts"
+                style="?attr/buttonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/button"
+                android:minHeight="1dp"
+                android:minWidth="1dp"
+                android:text="@string/scanWellKnownPorts"
+                android:textColor="@drawable/button_text"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/scanPortRange"
+                style="?attr/buttonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button"
+                android:minHeight="1dp"
+                android:minWidth="1dp"
+                android:text="@string/scanPortRange"
+                android:textColor="@drawable/button_text"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
