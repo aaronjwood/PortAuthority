@@ -33,6 +33,10 @@ android {
             applicationId "com.aaronjwood.portauthority.donate"
         }
     }
+
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
