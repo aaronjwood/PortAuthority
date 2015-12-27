@@ -126,9 +126,11 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                 Intent intent = new Intent(MainActivity.this, LanHostActivity.class);
                 String firstLine = map.get("First Line");
                 String secondLine = map.get("Second Line");
-                String macAddress = map.get("Second Line").substring(secondLine.indexOf("[") + 1, secondLine.indexOf("]"));
+                String ip = secondLine.substring(0, secondLine.indexOf("[") - 1);
+                String macAddress = secondLine.substring(secondLine.indexOf("[") + 1, secondLine.indexOf("]"));
 
-                intent.putExtra("HOST", firstLine);
+                intent.putExtra("HOSTNAME", firstLine);
+                intent.putExtra("IP", ip);
                 intent.putExtra("MAC", macAddress);
                 startActivity(intent);
             }
