@@ -2,9 +2,12 @@ package com.aaronjwood.portauthority.activity;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -32,6 +35,7 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
     private String hostName;
     private String hostIp;
     private String hostMac;
+    private ListView portList;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> ports = new ArrayList<>();
     private ProgressDialog scanProgressDialog;
@@ -50,31 +54,32 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
 
         TextView hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
         TextView hostMacVendor = (TextView) findViewById(R.id.hostMacVendor);
-        ListView portList = (ListView) findViewById(R.id.portList);
         TextView hostMacLabel = (TextView) findViewById(R.id.hostMac);
+        this.portList = (ListView) findViewById(R.id.portList);
 
         if (savedInstanceState != null) {
+            this.hostName = savedInstanceState.getString("hostName");
             this.hostIp = savedInstanceState.getString("hostIp");
             this.hostMac = savedInstanceState.getString("hostMac");
-            this.hostName = savedInstanceState.getString("hostName");
             this.ports = savedInstanceState.getStringArrayList("ports");
             this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
-            portList.setAdapter(this.adapter);
+            this.portList.setAdapter(this.adapter);
             this.adapter.notifyDataSetChanged();
         } else if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            this.hostIp = extras.getString("HOST");
+            this.hostName = extras.getString("HOSTNAME");
+            this.hostIp = extras.getString("IP");
             this.hostMac = extras.getString("MAC");
 
             this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
-            portList.setAdapter(adapter);
+            this.portList.setAdapter(adapter);
         }
 
         this.wifi = new Wireless(this);
 
         hostMacVendor.setText(this.host.getMacVendor(hostMac.replace(":", "").substring(0, 6), this));
 
-        hostIpLabel.setText(this.hostIp);
+        hostIpLabel.setText(this.hostName);
         hostMacLabel.setText(this.hostMac);
 
         this.setupPortScan();
@@ -111,6 +116,33 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
                 scanProgressDialog.show();
 
                 host.scanPorts(hostIp, 1, 1024, LanHostActivity.this);
+            }
+        });
+
+        this.portList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            /**
+             * Click handler to open certain ports to the browser
+             * @param parent
+             * @param view
+             * @param position
+             * @param id
+             */
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String item = (String) portList.getItemAtPosition(position);
+
+                if (item.contains("80 -")) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + hostIp)));
+                }
+
+                if (item.contains("443 -")) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + hostIp)));
+                }
+
+                if (item.contains("8080 -")) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + hostIp + ":8080")));
+                }
             }
         });
 
@@ -184,8 +216,8 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
-        savedState.putString("hostIp", this.hostIp);
         savedState.putString("hostName", this.hostName);
+        savedState.putString("hostIp", this.hostIp);
         savedState.putString("hostMac", this.hostMac);
         savedState.putStringArrayList("ports", this.ports);
     }
@@ -294,6 +326,10 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
                         item += " (" + output.get(scannedPort) + ")";
                     }
 
+                    if (scannedPort == 80 || scannedPort == 443 || scannedPort == 8080) {
+                        item += " \uD83C\uDF0E";
+                    }
+
                     final String finalItem = item;
 
                     Collections.sort(ports, new Comparator<String>() {
@@ -331,6 +367,10 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
         item = item + " - unknown";
         if (output.get(scannedPort) != null) {
             item += " (" + output.get(scannedPort) + ")";
+        }
+
+        if (scannedPort == 80 || scannedPort == 443 || scannedPort == 8080) {
+            item += " \uD83C\uDF0E";
         }
 
         final String finalItem = item;
