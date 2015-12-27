@@ -115,20 +115,19 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
 
                             try {
                                 NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
-                                final String netbiosName = netbios[0].getHostName();
+                                String netbiosName = netbios[0].getHostName();
 
-                                final String finalHostname = hostname;
-                                Map<String, String> item = new HashMap<String, String>() {{
-                                    put("First Line", finalHostname);
-                                    put("Second Line", ip + " [" + macAddress + "]");
-                                }};
+                                Map<String, String> item = new HashMap<>();
+                                item.put("First Line", hostname);
+                                item.put("Second Line", ip + " [" + macAddress + "]");
 
                                 synchronized (result) {
                                     if (result.contains(item)) {
-                                        result.set(result.indexOf(item), new HashMap<String, String>() {{
-                                            put("First Line", netbiosName);
-                                            put("Second Line", ip + " [" + macAddress + "]");
-                                        }});
+                                        Map<String, String> newItem = new HashMap<>();
+                                        newItem.put("First Line", netbiosName);
+                                        newItem.put("Second Line", ip + " [" + macAddress + "]");
+
+                                        result.set(result.indexOf(item), newItem);
                                         delegate.processFinish(result);
                                     }
                                 }
