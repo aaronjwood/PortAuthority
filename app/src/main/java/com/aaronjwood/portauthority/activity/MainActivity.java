@@ -189,9 +189,9 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
         //Fill the left drawer
         ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
-        leftDrawerList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<String>() {{
-            add("Scan External Host");
-        }}));
+        ArrayList<String> items = new ArrayList<>();
+        items.add("Scan External Host");
+        leftDrawerList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items));
     }
 
     /**
