@@ -62,19 +62,15 @@ public class LanHostActivity extends AppCompatActivity implements HostAsyncRespo
             this.hostIp = savedInstanceState.getString("hostIp");
             this.hostMac = savedInstanceState.getString("hostMac");
             this.ports = savedInstanceState.getStringArrayList("ports");
-            this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
-            this.portList.setAdapter(this.adapter);
-            this.adapter.notifyDataSetChanged();
         } else if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             this.hostName = extras.getString("HOSTNAME");
             this.hostIp = extras.getString("IP");
             this.hostMac = extras.getString("MAC");
-
-            this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
-            this.portList.setAdapter(adapter);
         }
 
+        this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
+        this.portList.setAdapter(adapter);
         this.wifi = new Wireless(this);
 
         hostMacVendor.setText(this.host.getMacVendor(hostMac.replace(":", "").substring(0, 6), this));
