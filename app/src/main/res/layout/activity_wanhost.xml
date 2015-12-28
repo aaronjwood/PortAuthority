@@ -27,7 +27,7 @@
         android:paddingTop="10dp"
         android:text="@string/openPorts"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/icsblue" />
+        android:textColor="@color/white" />
 
     <LinearLayout
         android:layout_width="match_parent"
