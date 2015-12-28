@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Host;
-import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 import java.io.BufferedReader;
@@ -30,7 +29,6 @@ import java.util.Map;
 
 
 public class WanHostActivity extends AppCompatActivity implements HostAsyncResponse {
-    private Wireless wifi;
     private Host host = new Host();
     private EditText wanHost;
     private ListView portList;
@@ -59,7 +57,6 @@ public class WanHostActivity extends AppCompatActivity implements HostAsyncRespo
 
         this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
         this.portList.setAdapter(adapter);
-        this.wifi = new Wireless(this);
 
         this.setupPortScan();
     }
@@ -79,11 +76,6 @@ public class WanHostActivity extends AppCompatActivity implements HostAsyncRespo
              */
             @Override
             public void onClick(View v) {
-                if (!wifi.isConnected()) {
-                    Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
                 WanHostActivity.this.ports.clear();
 
                 scanProgressDialog = new ProgressDialog(WanHostActivity.this, R.style.DialogTheme);
@@ -133,11 +125,6 @@ public class WanHostActivity extends AppCompatActivity implements HostAsyncRespo
              */
             @Override
             public void onClick(View v) {
-                if (!wifi.isConnected()) {
-                    Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
                 WanHostActivity.this.portRangeDialog = new Dialog(WanHostActivity.this, R.style.DialogTheme);
                 portRangeDialog.setTitle("Select Port Range");
                 portRangeDialog.setContentView(R.layout.port_range);
