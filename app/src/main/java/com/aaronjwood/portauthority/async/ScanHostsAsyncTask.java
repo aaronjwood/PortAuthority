@@ -11,18 +11,18 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<String, String>>> {
+import jcifs.netbios.NbtAddress;
 
-    private static final String TAG = "ScanHostsAsyncTask";
+public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
     private MainAsyncResponse delegate;
+    private final int NUM_THREADS = 16;
 
     /**
      * Constructor to set the delegate
@@ -37,11 +37,9 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
      * Scans for active hosts on the network
      *
      * @param params IP address
-     * @return List to hold the active hosts
      */
     @Override
-    protected ArrayList<Map<String, String>> doInBackground(String... params) {
-        final int NUM_THREADS = 8;
+    protected Void doInBackground(String... params) {
         String ip = params[0];
         String parts[] = ip.split("\\.");
 
@@ -69,17 +67,21 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
         } catch (InterruptedException ignored) {
         }
 
-        return new ArrayList<>();
+        publishProgress();
+        return null;
     }
 
     /**
-     * Scans the ARP table and adds active hosts to the list
+     * Scans the ARP table and updates the list with hosts on the network
+     * Resolves both DNS and NetBIOS
      *
-     * @param result List to hold the active hosts
+     * @param params
      */
-    protected void onPostExecute(final ArrayList<Map<String, String>> result) {
+    @Override
+    protected final void onProgressUpdate(final Void... params) {
         try {
-            ExecutorService executor = Executors.newCachedThreadPool();
+            final List<Map<String, String>> result = new ArrayList<>();
+            ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
             BufferedReader reader = new BufferedReader(new FileReader("/proc/net/arp"));
             reader.readLine();
             String line;
@@ -91,18 +93,44 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
                 String flag = arpLine[2];
                 final String macAddress = arpLine[3];
 
-                if (!flag.equals("0x0") && !macAddress.equals("00:00:00:00:00:00")) {
+                if (!"0x0".equals(flag) && !"00:00:00:00:00:00".equals(macAddress)) {
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
+                            String hostname = null;
+
                             try {
                                 InetAddress add = InetAddress.getByName(ip);
-                                String hostname = add.getCanonicalHostName();
+                                hostname = add.getCanonicalHostName();
 
                                 Map<String, String> entry = new HashMap<>();
                                 entry.put("First Line", hostname);
                                 entry.put("Second Line", ip + " [" + macAddress + "]");
-                                result.add(entry);
+                                synchronized (result) {
+                                    result.add(entry);
+                                    delegate.processFinish(result);
+                                }
+                            } catch (UnknownHostException ignored) {
+                            }
+
+                            try {
+                                NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
+                                String netbiosName = netbios[0].getHostName();
+
+                                Map<String, String> item = new HashMap<>();
+                                item.put("First Line", hostname);
+                                item.put("Second Line", ip + " [" + macAddress + "]");
+
+                                synchronized (result) {
+                                    if (result.contains(item)) {
+                                        Map<String, String> newItem = new HashMap<>();
+                                        newItem.put("First Line", netbiosName);
+                                        newItem.put("Second Line", ip + " [" + macAddress + "]");
+
+                                        result.set(result.indexOf(item), newItem);
+                                        delegate.processFinish(result);
+                                    }
+                                }
                             } catch (UnknownHostException ignored) {
                             }
                         }
@@ -111,20 +139,8 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, ArrayList<Map<St
             }
 
             reader.close();
-
             executor.shutdown();
-            executor.awaitTermination(10, TimeUnit.SECONDS);
-
-            Collections.sort(result, new Comparator<Map<String, String>>() {
-
-                @Override
-                public int compare(Map<String, String> lhs, Map<String, String> rhs) {
-                    return lhs.get("Second Line").compareTo(rhs.get("Second Line"));
-                }
-            });
-
-            delegate.processFinish(result);
-        } catch (IOException | InterruptedException ignored) {
+        } catch (IOException ignored) {
         }
     }
 }

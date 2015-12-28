@@ -7,9 +7,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class ScanHostsRunnable implements Runnable {
-
-    private static final String TAG = "ScanHostsRunnable";
-
     private String[] ipParts;
     private int start;
     private int stop;
@@ -36,13 +33,13 @@ public class ScanHostsRunnable implements Runnable {
     @Override
     public void run() {
         for (int i = this.start; i <= this.stop; i++) {
-            String newIp = this.ipParts[0] + "." + this.ipParts[1] + "." + this.ipParts[2] + "." + i;
+            String ip = this.ipParts[0] + "." + this.ipParts[1] + "." + this.ipParts[2] + "." + i;
             try {
                 Socket socket = new Socket();
-                socket.setReuseAddress(true);
                 socket.setPerformancePreferences(1, 0, 0);
                 socket.setTcpNoDelay(true);
-                socket.connect(new InetSocketAddress(newIp, 7), 100);
+                socket.connect(new InetSocketAddress(ip, 7), 250);
+                socket.close();
             } catch (IOException ignored) {
             } finally {
                 this.delegate.processFinish(1);

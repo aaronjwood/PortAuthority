@@ -1,6 +1,6 @@
 package com.aaronjwood.portauthority.response;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public interface MainAsyncResponse {
@@ -10,7 +10,7 @@ public interface MainAsyncResponse {
      *
      * @param output
      */
-    void processFinish(ArrayList<Map<String, String>> output);
+    void processFinish(List<Map<String, String>> output);
 
     /**
      * Delegate to handle integer outputs

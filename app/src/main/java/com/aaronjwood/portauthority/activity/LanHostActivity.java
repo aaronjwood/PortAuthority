@@ -2,9 +2,12 @@ package com.aaronjwood.portauthority.activity;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -22,19 +25,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 
 
-public class HostActivity extends AppCompatActivity implements HostAsyncResponse {
-
-    private static final String TAG = "HostActivity";
-
+public class LanHostActivity extends AppCompatActivity implements HostAsyncResponse {
     private Wireless wifi;
     private Host host = new Host();
-    private TextView hostNameLabel;
     private String hostName;
     private String hostIp;
     private String hostMac;
+    private ListView portList;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> ports = new ArrayList<>();
     private ProgressDialog scanProgressDialog;
@@ -49,44 +50,43 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_host);
+        setContentView(R.layout.activity_lanhost);
 
         TextView hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
-        this.hostNameLabel = (TextView) findViewById(R.id.hostName);
         TextView hostMacVendor = (TextView) findViewById(R.id.hostMacVendor);
-        Button scanWellKnownPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
-        Button scanPortRangeButton = (Button) findViewById(R.id.scanPortRange);
-        ListView portList = (ListView) findViewById(R.id.portList);
         TextView hostMacLabel = (TextView) findViewById(R.id.hostMac);
+        this.portList = (ListView) findViewById(R.id.portList);
 
         if (savedInstanceState != null) {
+            this.hostName = savedInstanceState.getString("hostName");
             this.hostIp = savedInstanceState.getString("hostIp");
             this.hostMac = savedInstanceState.getString("hostMac");
-            this.hostName = savedInstanceState.getString("hostName");
             this.ports = savedInstanceState.getStringArrayList("ports");
-            this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
-            portList.setAdapter(this.adapter);
-            this.adapter.notifyDataSetChanged();
         } else if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            this.hostIp = extras.getString("HOST");
+            this.hostName = extras.getString("HOSTNAME");
+            this.hostIp = extras.getString("IP");
             this.hostMac = extras.getString("MAC");
-
-            this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
-            portList.setAdapter(adapter);
         }
 
+        this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
+        this.portList.setAdapter(adapter);
         this.wifi = new Wireless(this);
 
-        this.host.getHostname(this.hostIp, this);
+        hostMacVendor.setText(this.host.getMacVendor(hostMac.replace(":", "").substring(0, 6), this));
 
-        String mac = this.hostMac.replace(":", "");
-        mac = mac.substring(0, 6);
-
-        hostMacVendor.setText(this.host.getMacVendor(mac, this));
-
-        hostIpLabel.setText(this.hostIp);
+        hostIpLabel.setText(this.hostName);
         hostMacLabel.setText(this.hostMac);
+
+        this.setupPortScan();
+    }
+
+    /**
+     * Sets up event handlers and functionality for various port scanning features
+     */
+    private void setupPortScan() {
+        Button scanWellKnownPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
+        Button scanPortRangeButton = (Button) findViewById(R.id.scanPortRange);
 
         scanWellKnownPortsButton.setOnClickListener(new View.OnClickListener() {
 
@@ -101,9 +101,9 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                     return;
                 }
 
-                HostActivity.this.ports.clear();
+                LanHostActivity.this.ports.clear();
 
-                scanProgressDialog = new ProgressDialog(HostActivity.this, R.style.DialogTheme);
+                scanProgressDialog = new ProgressDialog(LanHostActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning Well Known Ports");
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -111,7 +111,34 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                 scanProgressDialog.setMax(1024);
                 scanProgressDialog.show();
 
-                host.scanPorts(hostIp, 1, 1024, HostActivity.this);
+                host.scanPorts(hostIp, 1, 1024, LanHostActivity.this);
+            }
+        });
+
+        this.portList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            /**
+             * Click handler to open certain ports to the browser
+             * @param parent
+             * @param view
+             * @param position
+             * @param id
+             */
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String item = (String) portList.getItemAtPosition(position);
+
+                if (item.contains("80 -")) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + hostIp)));
+                }
+
+                if (item.contains("443 -")) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + hostIp)));
+                }
+
+                if (item.contains("8080 -")) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + hostIp + ":8080")));
+                }
             }
         });
 
@@ -128,7 +155,7 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                     return;
                 }
 
-                HostActivity.this.portRangeDialog = new Dialog(HostActivity.this, R.style.DialogTheme);
+                LanHostActivity.this.portRangeDialog = new Dialog(LanHostActivity.this, R.style.DialogTheme);
                 portRangeDialog.setTitle("Select Port Range");
                 portRangeDialog.setContentView(R.layout.port_range);
                 portRangeDialog.show();
@@ -159,9 +186,9 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                             return;
                         }
 
-                        HostActivity.this.ports.clear();
+                        LanHostActivity.this.ports.clear();
 
-                        scanProgressDialog = new ProgressDialog(HostActivity.this, R.style.DialogTheme);
+                        scanProgressDialog = new ProgressDialog(LanHostActivity.this, R.style.DialogTheme);
                         scanProgressDialog.setCancelable(false);
                         scanProgressDialog.setTitle("Scanning Port " + startPort + " to " + stopPort);
                         scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -169,12 +196,11 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                         scanProgressDialog.setMax(stopPort - startPort + 1);
                         scanProgressDialog.show();
 
-                        host.scanPorts(hostIp, startPort, stopPort, HostActivity.this);
+                        host.scanPorts(hostIp, startPort, stopPort, LanHostActivity.this);
                     }
                 });
             }
         });
-
     }
 
     /**
@@ -186,8 +212,8 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
-        savedState.putString("hostIp", this.hostIp);
         savedState.putString("hostName", this.hostName);
+        savedState.putString("hostIp", this.hostIp);
         savedState.putString("hostMac", this.hostMac);
         savedState.putStringArrayList("ports", this.ports);
     }
@@ -217,15 +243,16 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
     @Override
     public void processFinish(final int output) {
         this.scanProgress += output;
-        if (scanProgressDialog != null && scanProgressDialog.isShowing() && this.scanProgress % 50 == 0) {
-            runOnUiThread(new Runnable() {
 
-                @Override
-                public void run() {
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                if (scanProgressDialog != null && scanProgressDialog.isShowing() && scanProgress % 50 == 0) {
                     scanProgressDialog.setProgress(scanProgress);
                 }
-            });
-        }
+            }
+        });
     }
 
     /**
@@ -251,7 +278,6 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
      */
     @Override
     public void processFinish(Map<Integer, String> output) {
-        int scannedPort = output.keySet().iterator().next();
         BufferedReader reader;
         try {
             reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
@@ -260,6 +286,7 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
             return;
         }
         String line;
+        int scannedPort = output.keySet().iterator().next();
         String item = String.valueOf(scannedPort);
 
         try {
@@ -276,7 +303,7 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                     port = null;
                 }
 
-                if (name.equals("")) {
+                if (name.isEmpty()) {
                     name = "unknown";
                 }
 
@@ -295,13 +322,29 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
                         item += " (" + output.get(scannedPort) + ")";
                     }
 
+                    if (scannedPort == 80 || scannedPort == 443 || scannedPort == 8080) {
+                        item += " \uD83C\uDF0E";
+                    }
+
                     final String finalItem = item;
+
                     runOnUiThread(new Runnable() {
 
                         @Override
                         public void run() {
                             ports.add(finalItem);
-                            Collections.sort(ports);
+
+                            Collections.sort(ports, new Comparator<String>() {
+
+                                @Override
+                                public int compare(String lhs, String rhs) {
+                                    int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
+                                    int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
+
+                                    return left - right;
+                                }
+                            });
+
                             adapter.notifyDataSetChanged();
                         }
                     });
@@ -323,29 +366,31 @@ public class HostActivity extends AppCompatActivity implements HostAsyncResponse
             item += " (" + output.get(scannedPort) + ")";
         }
 
+        if (scannedPort == 80 || scannedPort == 443 || scannedPort == 8080) {
+            item += " \uD83C\uDF0E";
+        }
+
         final String finalItem = item;
+
         runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
                 ports.add(finalItem);
-                Collections.sort(ports);
+
+                Collections.sort(ports, new Comparator<String>() {
+
+                    @Override
+                    public int compare(String lhs, String rhs) {
+                        int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
+                        int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
+
+                        return left - right;
+                    }
+                });
+
                 adapter.notifyDataSetChanged();
             }
         });
-    }
-
-    /**
-     * Delegate to handle setting the hostname in the UI
-     *
-     * @param output Hostname
-     */
-    @Override
-    public void processFinish(String output) {
-        if (output != null) {
-            this.hostNameLabel.setText(output);
-        } else {
-            this.hostNameLabel.setText("Couldn't get hostname");
-        }
     }
 }

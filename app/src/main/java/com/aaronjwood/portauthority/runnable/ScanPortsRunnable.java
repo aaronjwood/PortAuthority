@@ -11,9 +11,6 @@ import java.net.Socket;
 import java.util.HashMap;
 
 public class ScanPortsRunnable implements Runnable {
-
-    private static final String TAG = "ScanPortsRunnable";
-
     private String ip;
     private int startPort;
     private int stopPort;
@@ -45,7 +42,7 @@ public class ScanPortsRunnable implements Runnable {
                 Socket socket = new Socket();
                 socket.setPerformancePreferences(1, 0, 0);
                 socket.setTcpNoDelay(true);
-                socket.connect(new InetSocketAddress(this.ip, i), 3500);
+                socket.connect(new InetSocketAddress(this.ip, i), 4000);
 
                 HashMap<Integer, String> portData = new HashMap<>();
                 BufferedReader in;
@@ -55,7 +52,7 @@ public class ScanPortsRunnable implements Runnable {
                     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     data = in.readLine();
                     in.close();
-                } else if (i == 80 || i == 443) {
+                } else if (i == 80 || i == 443 || i == 8080) {
                     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                     out.println("GET / HTTP/1.1\r\nHost: " + this.ip + "\r\n");
