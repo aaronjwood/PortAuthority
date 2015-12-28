@@ -207,6 +207,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                 if (position == 0) {
                     Intent intent = new Intent(MainActivity.this, WanHostActivity.class);
                     startActivity(intent);
+                    leftDrawer.closeDrawer(parent);
                 }
             }
         });
