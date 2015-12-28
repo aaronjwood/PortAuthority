@@ -188,10 +188,28 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         });
 
         //Fill the left drawer
-        ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
+        final ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
         ArrayList<String> items = new ArrayList<>();
         items.add("Scan External Host");
         leftDrawerList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items));
+
+        leftDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            /**
+             * Click handler for the left side navigation drawer items
+             * @param parent
+             * @param view
+             * @param position
+             * @param id
+             */
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    Intent intent = new Intent(MainActivity.this, WanHostActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     /**

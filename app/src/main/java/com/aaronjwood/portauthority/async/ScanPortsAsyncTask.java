@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.runnable.ScanPortsRunnable;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +35,14 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
         String ip = (String) params[0];
         int startPort = (int) params[1];
         int stopPort = (int) params[2];
+
+        try {
+            InetAddress address = InetAddress.getByName(ip);
+            ip = address.getHostAddress();
+        } catch (UnknownHostException e) {
+            this.delegate.processFinish(false);
+            return null;
+        }
 
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
 
