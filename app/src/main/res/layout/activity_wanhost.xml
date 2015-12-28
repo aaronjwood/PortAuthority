@@ -17,13 +17,6 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/icsblue" />
 
-    <View
-        android:id="@+id/macVendorSeparator"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/hostAddress"
-        android:background="@color/icsblue" />
-
     <TextView
         android:id="@+id/portListLabel"
         android:layout_width="wrap_content"
