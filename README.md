@@ -1,6 +1,6 @@
 # Port Authority
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/74a6e90f803d46a1a39b34daabeb8af1)](https://www.codacy.com/app/aaronjwood/PortAuthority)
-[![Build Status](https://travis-ci.org/aaronjwood/PortAuthority.svg?branch=development)](https://travis-ci.org/aaronjwood/PortAuthority)
+[![Build Status](https://travis-ci.org/aaronjwood/PortAuthority.svg?branch=master)](https://travis-ci.org/aaronjwood/PortAuthority)
 
 A handy systems and security-focused tool, Port Authority is a very fast port scanner.
 Port Authority also allows you to quickly discover hosts on your network and will display useful network information about your device and other hosts.
