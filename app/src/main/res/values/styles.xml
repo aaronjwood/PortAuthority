@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- the theme applied to the application or activity -->
+
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <!-- Main theme colors -->
-        <!-- your app's branding color (for the app bar) -->
         <item name="colorPrimary">@color/icsblue</item>
-        <!-- darker variant of colorPrimary (for status bar, contextual app bars) -->
         <item name="colorPrimaryDark">@color/black</item>
-        <!-- theme UI controls like checkboxes and text fields -->
         <item name="colorAccent">@color/icsblue</item>
+        <item name="android:textColorSecondary">@color/icsblue</item>
     </style>
 
     <style name="DialogTheme" parent="Theme.AppCompat.Dialog">
