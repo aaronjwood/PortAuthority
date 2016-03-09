@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
+import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.io.BufferedReader;
@@ -144,11 +145,13 @@ public class WanHostActivity extends AppCompatActivity implements HostAsyncRespo
                 final NumberPicker portRangePickerStop = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStop);
                 Button startPortRangeScan = (Button) portRangeDialog.findViewById(R.id.startPortRangeScan);
 
-                portRangePickerStart.setMinValue(1);
-                portRangePickerStart.setMaxValue(65535);
+                portRangePickerStart.setMinValue(Constants.MIN_PORT_VALUE);
+                portRangePickerStart.setMaxValue(Constants.MAX_PORT_VALUE);
+                portRangePickerStart.setValue(UserPreference.getPortRangeStart(WanHostActivity.this));
                 portRangePickerStart.setWrapSelectorWheel(false);
-                portRangePickerStop.setMinValue(1);
-                portRangePickerStop.setMaxValue(65535);
+                portRangePickerStop.setMinValue(Constants.MIN_PORT_VALUE);
+                portRangePickerStop.setMaxValue(Constants.MAX_PORT_VALUE);
+                portRangePickerStop.setValue(UserPreference.getPortRangeHigh(WanHostActivity.this));
                 portRangePickerStop.setWrapSelectorWheel(false);
 
                 startPortRangeScan.setOnClickListener(new View.OnClickListener() {
@@ -165,6 +168,9 @@ public class WanHostActivity extends AppCompatActivity implements HostAsyncRespo
                             Toast.makeText(getApplicationContext(), "Please pick a valid port range", Toast.LENGTH_SHORT).show();
                             return;
                         }
+
+                        UserPreference.savePortRangeStart(WanHostActivity.this, startPort);
+                        UserPreference.savePortRangeHigh(WanHostActivity.this, stopPort);
 
                         WanHostActivity.this.ports.clear();
 
