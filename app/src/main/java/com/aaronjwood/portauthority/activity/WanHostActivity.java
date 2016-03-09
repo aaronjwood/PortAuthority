@@ -185,6 +185,14 @@ public class WanHostActivity extends AppCompatActivity implements HostAsyncRespo
                         host.scanPorts(wanHost.getText().toString(), startPort, stopPort, WanHostActivity.this);
                     }
                 });
+
+                portRangeDialog.findViewById(R.id.resetPortRangeScan).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        portRangePickerStart.setValue(Constants.MIN_PORT_VALUE);
+                        portRangePickerStop.setValue(Constants.MAX_PORT_VALUE);
+                    }
+                });
             }
         });
     }
