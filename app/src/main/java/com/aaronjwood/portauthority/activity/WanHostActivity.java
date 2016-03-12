@@ -16,12 +16,11 @@ import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Host;
-import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 
-public class WanHostActivity extends HostActivity implements HostAsyncResponse {
+public class WanHostActivity extends HostActivity {
     private Host host = new Host();
     private EditText wanHost;
     private ListView portList;

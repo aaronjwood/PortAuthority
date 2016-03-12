@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.aaronjwood.portauthority.response.HostAsyncResponse;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,7 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 
-public abstract class HostActivity extends AppCompatActivity {
+public abstract class HostActivity extends AppCompatActivity implements HostAsyncResponse {
 
     protected ArrayAdapter<String> adapter;
     protected ArrayList<String> ports = new ArrayList<>();
@@ -44,6 +46,7 @@ public abstract class HostActivity extends AppCompatActivity {
      *
      * @param output The amount of progress to increment
      */
+    @Override
     public void processFinish(final int output) {
         this.scanProgress += output;
 
@@ -63,6 +66,7 @@ public abstract class HostActivity extends AppCompatActivity {
      *
      * @param output Contains the port number and associated banner (if any)
      */
+    @Override
     public void processFinish(Map<Integer, String> output) {
         BufferedReader reader;
         try {

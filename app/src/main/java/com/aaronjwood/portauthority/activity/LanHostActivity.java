@@ -17,12 +17,11 @@ import android.widget.Toast;
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
-import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 
-public class LanHostActivity extends HostActivity implements HostAsyncResponse {
+public class LanHostActivity extends HostActivity {
     private Wireless wifi;
     private Host host = new Host();
     private String hostName;
