@@ -18,6 +18,8 @@ import android.widget.Toast;
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
+import com.aaronjwood.portauthority.utils.Constants;
+import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,14 +53,23 @@ public class WanHostActivity extends AppCompatActivity implements HostAsyncRespo
         this.wanHost = (EditText) findViewById(R.id.hostAddress);
         this.portList = (ListView) findViewById(R.id.portList);
 
+
         if (savedInstanceState != null) {
             this.ports = savedInstanceState.getStringArrayList("ports");
+        } else {
+            this.wanHost.setText(UserPreference.getLastUsedHostAddress(this));
         }
 
         this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
         this.portList.setAdapter(adapter);
 
         this.setupPortScan();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        UserPreference.saveLastUsedHostAddress(this, this.wanHost.getText().toString());
     }
 
     /**
@@ -134,11 +145,13 @@ public class WanHostActivity extends AppCompatActivity implements HostAsyncRespo
                 final NumberPicker portRangePickerStop = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStop);
                 Button startPortRangeScan = (Button) portRangeDialog.findViewById(R.id.startPortRangeScan);
 
-                portRangePickerStart.setMinValue(1);
-                portRangePickerStart.setMaxValue(65535);
+                portRangePickerStart.setMinValue(Constants.MIN_PORT_VALUE);
+                portRangePickerStart.setMaxValue(Constants.MAX_PORT_VALUE);
+                portRangePickerStart.setValue(UserPreference.getPortRangeStart(WanHostActivity.this));
                 portRangePickerStart.setWrapSelectorWheel(false);
-                portRangePickerStop.setMinValue(1);
-                portRangePickerStop.setMaxValue(65535);
+                portRangePickerStop.setMinValue(Constants.MIN_PORT_VALUE);
+                portRangePickerStop.setMaxValue(Constants.MAX_PORT_VALUE);
+                portRangePickerStop.setValue(UserPreference.getPortRangeHigh(WanHostActivity.this));
                 portRangePickerStop.setWrapSelectorWheel(false);
 
                 startPortRangeScan.setOnClickListener(new View.OnClickListener() {
@@ -156,6 +169,9 @@ public class WanHostActivity extends AppCompatActivity implements HostAsyncRespo
                             return;
                         }
 
+                        UserPreference.savePortRangeStart(WanHostActivity.this, startPort);
+                        UserPreference.savePortRangeHigh(WanHostActivity.this, stopPort);
+
                         WanHostActivity.this.ports.clear();
 
                         scanProgressDialog = new ProgressDialog(WanHostActivity.this, R.style.DialogTheme);
@@ -167,6 +183,14 @@ public class WanHostActivity extends AppCompatActivity implements HostAsyncRespo
                         scanProgressDialog.show();
 
                         host.scanPorts(wanHost.getText().toString(), startPort, stopPort, WanHostActivity.this);
+                    }
+                });
+
+                portRangeDialog.findViewById(R.id.resetPortRangeScan).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        portRangePickerStart.setValue(Constants.MIN_PORT_VALUE);
+                        portRangePickerStop.setValue(Constants.MAX_PORT_VALUE);
                     }
                 });
             }
