@@ -1,5 +1,7 @@
 package com.aaronjwood.portauthority.activity;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -16,6 +18,25 @@ public abstract class HostActivity extends AppCompatActivity {
 
     protected ArrayAdapter<String> adapter;
     protected ArrayList<String> ports = new ArrayList<>();
+    protected ProgressDialog scanProgressDialog;
+    protected Dialog portRangeDialog;
+
+    /**
+     * Activity paused
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
+            this.scanProgressDialog.dismiss();
+        }
+        if (this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
+            this.portRangeDialog.dismiss();
+        }
+        this.scanProgressDialog = null;
+        this.portRangeDialog = null;
+    }
 
     /**
      * Delegate to handle open ports
