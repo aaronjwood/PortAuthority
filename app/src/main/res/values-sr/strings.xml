@@ -15,6 +15,7 @@
     <string name="hostname">Име домаћина</string>
     <string name="scanWellKnownPorts">Скенирај познате портове</string>
     <string name="scanPortRange">Скенирај распон портова</string>
+    <string name="resetPortRange">Ресет Порт Ранге</string>
     <string name="openPorts">Отворени портови</string>
     <string name="portRangeStart">Почетни</string>
     <string name="portRangeStop">Крајњи</string>
