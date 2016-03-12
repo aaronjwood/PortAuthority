@@ -5,3 +5,10 @@ android:
     - build-tools-23.0.2
     - android-23
     - extra-android-m2repository
+cache:
+  directories:
+    - $HOME/.gradle/caches/2.11
+    - $HOME/.gradle/caches/jars-1
+    - $HOME/.gradle/daemon
+    - $HOME/.gradle/native
+    - $HOME/.gradle/wrapper
