@@ -29,8 +29,6 @@ public class LanHostActivity extends HostActivity implements HostAsyncResponse {
     private String hostIp;
     private String hostMac;
     private ListView portList;
-    private ProgressDialog scanProgressDialog;
-    private Dialog portRangeDialog;
     private int scanProgress;
 
     /**
@@ -212,23 +210,6 @@ public class LanHostActivity extends HostActivity implements HostAsyncResponse {
         savedState.putString("hostIp", this.hostIp);
         savedState.putString("hostMac", this.hostMac);
         savedState.putStringArrayList("ports", this.ports);
-    }
-
-    /**
-     * Activity paused
-     */
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
-            this.scanProgressDialog.dismiss();
-        }
-        if (this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
-            this.portRangeDialog.dismiss();
-        }
-        this.scanProgressDialog = null;
-        this.portRangeDialog = null;
     }
 
     /**
