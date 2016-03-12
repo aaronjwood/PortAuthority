@@ -199,23 +199,6 @@ public class WanHostActivity extends HostActivity implements HostAsyncResponse {
     }
 
     /**
-     * Activity paused
-     */
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
-            this.scanProgressDialog.dismiss();
-        }
-        if (this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
-            this.portRangeDialog.dismiss();
-        }
-        this.scanProgressDialog = null;
-        this.portRangeDialog = null;
-    }
-
-    /**
      * Delegate to handle incrementing the scan progress dialog
      *
      * @param output The amount of progress to increment
