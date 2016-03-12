@@ -1,12 +1,4 @@
 language: android
-sudo: false
-cache:
-  directories:
-    - ${TRAVIS_BUILD_DIR}/gradle/caches/
-    - ${TRAVIS_BUILD_DIR}/gradle/wrapper/dists/
-env:
-  global:
-    - ADB_INSTALL_TIMEOUT=8
 android:
   components:
     - tools
