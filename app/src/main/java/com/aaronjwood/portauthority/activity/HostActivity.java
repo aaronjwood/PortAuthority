@@ -20,6 +20,7 @@ public abstract class HostActivity extends AppCompatActivity {
     protected ArrayList<String> ports = new ArrayList<>();
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
+    protected int scanProgress;
 
     /**
      * Activity paused
@@ -36,6 +37,25 @@ public abstract class HostActivity extends AppCompatActivity {
         }
         this.scanProgressDialog = null;
         this.portRangeDialog = null;
+    }
+
+    /**
+     * Delegate to handle incrementing the scan progress dialog
+     *
+     * @param output The amount of progress to increment
+     */
+    public void processFinish(final int output) {
+        this.scanProgress += output;
+
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                if (scanProgressDialog != null && scanProgressDialog.isShowing() && scanProgress % 50 == 0) {
+                    scanProgressDialog.setProgress(scanProgress);
+                }
+            }
+        });
     }
 
     /**

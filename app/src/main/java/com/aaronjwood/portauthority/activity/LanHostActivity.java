@@ -29,7 +29,6 @@ public class LanHostActivity extends HostActivity implements HostAsyncResponse {
     private String hostIp;
     private String hostMac;
     private ListView portList;
-    private int scanProgress;
 
     /**
      * Activity created
@@ -212,25 +211,6 @@ public class LanHostActivity extends HostActivity implements HostAsyncResponse {
         savedState.putStringArrayList("ports", this.ports);
     }
 
-    /**
-     * Delegate to handle incrementing the scan progress dialog
-     *
-     * @param output The amount of progress to increment
-     */
-    @Override
-    public void processFinish(final int output) {
-        this.scanProgress += output;
-
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                if (scanProgressDialog != null && scanProgressDialog.isShowing() && scanProgress % 50 == 0) {
-                    scanProgressDialog.setProgress(scanProgress);
-                }
-            }
-        });
-    }
 
     /**
      * Delegate to determine if the progress dialog should be dismissed or not
