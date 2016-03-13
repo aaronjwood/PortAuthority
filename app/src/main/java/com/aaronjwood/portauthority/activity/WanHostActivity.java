@@ -42,12 +42,12 @@ public class WanHostActivity extends HostActivity {
 
 
         if (savedInstanceState != null) {
-            this.ports = savedInstanceState.getStringArrayList("ports");
+            ports = savedInstanceState.getStringArrayList("ports");
         } else {
             this.wanHost.setText(UserPreference.getLastUsedHostAddress(this));
         }
 
-        this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
+        this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, ports);
         this.portList.setAdapter(adapter);
 
         this.setupPortScan();
@@ -74,7 +74,7 @@ public class WanHostActivity extends HostActivity {
              */
             @Override
             public void onClick(View v) {
-                WanHostActivity.this.ports.clear();
+                ports.clear();
 
                 scanProgressDialog = new ProgressDialog(WanHostActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
@@ -162,7 +162,7 @@ public class WanHostActivity extends HostActivity {
                         UserPreference.savePortRangeStart(WanHostActivity.this, startPort);
                         UserPreference.savePortRangeHigh(WanHostActivity.this, stopPort);
 
-                        WanHostActivity.this.ports.clear();
+                        ports.clear();
 
                         scanProgressDialog = new ProgressDialog(WanHostActivity.this, R.style.DialogTheme);
                         scanProgressDialog.setCancelable(false);
@@ -196,7 +196,7 @@ public class WanHostActivity extends HostActivity {
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
-        savedState.putStringArrayList("ports", this.ports);
+        savedState.putStringArrayList("ports", ports);
     }
 
     /**
