@@ -3,10 +3,14 @@ package com.aaronjwood.portauthority.activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.NumberPicker;
 import android.widget.Toast;
 
+import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
+import com.aaronjwood.portauthority.utils.Constants;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,6 +43,22 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         }
         this.scanProgressDialog = null;
         this.portRangeDialog = null;
+    }
+
+    /**
+     * Event handler for when the port range reset is triggered
+     *
+     * @param start Starting port picker
+     * @param stop  Stopping port picker
+     */
+    protected void resetPortRangeScanClick(final NumberPicker start, final NumberPicker stop) {
+        portRangeDialog.findViewById(R.id.resetPortRangeScan).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                start.setValue(Constants.MIN_PORT_VALUE);
+                stop.setValue(Constants.MAX_PORT_VALUE);
+            }
+        });
     }
 
     /**

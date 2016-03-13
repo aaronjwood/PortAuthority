@@ -143,22 +143,6 @@ public class LanHostActivity extends HostActivity {
     }
 
     /**
-     * Event handler for when the port range reset is triggered
-     *
-     * @param start Starting port picker
-     * @param stop  Stopping port picker
-     */
-    private void resetPortRangeScanClick(final NumberPicker start, final NumberPicker stop) {
-        portRangeDialog.findViewById(R.id.resetPortRangeScan).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start.setValue(Constants.MIN_PORT_VALUE);
-                stop.setValue(Constants.MAX_PORT_VALUE);
-            }
-        });
-    }
-
-    /**
      * Event handler for when the port range scan is finally initiated
      *
      * @param start Starting port picker
