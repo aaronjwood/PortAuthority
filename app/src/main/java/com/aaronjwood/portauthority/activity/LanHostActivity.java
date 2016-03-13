@@ -168,6 +168,9 @@ public class LanHostActivity extends HostActivity {
                      */
                     @Override
                     public void onClick(View v) {
+                        portRangePickerStart.clearFocus();
+                        portRangePickerStop.clearFocus();
+                        
                         int startPort = portRangePickerStart.getValue();
                         int stopPort = portRangePickerStop.getValue();
                         if ((startPort - stopPort >= 0)) {
