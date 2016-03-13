@@ -38,7 +38,10 @@ public class ScanPortsRunnable implements Runnable {
     public void run() {
         for (int i = this.startPort; i <= this.stopPort; i++) {
             try {
-                this.delegate.processFinish(1);
+                if (i % 75 == 0) {
+                    this.delegate.processFinish(1);
+                }
+
                 Socket socket = new Socket();
                 socket.setPerformancePreferences(1, 0, 0);
                 socket.setTcpNoDelay(true);

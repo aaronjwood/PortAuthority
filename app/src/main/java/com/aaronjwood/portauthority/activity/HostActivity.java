@@ -48,13 +48,13 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      */
     @Override
     public void processFinish(final int output) {
-        this.scanProgress += output;
+        this.scanProgress += output * 75;
 
         runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
-                if (scanProgressDialog != null && scanProgressDialog.isShowing() && scanProgress % 50 == 0) {
+                if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
                     scanProgressDialog.setProgress(scanProgress);
                 }
             }
