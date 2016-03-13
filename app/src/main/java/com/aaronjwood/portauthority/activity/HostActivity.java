@@ -1,13 +1,15 @@
 package com.aaronjwood.portauthority.activity;
 
-import android.app.Activity;
-import android.app.Application;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
@@ -29,6 +31,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
 
     protected Host host = new Host();
     protected ArrayAdapter<String> adapter;
+    protected ListView portList;
     protected ArrayList<String> ports = new ArrayList<>();
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
@@ -107,6 +110,38 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                 scanProgressDialog.show();
 
                 host.scanPorts(ip, startPort, stopPort, activity);
+            }
+        });
+    }
+
+    /**
+     * Event handler for when an item on the port list is clicked
+     */
+    protected void portListClick(final String ip) {
+        this.portList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            /**
+             * Click handler to open certain ports to the browser
+             * @param parent
+             * @param view
+             * @param position
+             * @param id
+             */
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String item = (String) portList.getItemAtPosition(position);
+
+                if (item.contains("80 -")) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + ip)));
+                }
+
+                if (item.contains("443 -")) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + ip)));
+                }
+
+                if (item.contains("8080 -")) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + ip + ":8080")));
+                }
             }
         });
     }

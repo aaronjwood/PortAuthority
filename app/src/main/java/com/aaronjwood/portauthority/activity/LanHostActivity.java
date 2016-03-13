@@ -2,11 +2,8 @@ package com.aaronjwood.portauthority.activity;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -25,7 +22,6 @@ public class LanHostActivity extends HostActivity {
     private String hostName;
     private String hostIp;
     private String hostMac;
-    private ListView portList;
 
     /**
      * Activity created
@@ -141,44 +137,12 @@ public class LanHostActivity extends HostActivity {
     }
 
     /**
-     * Event handler for when an item on the port list is clicked
-     */
-    private void portListClick() {
-        this.portList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            /**
-             * Click handler to open certain ports to the browser
-             * @param parent
-             * @param view
-             * @param position
-             * @param id
-             */
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String item = (String) portList.getItemAtPosition(position);
-
-                if (item.contains("80 -")) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + hostIp)));
-                }
-
-                if (item.contains("443 -")) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + hostIp)));
-                }
-
-                if (item.contains("8080 -")) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + hostIp + ":8080")));
-                }
-            }
-        });
-    }
-
-    /**
      * Sets up event handlers and functionality for various port scanning features
      */
     private void setupPortScan() {
         this.scanWellKnownPortsClick();
         this.scanPortRangeClick();
-        this.portListClick();
+        this.portListClick(hostIp);
     }
 
     /**

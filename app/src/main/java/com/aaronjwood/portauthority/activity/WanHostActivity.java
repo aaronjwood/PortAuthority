@@ -2,11 +2,8 @@ package com.aaronjwood.portauthority.activity;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +19,6 @@ import com.aaronjwood.portauthority.utils.UserPreference;
 public class WanHostActivity extends HostActivity {
 
     private EditText wanHost;
-    private ListView portList;
 
     /**
      * Activity created
@@ -120,37 +116,6 @@ public class WanHostActivity extends HostActivity {
         });
     }
 
-    /**
-     * Event handler for when an item on the port list is clicked
-     */
-    private void portListClick() {
-        this.portList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            /**
-             * Click handler to open certain ports to the browser
-             * @param parent
-             * @param view
-             * @param position
-             * @param id
-             */
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String item = (String) portList.getItemAtPosition(position);
-
-                if (item.contains("80 -")) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + wanHost.getText().toString())));
-                }
-
-                if (item.contains("443 -")) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + wanHost.getText().toString())));
-                }
-
-                if (item.contains("8080 -")) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + wanHost.getText().toString() + ":8080")));
-                }
-            }
-        });
-    }
 
     /**
      * Sets up event handlers and functionality for various port scanning features
@@ -158,7 +123,7 @@ public class WanHostActivity extends HostActivity {
     private void setupPortScan() {
         this.scanWellKnownPortsClick();
         this.scanPortRangeClick();
-        this.portListClick();
+        this.portListClick(wanHost.getText().toString());
     }
 
     /**
