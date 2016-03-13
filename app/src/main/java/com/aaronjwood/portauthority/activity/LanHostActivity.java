@@ -142,7 +142,7 @@ public class LanHostActivity extends HostActivity {
                     return;
                 }
 
-                LanHostActivity.this.portRangeDialog = new Dialog(LanHostActivity.this, R.style.DialogTheme);
+                portRangeDialog = new Dialog(LanHostActivity.this, R.style.DialogTheme);
                 portRangeDialog.setTitle("Select Port Range");
                 portRangeDialog.setContentView(R.layout.port_range);
                 portRangeDialog.show();
@@ -170,7 +170,7 @@ public class LanHostActivity extends HostActivity {
                     public void onClick(View v) {
                         portRangePickerStart.clearFocus();
                         portRangePickerStop.clearFocus();
-                        
+
                         int startPort = portRangePickerStart.getValue();
                         int stopPort = portRangePickerStop.getValue();
                         if ((startPort - stopPort >= 0)) {
@@ -192,6 +192,14 @@ public class LanHostActivity extends HostActivity {
                         scanProgressDialog.show();
 
                         host.scanPorts(hostIp, startPort, stopPort, LanHostActivity.this);
+                    }
+                });
+
+                portRangeDialog.findViewById(R.id.resetPortRangeScan).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        portRangePickerStart.setValue(Constants.MIN_PORT_VALUE);
+                        portRangePickerStop.setValue(Constants.MAX_PORT_VALUE);
                     }
                 });
             }

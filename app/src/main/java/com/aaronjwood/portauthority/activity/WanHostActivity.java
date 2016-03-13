@@ -123,7 +123,7 @@ public class WanHostActivity extends HostActivity {
              */
             @Override
             public void onClick(View v) {
-                WanHostActivity.this.portRangeDialog = new Dialog(WanHostActivity.this, R.style.DialogTheme);
+                portRangeDialog = new Dialog(WanHostActivity.this, R.style.DialogTheme);
                 portRangeDialog.setTitle("Select Port Range");
                 portRangeDialog.setContentView(R.layout.port_range);
                 portRangeDialog.show();
@@ -151,7 +151,7 @@ public class WanHostActivity extends HostActivity {
                     public void onClick(View v) {
                         portRangePickerStart.clearFocus();
                         portRangePickerStop.clearFocus();
-                        
+
                         int startPort = portRangePickerStart.getValue();
                         int stopPort = portRangePickerStop.getValue();
                         if ((startPort - stopPort >= 0)) {
