@@ -24,8 +24,6 @@ public class WanHostActivity extends HostActivity {
     private Host host = new Host();
     private EditText wanHost;
     private ListView portList;
-    private ProgressDialog scanProgressDialog;
-    private Dialog portRangeDialog;
 
     /**
      * Activity created
