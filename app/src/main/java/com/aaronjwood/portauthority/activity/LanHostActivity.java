@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
-import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
@@ -23,7 +22,6 @@ import com.aaronjwood.portauthority.utils.UserPreference;
 
 public class LanHostActivity extends HostActivity {
     private Wireless wifi;
-    private Host host = new Host();
     private String hostName;
     private String hostIp;
     private String hostMac;
@@ -136,52 +134,8 @@ public class LanHostActivity extends HostActivity {
                 portRangePickerStop.setValue(UserPreference.getPortRangeHigh(LanHostActivity.this));
                 portRangePickerStop.setWrapSelectorWheel(false);
 
-                startPortRangeScanClick(portRangePickerStart, portRangePickerStop);
+                startPortRangeScanClick(portRangePickerStart, portRangePickerStop, LanHostActivity.this, hostIp);
                 resetPortRangeScanClick(portRangePickerStart, portRangePickerStop);
-            }
-        });
-    }
-
-    /**
-     * Event handler for when the port range scan is finally initiated
-     *
-     * @param start Starting port picker
-     * @param stop  Stopping port picker
-     */
-    private void startPortRangeScanClick(final NumberPicker start, final NumberPicker stop) {
-        Button startPortRangeScan = (Button) portRangeDialog.findViewById(R.id.startPortRangeScan);
-        startPortRangeScan.setOnClickListener(new View.OnClickListener() {
-
-            /**
-             * Click handler for starting a port range scan
-             * @param v
-             */
-            @Override
-            public void onClick(View v) {
-                start.clearFocus();
-                stop.clearFocus();
-
-                int startPort = start.getValue();
-                int stopPort = stop.getValue();
-                if ((startPort - stopPort >= 0)) {
-                    Toast.makeText(getApplicationContext(), "Please pick a valid port range", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                UserPreference.savePortRangeStart(LanHostActivity.this, startPort);
-                UserPreference.savePortRangeHigh(LanHostActivity.this, stopPort);
-
-                ports.clear();
-
-                scanProgressDialog = new ProgressDialog(LanHostActivity.this, R.style.DialogTheme);
-                scanProgressDialog.setCancelable(false);
-                scanProgressDialog.setTitle("Scanning Port " + startPort + " to " + stopPort);
-                scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                scanProgressDialog.setProgress(0);
-                scanProgressDialog.setMax(stopPort - startPort + 1);
-                scanProgressDialog.show();
-
-                host.scanPorts(hostIp, startPort, stopPort, LanHostActivity.this);
             }
         });
     }

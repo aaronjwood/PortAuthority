@@ -15,13 +15,12 @@ import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
-import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 
 public class WanHostActivity extends HostActivity {
-    private Host host = new Host();
+
     private EditText wanHost;
     private ListView portList;
 
@@ -115,52 +114,8 @@ public class WanHostActivity extends HostActivity {
                 portRangePickerStop.setValue(UserPreference.getPortRangeHigh(WanHostActivity.this));
                 portRangePickerStop.setWrapSelectorWheel(false);
 
-                startPortRangeScanClick(portRangePickerStart, portRangePickerStop);
+                startPortRangeScanClick(portRangePickerStart, portRangePickerStop, WanHostActivity.this, wanHost.getText().toString());
                 resetPortRangeScanClick(portRangePickerStart, portRangePickerStop);
-            }
-        });
-    }
-
-    /**
-     * Event handler for when the port range scan is finally initiated
-     *
-     * @param start Starting port picker
-     * @param stop  Stopping port picker
-     */
-    private void startPortRangeScanClick(final NumberPicker start, final NumberPicker stop) {
-        Button startPortRangeScan = (Button) portRangeDialog.findViewById(R.id.startPortRangeScan);
-        startPortRangeScan.setOnClickListener(new View.OnClickListener() {
-
-            /**
-             * Click handler for starting a port range scan
-             * @param v
-             */
-            @Override
-            public void onClick(View v) {
-                start.clearFocus();
-                stop.clearFocus();
-
-                int startPort = start.getValue();
-                int stopPort = stop.getValue();
-                if ((startPort - stopPort >= 0)) {
-                    Toast.makeText(getApplicationContext(), "Please pick a valid port range", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                UserPreference.savePortRangeStart(WanHostActivity.this, startPort);
-                UserPreference.savePortRangeHigh(WanHostActivity.this, stopPort);
-
-                ports.clear();
-
-                scanProgressDialog = new ProgressDialog(WanHostActivity.this, R.style.DialogTheme);
-                scanProgressDialog.setCancelable(false);
-                scanProgressDialog.setTitle("Scanning Port " + startPort + " to " + stopPort);
-                scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                scanProgressDialog.setProgress(0);
-                scanProgressDialog.setMax(stopPort - startPort + 1);
-                scanProgressDialog.show();
-
-                host.scanPorts(wanHost.getText().toString(), startPort, stopPort, WanHostActivity.this);
             }
         });
     }
