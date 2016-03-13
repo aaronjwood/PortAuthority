@@ -48,7 +48,7 @@ public class LanHostActivity extends HostActivity {
             this.hostName = savedInstanceState.getString("hostName");
             this.hostIp = savedInstanceState.getString("hostIp");
             this.hostMac = savedInstanceState.getString("hostMac");
-            this.ports = savedInstanceState.getStringArrayList("ports");
+            ports = savedInstanceState.getStringArrayList("ports");
         } else if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             this.hostName = extras.getString("HOSTNAME");
@@ -56,7 +56,7 @@ public class LanHostActivity extends HostActivity {
             this.hostMac = extras.getString("MAC");
         }
 
-        this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, this.ports);
+        this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, ports);
         this.portList.setAdapter(adapter);
         this.wifi = new Wireless(this);
 
@@ -88,7 +88,7 @@ public class LanHostActivity extends HostActivity {
                     return;
                 }
 
-                LanHostActivity.this.ports.clear();
+                ports.clear();
 
                 scanProgressDialog = new ProgressDialog(LanHostActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
@@ -181,7 +181,7 @@ public class LanHostActivity extends HostActivity {
                         UserPreference.savePortRangeStart(LanHostActivity.this, startPort);
                         UserPreference.savePortRangeHigh(LanHostActivity.this, stopPort);
 
-                        LanHostActivity.this.ports.clear();
+                        ports.clear();
 
                         scanProgressDialog = new ProgressDialog(LanHostActivity.this, R.style.DialogTheme);
                         scanProgressDialog.setCancelable(false);
@@ -218,7 +218,7 @@ public class LanHostActivity extends HostActivity {
         savedState.putString("hostName", this.hostName);
         savedState.putString("hostIp", this.hostIp);
         savedState.putString("hostMac", this.hostMac);
-        savedState.putStringArrayList("ports", this.ports);
+        savedState.putStringArrayList("ports", ports);
     }
 
 
