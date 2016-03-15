@@ -76,6 +76,7 @@ public class WanHostActivity extends HostActivity {
                 scanProgressDialog.show();
 
                 host.scanPorts(wanHost.getText().toString(), 1, 1024, WanHostActivity.this);
+                portListClick(wanHost.getText().toString());
             }
         });
     }
@@ -112,6 +113,7 @@ public class WanHostActivity extends HostActivity {
 
                 startPortRangeScanClick(portRangePickerStart, portRangePickerStop, WanHostActivity.this, wanHost.getText().toString());
                 resetPortRangeScanClick(portRangePickerStart, portRangePickerStop);
+                portListClick(wanHost.getText().toString());
             }
         });
     }
@@ -123,7 +125,6 @@ public class WanHostActivity extends HostActivity {
     private void setupPortScan() {
         this.scanWellKnownPortsClick();
         this.scanPortRangeClick();
-        this.portListClick(wanHost.getText().toString());
     }
 
     /**
