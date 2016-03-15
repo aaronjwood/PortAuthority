@@ -115,7 +115,13 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
 
                             try {
                                 NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
-                                String netbiosName = netbios[0].getHostName();
+                                String netbiosName = hostname;
+                                for (NbtAddress addr : netbios) {
+                                    if (addr.getNameType() == 0x20) {
+                                        netbiosName = addr.getHostName();
+                                        break;
+                                    }
+                                }
 
                                 Map<String, String> item = new HashMap<>();
                                 item.put("First Line", hostname);
