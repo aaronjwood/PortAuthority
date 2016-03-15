@@ -37,16 +37,19 @@ public class ScanPortsRunnable implements Runnable {
     @Override
     public void run() {
         for (int i = this.startPort; i <= this.stopPort; i++) {
-            try {
+            if (i % 75 == 0) {
                 this.delegate.processFinish(1);
-                Socket socket = new Socket();
-                socket.setPerformancePreferences(1, 0, 0);
+            }
+
+            HashMap<Integer, String> portData = new HashMap<>();
+            BufferedReader in;
+            String data = null;
+            Socket socket = new Socket();
+            socket.setPerformancePreferences(1, 0, 0);
+
+            try {
                 socket.setTcpNoDelay(true);
                 socket.connect(new InetSocketAddress(this.ip, i), 4000);
-
-                HashMap<Integer, String> portData = new HashMap<>();
-                BufferedReader in;
-                String data = null;
 
                 if (i == 22) {
                     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
