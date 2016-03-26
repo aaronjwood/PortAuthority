@@ -37,9 +37,7 @@ public class ScanPortsRunnable implements Runnable {
     @Override
     public void run() {
         for (int i = this.startPort; i <= this.stopPort; i++) {
-            if (i % 75 == 0) {
-                this.delegate.processFinish(1);
-            }
+            this.delegate.processFinish(1);
 
             HashMap<Integer, String> portData = new HashMap<>();
             BufferedReader in;
