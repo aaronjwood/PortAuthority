@@ -155,7 +155,11 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     public void processFinish(final int output) {
         this.scanProgress += output;
 
-        if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
+        if (this.scanProgress % 75 != 0) {
+            return;
+        }
+
+        if (scanProgressDialog != null) {
             scanProgressDialog.setProgress(scanProgress);
         }
     }
