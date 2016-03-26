@@ -153,17 +153,11 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      */
     @Override
     public void processFinish(final int output) {
-        this.scanProgress += output * 75;
+        this.scanProgress += output;
 
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
-                    scanProgressDialog.setProgress(scanProgress);
-                }
-            }
-        });
+        if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
+            scanProgressDialog.setProgress(scanProgress);
+        }
     }
 
     /**
@@ -266,26 +260,19 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         }
 
         final String finalItem = item;
+        ports.add(finalItem);
 
-        runOnUiThread(new Runnable() {
+        Collections.sort(ports, new Comparator<String>() {
 
             @Override
-            public void run() {
-                ports.add(finalItem);
+            public int compare(String lhs, String rhs) {
+                int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
+                int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
 
-                Collections.sort(ports, new Comparator<String>() {
-
-                    @Override
-                    public int compare(String lhs, String rhs) {
-                        int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
-                        int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
-
-                        return left - right;
-                    }
-                });
-
-                adapter.notifyDataSetChanged();
+                return left - right;
             }
         });
+
+        adapter.notifyDataSetChanged();
     }
 }
