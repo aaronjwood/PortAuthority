@@ -26,6 +26,9 @@ import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Discovery;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +36,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends Activity implements MainAsyncResponse {
 
@@ -59,6 +64,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
 
         this.setupDrawer();
@@ -94,6 +100,8 @@ public class MainActivity extends Activity implements MainAsyncResponse {
              */
             @Override
             public void onClick(View v) {
+                Answers.getInstance().logCustom(new CustomEvent("Host Discovery"));
+
                 if (!wifi.isConnected()) {
                     Toast.makeText(getApplicationContext(), "You're not connected to a WiFi network!", Toast.LENGTH_SHORT).show();
                     return;
