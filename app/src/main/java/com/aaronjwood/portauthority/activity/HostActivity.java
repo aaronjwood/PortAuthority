@@ -18,6 +18,8 @@ import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -129,6 +131,8 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
              */
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Answers.getInstance().logCustom(new CustomEvent("Open Port To Browser"));
+
                 String item = (String) portList.getItemAtPosition(position);
 
                 if (item.contains("80 -")) {
