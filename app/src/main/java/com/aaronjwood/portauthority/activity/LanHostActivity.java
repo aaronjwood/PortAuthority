@@ -15,6 +15,8 @@ import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 
 
 public class LanHostActivity extends HostActivity {
@@ -75,6 +77,8 @@ public class LanHostActivity extends HostActivity {
              */
             @Override
             public void onClick(View v) {
+                Answers.getInstance().logCustom(new CustomEvent("Well Known LAN Port Scan"));
+
                 if (!wifi.isConnected()) {
                     Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
                     return;
