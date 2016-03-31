@@ -112,6 +112,8 @@ public class LanHostActivity extends HostActivity {
              */
             @Override
             public void onClick(View v) {
+                Answers.getInstance().logCustom(new CustomEvent("LAN Port Range Scan"));
+
                 if (!wifi.isConnected()) {
                     Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
                     return;
