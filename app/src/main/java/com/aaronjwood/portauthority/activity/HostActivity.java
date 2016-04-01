@@ -159,15 +159,14 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
             return;
         }
 
-        if (scanProgressDialog != null) {
-            runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (scanProgressDialog != null) {
                     scanProgressDialog.setProgress(scanProgress);
                 }
-            });
-        }
+            }
+        });
     }
 
     /**
