@@ -27,8 +27,6 @@ import com.aaronjwood.portauthority.network.Discovery;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
-import com.crashlytics.android.Crashlytics;
-import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -61,7 +59,6 @@ public class MainActivity extends Activity implements MainAsyncResponse {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
 
         this.setupDrawer();
