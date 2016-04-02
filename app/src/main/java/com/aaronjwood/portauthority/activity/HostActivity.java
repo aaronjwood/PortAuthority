@@ -32,7 +32,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     protected Host host = new Host();
     protected ArrayAdapter<String> adapter;
     protected ListView portList;
-    protected ArrayList<String> ports = new ArrayList<>();
+    protected final ArrayList<String> ports = new ArrayList<>();
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
     protected int scanProgress;
@@ -230,20 +230,22 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
 
                         @Override
                         public void run() {
-                            ports.add(finalItem);
+                            synchronized (ports) {
+                                ports.add(finalItem);
 
-                            Collections.sort(ports, new Comparator<String>() {
+                                Collections.sort(ports, new Comparator<String>() {
 
-                                @Override
-                                public int compare(String lhs, String rhs) {
-                                    int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
-                                    int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
+                                    @Override
+                                    public int compare(String lhs, String rhs) {
+                                        int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
+                                        int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
 
-                                    return left - right;
-                                }
-                            });
+                                        return left - right;
+                                    }
+                                });
 
-                            adapter.notifyDataSetChanged();
+                                adapter.notifyDataSetChanged();
+                            }
                         }
                     });
 
@@ -274,20 +276,22 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
 
             @Override
             public void run() {
-                ports.add(finalItem);
+                synchronized (ports) {
+                    ports.add(finalItem);
 
-                Collections.sort(ports, new Comparator<String>() {
+                    Collections.sort(ports, new Comparator<String>() {
 
-                    @Override
-                    public int compare(String lhs, String rhs) {
-                        int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
-                        int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
+                        @Override
+                        public int compare(String lhs, String rhs) {
+                            int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
+                            int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
 
-                        return left - right;
-                    }
-                });
+                            return left - right;
+                        }
+                    });
 
-                adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
+                }
             }
         });
     }
