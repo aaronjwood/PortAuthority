@@ -32,7 +32,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     protected Host host = new Host();
     protected ArrayAdapter<String> adapter;
     protected ListView portList;
-    protected final ArrayList<String> ports = new ArrayList<>();
+    protected ArrayList<String> ports = new ArrayList<>();
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
     protected int scanProgress;
