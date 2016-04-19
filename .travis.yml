@@ -1,11 +1,12 @@
 language: android
+sudo: required
+dist: trusty
 android:
   components:
     - tools
-    - build-tools-23.0.2
+    - build-tools-23.0.3
     - android-23
     - extra-android-m2repository
-sudo: false
 cache:
   directories:
     - $HOME/.gradle/caches/2.11

@@ -94,7 +94,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
              */
             @Override
             public void onClick(View v) {
-                if (!wifi.isConnected()) {
+                if (!wifi.isConnectedWifi()) {
                     Toast.makeText(getApplicationContext(), "You're not connected to a WiFi network!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -107,7 +107,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                 scanProgressDialog.setMax(255);
                 scanProgressDialog.show();
 
-                discovery.scanHosts(wifi.getInternalIpAddress(), MainActivity.this);
+                discovery.scanHosts(wifi.getInternalWifiIpAddress(), MainActivity.this);
             }
         });
 
@@ -156,8 +156,8 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                         getNetworkInfo();
                     } else {
                         mHandler.removeCallbacksAndMessages(null);
-                        MainActivity.this.internalIp.setText(R.string.noWifi);
-                        externalIp.setText(R.string.noWifi);
+                        internalIp.setText(wifi.getInternalMobileIpAddress());
+                        wifi.getExternalIpAddress(MainActivity.this);
                         signalStrength.setText(R.string.noWifi);
                         ssid.setText(R.string.noWifi);
                         bssid.setText(R.string.noWifi);
@@ -224,7 +224,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                 mHandler.postDelayed(this, TIMER_INTERVAL);
             }
         }, 0);
-        this.internalIp.setText(this.wifi.getInternalIpAddress());
+        this.internalIp.setText(this.wifi.getInternalWifiIpAddress());
         this.wifi.getExternalIpAddress(this);
         this.ssid.setText(this.wifi.getSSID());
         this.bssid.setText(this.wifi.getBSSID());

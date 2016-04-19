@@ -10,6 +10,15 @@ import android.net.wifi.WifiManager;
 import com.aaronjwood.portauthority.async.GetExternalIpAsyncTask;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 import java.util.Locale;
 
 public class Wireless {
@@ -31,7 +40,56 @@ public class Wireless {
      * @return MAC address
      */
     public String getMacAddress() {
-        return this.getWifiInfo().getMacAddress();
+        String address = this.getWifiInfo().getMacAddress(); //Won't work on Android 6+ https://developer.android.com/about/versions/marshmallow/android-6.0-changes.html#behavior-hardware-id
+        if (!"02:00:00:00:00:00".equals(address)) {
+            return address;
+        }
+
+        //This should get us the device's MAC address on Android 6+
+        try {
+            NetworkInterface iface = NetworkInterface.getByName(this.getInterfaceName());
+            byte[] mac = iface.getHardwareAddress();
+            if (mac == null) {
+                return "Unknown";
+            }
+
+            StringBuilder buf = new StringBuilder();
+            for (byte aMac : mac) {
+                buf.append(String.format("%02x:", aMac));
+            }
+
+            if (buf.length() > 0) {
+                buf.deleteCharAt(buf.length() - 1);
+            }
+
+            return buf.toString();
+        } catch (SocketException ex) {
+            return "Unknown";
+        }
+    }
+
+    /**
+     * Gets the device's wireless interface name (wlan0, eth0, etc.)
+     *
+     * @return Wireless interface name
+     */
+    private String getInterfaceName() {
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("/proc/net/wireless")));
+
+            //Ignore the header
+            reader.readLine();
+            reader.readLine();
+
+            String line = reader.readLine();
+            reader.close();
+
+            String interfaceName = line.substring(0, line.indexOf(':'));
+
+            return interfaceName.trim();
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     /**
@@ -67,18 +125,46 @@ public class Wireless {
      * @return SSID
      */
     public String getSSID() {
-        return this.getWifiInfo().getSSID();
+        String ssid = this.getWifiInfo().getSSID();
+        if (ssid.startsWith("\"") && ssid.endsWith("\"")) {
+            ssid = ssid.substring(1, ssid.length() - 1);
+        }
+
+        return ssid;
     }
 
     /**
-     * Gets the device's internal (LAN) IP address
+     * Gets the device's internal LAN IP address associated with the WiFi network
      *
-     * @return LAN IP address
+     * @return Local WiFi network LAN IP address
      */
-    public String getInternalIpAddress() {
+    public String getInternalWifiIpAddress() {
         int ip = this.getWifiInfo().getIpAddress();
         return String.format(Locale.getDefault(), "%d.%d.%d.%d", (ip & 0xff),
                 (ip >> 8 & 0xff), (ip >> 16 & 0xff), (ip >> 24 & 0xff));
+    }
+
+    /**
+     * Gets the device's internal LAN IP address associated with the cellular network
+     *
+     * @return Local cellular network LAN IP address
+     */
+    public String getInternalMobileIpAddress() {
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
+                NetworkInterface intf = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
+                        return inetAddress.getHostAddress();
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+            return "Unknown";
+        }
+
+        return "Unknown";
     }
 
     /**
@@ -100,12 +186,21 @@ public class Wireless {
     }
 
     /**
-     * Determines if the device is connected to a network or not
+     * Determines if the device is connected to a WiFi network or not
      *
      * @return True if the device is connected, false if it isn't
      */
-    public boolean isConnected() {
-        return this.getNetworkInfo().isConnected();
+    public boolean isConnectedWifi() {
+        return this.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
+    }
+
+    /**
+     * Determines if the device is connected to a cellular mobile network or not
+     *
+     * @return True if the device is connected, false if it isn't
+     */
+    public boolean isConnectedMobile() {
+        return this.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected();
     }
 
     /**
@@ -140,8 +235,8 @@ public class Wireless {
      *
      * @return Network information
      */
-    private NetworkInfo getNetworkInfo() {
-        return this.getConnectivityManager().getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+    private NetworkInfo getNetworkInfo(int type) {
+        return this.getConnectivityManager().getNetworkInfo(type);
     }
 
 }
