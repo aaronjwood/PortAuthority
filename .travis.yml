@@ -7,7 +7,6 @@ android:
     - build-tools-23.0.3
     - android-23
     - extra-android-m2repository
-sudo: false
 cache:
   directories:
     - $HOME/.gradle/caches/2.11
