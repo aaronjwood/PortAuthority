@@ -160,12 +160,21 @@ public class Wireless {
     }
 
     /**
-     * Determines if the device is connected to a network or not
+     * Determines if the device is connected to a WiFi network or not
      *
      * @return True if the device is connected, false if it isn't
      */
-    public boolean isConnected() {
-        return this.getNetworkInfo().isConnected();
+    public boolean isConnectedWifi() {
+        return this.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
+    }
+
+    /**
+     * Determines if the device is connected to a cellular mobile network or not
+     *
+     * @return True if the device is connected, false if it isn't
+     */
+    public boolean isConnectedMobile() {
+        return this.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected();
     }
 
     /**
@@ -200,8 +209,8 @@ public class Wireless {
      *
      * @return Network information
      */
-    private NetworkInfo getNetworkInfo() {
-        return this.getConnectivityManager().getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+    private NetworkInfo getNetworkInfo(int type) {
+        return this.getConnectivityManager().getNetworkInfo(type);
     }
 
 }

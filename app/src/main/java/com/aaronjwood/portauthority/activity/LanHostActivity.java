@@ -75,7 +75,7 @@ public class LanHostActivity extends HostActivity {
              */
             @Override
             public void onClick(View v) {
-                if (!wifi.isConnected()) {
+                if (!wifi.isConnectedWifi()) {
                     Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -108,7 +108,7 @@ public class LanHostActivity extends HostActivity {
              */
             @Override
             public void onClick(View v) {
-                if (!wifi.isConnected()) {
+                if (!wifi.isConnectedWifi()) {
                     Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
                     return;
                 }
