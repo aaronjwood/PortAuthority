@@ -122,7 +122,12 @@ public class Wireless {
      * @return SSID
      */
     public String getSSID() {
-        return this.getWifiInfo().getSSID();
+        String ssid = this.getWifiInfo().getSSID();
+        if (ssid.startsWith("\"") && ssid.endsWith("\"")) {
+            ssid = ssid.substring(1, ssid.length() - 1);
+        }
+
+        return ssid;
     }
 
     /**
