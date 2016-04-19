@@ -18,8 +18,6 @@ import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -131,8 +129,6 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
              */
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Answers.getInstance().logCustom(new CustomEvent("Open Port To Browser"));
-
                 String item = (String) portList.getItemAtPosition(position);
 
                 if (item.contains("80 -")) {
@@ -163,15 +159,14 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
             return;
         }
 
-        if (scanProgressDialog != null) {
-            runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (scanProgressDialog != null) {
                     scanProgressDialog.setProgress(scanProgress);
                 }
-            });
-        }
+            }
+        });
     }
 
     /**
@@ -235,20 +230,22 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
 
                         @Override
                         public void run() {
-                            ports.add(finalItem);
+                            synchronized (ports) {
+                                ports.add(finalItem);
 
-                            Collections.sort(ports, new Comparator<String>() {
+                                Collections.sort(ports, new Comparator<String>() {
 
-                                @Override
-                                public int compare(String lhs, String rhs) {
-                                    int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
-                                    int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
+                                    @Override
+                                    public int compare(String lhs, String rhs) {
+                                        int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
+                                        int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
 
-                                    return left - right;
-                                }
-                            });
+                                        return left - right;
+                                    }
+                                });
 
-                            adapter.notifyDataSetChanged();
+                                adapter.notifyDataSetChanged();
+                            }
                         }
                     });
 
@@ -279,20 +276,22 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
 
             @Override
             public void run() {
-                ports.add(finalItem);
+                synchronized (ports) {
+                    ports.add(finalItem);
 
-                Collections.sort(ports, new Comparator<String>() {
+                    Collections.sort(ports, new Comparator<String>() {
 
-                    @Override
-                    public int compare(String lhs, String rhs) {
-                        int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
-                        int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
+                        @Override
+                        public int compare(String lhs, String rhs) {
+                            int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
+                            int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
 
-                        return left - right;
-                    }
-                });
+                            return left - right;
+                        }
+                    });
 
-                adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
+                }
             }
         });
     }
