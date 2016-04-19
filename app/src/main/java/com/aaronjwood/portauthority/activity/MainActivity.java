@@ -157,7 +157,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                     } else {
                         mHandler.removeCallbacksAndMessages(null);
                         MainActivity.this.internalIp.setText(R.string.noWifi);
-                        externalIp.setText(R.string.noWifi);
+                        wifi.getExternalIpAddress(MainActivity.this);
                         signalStrength.setText(R.string.noWifi);
                         ssid.setText(R.string.noWifi);
                         bssid.setText(R.string.noWifi);
