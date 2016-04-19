@@ -134,7 +134,7 @@ public class Wireless {
     }
 
     /**
-     * Gets the device's internal (LAN) IP address
+     * Gets the device's internal LAN IP address associated with the WiFi network
      *
      * @return Local WiFi network LAN IP address
      */
@@ -145,6 +145,7 @@ public class Wireless {
     }
 
     /**
+     * Gets the device's internal LAN IP address associated with the cellular network
      *
      * @return Local cellular network LAN IP address
      */
