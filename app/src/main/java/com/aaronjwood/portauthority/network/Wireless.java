@@ -10,6 +10,12 @@ import android.net.wifi.WifiManager;
 import com.aaronjwood.portauthority.async.GetExternalIpAsyncTask;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Locale;
 
 public class Wireless {
@@ -31,7 +37,56 @@ public class Wireless {
      * @return MAC address
      */
     public String getMacAddress() {
-        return this.getWifiInfo().getMacAddress();
+        String address = this.getWifiInfo().getMacAddress(); //Won't work on Android 6+ https://developer.android.com/about/versions/marshmallow/android-6.0-changes.html#behavior-hardware-id
+        if (!"02:00:00:00:00:00".equals(address)) {
+            return address;
+        }
+
+        //This should get us the device's MAC address on Android 6+
+        try {
+            NetworkInterface iface = NetworkInterface.getByName(this.getInterfaceName());
+            byte[] mac = iface.getHardwareAddress();
+            if (mac == null) {
+                return "Unknown";
+            }
+
+            StringBuilder buf = new StringBuilder();
+            for (byte aMac : mac) {
+                buf.append(String.format("%02x:", aMac));
+            }
+
+            if (buf.length() > 0) {
+                buf.deleteCharAt(buf.length() - 1);
+            }
+
+            return buf.toString();
+        } catch (SocketException ex) {
+            return "Unknown";
+        }
+    }
+
+    /**
+     * Gets the device's wireless interface name (wlan0, eth0, etc.)
+     *
+     * @return Wireless interface name
+     */
+    private String getInterfaceName() {
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("/proc/net/wireless")));
+
+            //Ignore the header
+            reader.readLine();
+            reader.readLine();
+
+            String line = reader.readLine();
+            reader.close();
+
+            String interfaceName = line.substring(0, line.indexOf(':'));
+
+            return interfaceName.trim();
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     /**
