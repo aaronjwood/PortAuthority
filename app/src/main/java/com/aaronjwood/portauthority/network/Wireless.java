@@ -10,14 +10,11 @@ import android.net.wifi.WifiManager;
 import com.aaronjwood.portauthority.async.GetExternalIpAsyncTask;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Locale;
 
@@ -47,7 +44,7 @@ public class Wireless {
 
         //This should get us the device's MAC address on Android 6+
         try {
-            NetworkInterface iface = NetworkInterface.getByName(this.getInterfaceName());
+            NetworkInterface iface = NetworkInterface.getByInetAddress(this.getInterfaceName());
             byte[] mac = iface.getHardwareAddress();
             if (mac == null) {
                 return "Unknown";
@@ -73,21 +70,11 @@ public class Wireless {
      *
      * @return Wireless interface name
      */
-    private String getInterfaceName() {
+    private InetAddress getInterfaceName() {
+        String ipAddress = this.getInternalWifiIpAddress();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("/proc/net/wireless")));
-
-            //Ignore the header
-            reader.readLine();
-            reader.readLine();
-
-            String line = reader.readLine();
-            reader.close();
-
-            String interfaceName = line.substring(0, line.indexOf(':'));
-
-            return interfaceName.trim();
-        } catch (IOException e) {
+            return InetAddress.getByName(ipAddress);
+        } catch (UnknownHostException e) {
             return null;
         }
     }
