@@ -10,13 +10,14 @@ import android.net.wifi.WifiManager;
 import com.aaronjwood.portauthority.async.GetExternalIpAsyncTask;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
+import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.ByteOrder;
 import java.util.Enumeration;
-import java.util.Locale;
 
 public class Wireless {
 
@@ -44,7 +45,11 @@ public class Wireless {
 
         //This should get us the device's MAC address on Android 6+
         try {
-            NetworkInterface iface = NetworkInterface.getByInetAddress(this.getInterfaceName());
+            NetworkInterface iface = NetworkInterface.getByInetAddress(this.getWifiInetAddress());
+            if (iface == null) {
+                return "Unknown";
+            }
+
             byte[] mac = iface.getHardwareAddress();
             if (mac == null) {
                 return "Unknown";
@@ -66,11 +71,11 @@ public class Wireless {
     }
 
     /**
-     * Gets the device's wireless interface name (wlan0, eth0, etc.)
+     * Gets the device's wireless address
      *
-     * @return Wireless interface name
+     * @return Wireless address
      */
-    private InetAddress getInterfaceName() {
+    private InetAddress getWifiInetAddress() {
         String ipAddress = this.getInternalWifiIpAddress();
         try {
             return InetAddress.getByName(ipAddress);
@@ -127,8 +132,17 @@ public class Wireless {
      */
     public String getInternalWifiIpAddress() {
         int ip = this.getWifiInfo().getIpAddress();
-        return String.format(Locale.getDefault(), "%d.%d.%d.%d", (ip & 0xff),
-                (ip >> 8 & 0xff), (ip >> 16 & 0xff), (ip >> 24 & 0xff));
+        if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
+            ip = Integer.reverseBytes(ip);
+        }
+
+        byte[] ipByteArray = BigInteger.valueOf(ip).toByteArray();
+
+        try {
+            return InetAddress.getByAddress(ipByteArray).getHostAddress();
+        } catch (UnknownHostException ex) {
+            return null;
+        }
     }
 
     /**
