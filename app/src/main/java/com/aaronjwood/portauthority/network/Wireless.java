@@ -44,7 +44,7 @@ public class Wireless {
 
         //This should get us the device's MAC address on Android 6+
         try {
-            NetworkInterface iface = NetworkInterface.getByInetAddress(this.getInterfaceName());
+            NetworkInterface iface = NetworkInterface.getByInetAddress(this.getWifiInetAddress());
             if (iface == null) {
                 return "Unknown";
             }
@@ -70,11 +70,11 @@ public class Wireless {
     }
 
     /**
-     * Gets the device's wireless interface name (wlan0, eth0, etc.)
+     * Gets the device's wireless address
      *
-     * @return Wireless interface name
+     * @return Wireless address
      */
-    private InetAddress getInterfaceName() {
+    private InetAddress getWifiInetAddress() {
         String ipAddress = this.getInternalWifiIpAddress();
         try {
             return InetAddress.getByName(ipAddress);
