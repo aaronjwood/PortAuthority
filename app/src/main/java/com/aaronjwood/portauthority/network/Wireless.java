@@ -192,7 +192,8 @@ public class Wireless {
      * @return True if the device is connected, false if it isn't
      */
     public boolean isConnectedWifi() {
-        return this.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
+        NetworkInfo info = this.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return info != null && info.isConnected();
     }
 
     /**
