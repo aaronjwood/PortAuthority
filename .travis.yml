@@ -1,6 +1,5 @@
 language: android
-sudo: required
-dist: precise
+sudo: false
 android:
   components:
     - tools
