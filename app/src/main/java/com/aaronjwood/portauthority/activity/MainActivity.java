@@ -191,6 +191,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         final ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
         ArrayList<String> items = new ArrayList<>();
         items.add("Scan External Host");
+        items.add("Settings");
         leftDrawerList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items));
 
         leftDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -204,10 +205,14 @@ public class MainActivity extends Activity implements MainAsyncResponse {
              */
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    Intent intent = new Intent(MainActivity.this, WanHostActivity.class);
-                    startActivity(intent);
-                    leftDrawer.closeDrawer(parent);
+                switch (position) {
+                    case 0:
+                        startActivity(new Intent(MainActivity.this, WanHostActivity.class));
+                        leftDrawer.closeDrawer(parent);
+                        break;
+                    case 1:
+                        startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
+                        break;
                 }
             }
         });
