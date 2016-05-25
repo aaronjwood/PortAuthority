@@ -16,4 +16,9 @@
         <item name="android:background">#000000</item>
         <item name="android:gravity">center</item>
     </style>
+
+    <style name="DeviceInfoItem">
+        <item name="android:padding">5dp</item>
+        <item name="android:background">@drawable/cell_shape</item>
+    </style>
 </resources>
