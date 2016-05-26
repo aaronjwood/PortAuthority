@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Discovery;
+import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.utils.UserPreference;
@@ -75,7 +76,11 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         this.wifi = new Wireless(this);
 
         TextView macAddress = (TextView) findViewById(R.id.deviceMacAddress);
-        macAddress.setText(this.wifi.getMacAddress());
+        String mac = this.wifi.getMacAddress();
+        macAddress.setText(mac);
+
+        TextView macVendor = (TextView) findViewById(R.id.deviceMacVendor);
+        macVendor.setText(new Host().getMacVendor(mac.replace(":", "").substring(0, 6), this));
 
         this.setupReceivers();
         this.setupHostDiscovery();
