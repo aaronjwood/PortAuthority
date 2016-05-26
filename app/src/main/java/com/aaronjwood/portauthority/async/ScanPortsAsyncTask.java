@@ -1,9 +1,11 @@
 package com.aaronjwood.portauthority.async;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.runnable.ScanPortsRunnable;
+import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -31,10 +33,11 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
      */
     @Override
     protected Void doInBackground(Object... params) {
-        final int NUM_THREADS = 500;
         String ip = (String) params[0];
         int startPort = (int) params[1];
         int stopPort = (int) params[2];
+        Context context = (Context) params[3];
+        final int NUM_THREADS = UserPreference.getPortScanThreads(context);
 
         try {
             InetAddress address = InetAddress.getByName(ip);
