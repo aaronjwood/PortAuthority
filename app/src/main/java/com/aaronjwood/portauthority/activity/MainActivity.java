@@ -26,6 +26,7 @@ import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Discovery;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
+import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -157,7 +158,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                     } else {
                         mHandler.removeCallbacksAndMessages(null);
                         internalIp.setText(wifi.getInternalMobileIpAddress());
-                        wifi.getExternalIpAddress(MainActivity.this);
+                        getExternalIp();
                         signalStrength.setText(R.string.noWifi);
                         ssid.setText(R.string.noWifi);
                         bssid.setText(R.string.noWifi);
@@ -230,9 +231,29 @@ public class MainActivity extends Activity implements MainAsyncResponse {
             }
         }, 0);
         this.internalIp.setText(this.wifi.getInternalWifiIpAddress());
-        this.wifi.getExternalIpAddress(this);
+        this.getExternalIp();
         this.ssid.setText(this.wifi.getSSID());
         this.bssid.setText(this.wifi.getBSSID());
+    }
+
+    /**
+     * Wrapper for getting the external IP address
+     * We can control whether or not to do this based on the user's preference
+     * If the user doesn't want this then hide the appropriate views
+     */
+    private void getExternalIp() {
+        TextView label = (TextView) findViewById(R.id.externalIpAddressLabel);
+        TextView ip = (TextView) findViewById(R.id.externalIpAddress);
+
+        if (UserPreference.getFetchExternalIp(this)) {
+            label.setVisibility(View.VISIBLE);
+            ip.setVisibility(View.VISIBLE);
+
+            this.wifi.getExternalIpAddress(this);
+        } else {
+            label.setVisibility(View.GONE);
+            ip.setVisibility(View.GONE);
+        }
     }
 
     /**
