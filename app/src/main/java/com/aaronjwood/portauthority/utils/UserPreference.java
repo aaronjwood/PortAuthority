@@ -15,6 +15,7 @@ public class UserPreference {
     private static final String KEY_HOST_ADDRESS = "HOST_ADDRESS_STRING";
     private static final String KEY_PORT_RANGE_START = "KEY_PORT_RANGE_MIN_INT";
     private static final String KEY_PORT_RANGE_STOP = "KEY_PORT_RANGE_HIGH_INT";
+    private static final String PORT_SCAN_THREADS = "portScanThreads";
 
     /**
      * Saves the last used host address for later use.
@@ -71,5 +72,16 @@ public class UserPreference {
     public static int getPortRangeHigh(@NonNull Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getInt(KEY_PORT_RANGE_STOP, Constants.MAX_PORT_VALUE);
+    }
+
+    /**
+     * Gets the number of threads used for scanning ports
+     *
+     * @param context
+     * @return Number of threads for scanning ports
+     */
+    public static int getPortScanThreads(@NonNull Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return Integer.parseInt(preferences.getString(PORT_SCAN_THREADS, "500"));
     }
 }
