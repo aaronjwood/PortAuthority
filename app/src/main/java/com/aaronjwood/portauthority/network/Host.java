@@ -18,7 +18,7 @@ public class Host {
      * @param delegate  Delegate to be called when the port scan has finished
      */
     public void scanPorts(String ip, int startPort, int stopPort, HostAsyncResponse delegate) {
-        new ScanPortsAsyncTask(delegate).execute(ip, startPort, stopPort, delegate);
+        new ScanPortsAsyncTask(delegate).execute(ip, startPort, stopPort);
     }
 
     /**

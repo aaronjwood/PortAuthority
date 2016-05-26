@@ -36,7 +36,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
         String ip = (String) params[0];
         int startPort = (int) params[1];
         int stopPort = (int) params[2];
-        Context context = (Context) params[3];
+        Context context = (Context) this.delegate;
         final int NUM_THREADS = UserPreference.getPortScanThreads(context);
 
         try {
