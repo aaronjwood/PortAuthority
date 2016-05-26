@@ -208,12 +208,12 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                 switch (position) {
                     case 0:
                         startActivity(new Intent(MainActivity.this, WanHostActivity.class));
-                        leftDrawer.closeDrawer(parent);
                         break;
                     case 1:
                         startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                         break;
                 }
+                leftDrawer.closeDrawer(parent);
             }
         });
     }
