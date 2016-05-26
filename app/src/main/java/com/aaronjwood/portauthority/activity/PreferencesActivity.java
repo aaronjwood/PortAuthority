@@ -8,6 +8,10 @@ import com.aaronjwood.portauthority.R;
 
 public class PreferencesActivity extends PreferenceActivity {
 
+    /**
+     * Activity created
+     * @param savedInstanceState Data from a saved state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,6 +22,11 @@ public class PreferencesActivity extends PreferenceActivity {
     }
 
     public static class MyPreferenceFragment extends PreferenceFragment {
+
+        /**
+         * Fragment created
+         * @param savedInstanceState Data from a saved state
+         */
         @Override
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
