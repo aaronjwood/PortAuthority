@@ -209,22 +209,22 @@
             android:id="@+id/deviceMacVendorLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/macVendor"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:layout_toLeftOf="@+id/deviceMacVendor"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/ssidLabel"
+            android:layout_toLeftOf="@+id/deviceMacVendor"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text="@string/macVendor"
             android:textColor="@color/white" />
 
         <TextView
             android:id="@+id/deviceMacVendor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
             android:layout_below="@+id/ssidLabel"
             android:layout_toLeftOf="@id/textView"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
             android:textColor="@color/icsblue" />
 
         <View
