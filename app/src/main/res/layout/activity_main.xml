@@ -35,177 +35,124 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/icsblue" />
 
-        <TextView
-            android:id="@+id/deviceMacAddressLabel"
-            android:layout_width="0dp"
+        <TableLayout
+            android:id="@+id/deviceInfo"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_below="@id/deviceInfoLabel"
-            android:layout_toLeftOf="@+id/deviceMacAddress"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:text="@string/macAddress"
-            android:textColor="@color/white" />
+            android:stretchColumns="1">
 
-        <TextView
-            android:id="@+id/deviceMacAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/deviceInfoLabel"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:textColor="@color/icsblue" />
+            <TableRow>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/deviceMacAddressLabel"
-            android:background="@color/icsblue" />
+                <TextView
+                    android:id="@+id/deviceMacAddressLabel"
+                    style="@style/DeviceInfoItem"
+                    android:text="@string/macAddress"
+                    android:textColor="@color/white" />
 
-        <TextView
-            android:id="@+id/internalIpAddressLabel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/deviceMacAddressLabel"
-            android:layout_toLeftOf="@+id/internalIpAddress"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:text="@string/internalIpLabel"
-            android:textColor="@color/white" />
+                <TextView
+                    android:id="@+id/deviceMacAddress"
+                    style="@style/DeviceInfoItem"
+                    android:gravity="end"
+                    android:textColor="@color/icsblue" />
+            </TableRow>
 
-        <TextView
-            android:id="@+id/internalIpAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/deviceMacAddress"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:textColor="@color/icsblue" />
+            <TableRow>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/internalIpAddress"
-            android:background="@color/icsblue" />
+                <TextView
+                    android:id="@+id/deviceMacVendorLabel"
+                    style="@style/DeviceInfoItem"
+                    android:text="@string/macVendor"
+                    android:textColor="@color/white" />
 
-        <TextView
-            android:id="@+id/externalIpAddressLabel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/internalIpAddressLabel"
-            android:layout_toLeftOf="@+id/externalIpAddress"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:text="@string/externalIpLabel"
-            android:textColor="@color/white" />
+                <TextView
+                    android:id="@+id/deviceMacVendor"
+                    style="@style/DeviceInfoItem"
+                    android:gravity="end"
+                    android:textColor="@color/icsblue" />
+            </TableRow>
 
-        <TextView
-            android:id="@+id/externalIpAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/internalIpAddress"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:text="@string/fetching"
-            android:textColor="@color/icsblue" />
+            <TableRow>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/externalIpAddress"
-            android:background="@color/icsblue" />
+                <TextView
+                    android:id="@+id/internalIpAddressLabel"
+                    style="@style/DeviceInfoItem"
+                    android:text="@string/internalIpLabel"
+                    android:textColor="@color/white" />
 
-        <TextView
-            android:id="@+id/signalStrengthLabel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/externalIpAddressLabel"
-            android:layout_toLeftOf="@+id/signalStrength"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:text="@string/signalLabel"
-            android:textColor="@color/white" />
+                <TextView
+                    android:id="@+id/internalIpAddress"
+                    style="@style/DeviceInfoItem"
+                    android:gravity="end"
+                    android:textColor="@color/icsblue" />
+            </TableRow>
 
-        <TextView
-            android:id="@+id/signalStrength"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/externalIpAddress"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:textColor="@color/icsblue" />
+            <TableRow>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/signalStrength"
-            android:background="@color/icsblue" />
+                <TextView
+                    android:id="@+id/externalIpAddressLabel"
+                    style="@style/DeviceInfoItem"
+                    android:text="@string/externalIpLabel"
+                    android:textColor="@color/white" />
 
-        <TextView
-            android:id="@+id/ssidLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/signalStrengthLabel"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:text="@string/ssid"
-            android:textColor="@color/white" />
+                <TextView
+                    android:id="@+id/externalIpAddress"
+                    style="@style/DeviceInfoItem"
+                    android:gravity="end"
+                    android:text="@string/fetching"
+                    android:textColor="@color/icsblue" />
+            </TableRow>
 
-        <TextView
-            android:id="@+id/ssid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/signalStrength"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:textColor="@color/icsblue" />
+            <TableRow>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/ssid"
-            android:background="@color/icsblue" />
+                <TextView
+                    android:id="@+id/signalStrengthLabel"
+                    style="@style/DeviceInfoItem"
+                    android:text="@string/signalLabel"
+                    android:textColor="@color/white" />
 
-        <TextView
-            android:id="@+id/bssidLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/ssidLabel"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:text="@string/bssid"
-            android:textColor="@color/white" />
+                <TextView
+                    android:id="@+id/signalStrength"
+                    style="@style/DeviceInfoItem"
+                    android:gravity="end"
+                    android:textColor="@color/icsblue" />
+            </TableRow>
 
-        <TextView
-            android:id="@+id/bssid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/ssid"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:textColor="@color/icsblue" />
+            <TableRow>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/bssid"
-            android:background="@color/icsblue" />
+                <TextView
+                    android:id="@+id/ssidLabel"
+                    style="@style/DeviceInfoItem"
+                    android:text="@string/ssid"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/ssid"
+                    style="@style/DeviceInfoItem"
+                    android:gravity="end"
+                    android:textColor="@color/icsblue" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/bssidLabel"
+                    style="@style/DeviceInfoItem"
+                    android:text="@string/bssid"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/bssid"
+                    style="@style/DeviceInfoItem"
+                    android:gravity="end"
+                    android:textColor="@color/icsblue" />
+            </TableRow>
+        </TableLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/bssidLabel"
+            android:layout_below="@id/deviceInfo"
             android:orientation="vertical">
 
             <ListView

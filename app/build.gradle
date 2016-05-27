@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 23
-        versionCode 29
-        versionName "1.6.11"
+        versionCode 30
+        versionName "1.7.0"
     }
 
     compileOptions {
@@ -44,7 +44,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:23.3.0'
-    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'jcifs:jcifs:1.3.17'
 }

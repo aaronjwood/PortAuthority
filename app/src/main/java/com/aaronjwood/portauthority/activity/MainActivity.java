@@ -24,8 +24,10 @@ import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Discovery;
+import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
+import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,7 +76,11 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         this.wifi = new Wireless(this);
 
         TextView macAddress = (TextView) findViewById(R.id.deviceMacAddress);
-        macAddress.setText(this.wifi.getMacAddress());
+        String mac = this.wifi.getMacAddress();
+        macAddress.setText(mac);
+
+        TextView macVendor = (TextView) findViewById(R.id.deviceMacVendor);
+        macVendor.setText(new Host().getMacVendor(mac.replace(":", "").substring(0, 6), this));
 
         this.setupReceivers();
         this.setupHostDiscovery();
@@ -157,7 +163,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                     } else {
                         mHandler.removeCallbacksAndMessages(null);
                         internalIp.setText(wifi.getInternalMobileIpAddress());
-                        wifi.getExternalIpAddress(MainActivity.this);
+                        getExternalIp();
                         signalStrength.setText(R.string.noWifi);
                         ssid.setText(R.string.noWifi);
                         bssid.setText(R.string.noWifi);
@@ -191,6 +197,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         final ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
         ArrayList<String> items = new ArrayList<>();
         items.add("Scan External Host");
+        items.add("Settings");
         leftDrawerList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items));
 
         leftDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -204,11 +211,15 @@ public class MainActivity extends Activity implements MainAsyncResponse {
              */
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    Intent intent = new Intent(MainActivity.this, WanHostActivity.class);
-                    startActivity(intent);
-                    leftDrawer.closeDrawer(parent);
+                switch (position) {
+                    case 0:
+                        startActivity(new Intent(MainActivity.this, WanHostActivity.class));
+                        break;
+                    case 1:
+                        startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
+                        break;
                 }
+                leftDrawer.closeDrawer(parent);
             }
         });
     }
@@ -225,9 +236,29 @@ public class MainActivity extends Activity implements MainAsyncResponse {
             }
         }, 0);
         this.internalIp.setText(this.wifi.getInternalWifiIpAddress());
-        this.wifi.getExternalIpAddress(this);
+        this.getExternalIp();
         this.ssid.setText(this.wifi.getSSID());
         this.bssid.setText(this.wifi.getBSSID());
+    }
+
+    /**
+     * Wrapper for getting the external IP address
+     * We can control whether or not to do this based on the user's preference
+     * If the user doesn't want this then hide the appropriate views
+     */
+    private void getExternalIp() {
+        TextView label = (TextView) findViewById(R.id.externalIpAddressLabel);
+        TextView ip = (TextView) findViewById(R.id.externalIpAddress);
+
+        if (UserPreference.getFetchExternalIp(this)) {
+            label.setVisibility(View.VISIBLE);
+            ip.setVisibility(View.VISIBLE);
+
+            this.wifi.getExternalIpAddress(this);
+        } else {
+            label.setVisibility(View.GONE);
+            ip.setVisibility(View.GONE);
+        }
     }
 
     /**

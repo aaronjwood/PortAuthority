@@ -249,12 +249,11 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                         }
                     });
 
-                    reader.close();
-
                     //Make sure to return so that we don't fall through and add the port again!
                     return;
                 }
             }
+            reader.close();
         } catch (IOException e) {
             Toast.makeText(getApplicationContext(), "Error reading from port data file!", Toast.LENGTH_SHORT).show();
             return;

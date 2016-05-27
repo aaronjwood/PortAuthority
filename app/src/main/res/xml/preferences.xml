@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Port Scans">
+        <ListPreference
+            android:defaultValue="500"
+            android:dialogTitle="Number of threads"
+            android:entries="@array/threads"
+            android:entryValues="@array/threads"
+            android:key="portScanThreads"
+            android:summary="Control how many threads are used to scan ports"
+            android:title="Threads" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Privacy">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="externalIp"
+            android:summary="Determines whether or not the application should get your external IP using a third party service"
+            android:title="Fetch device's external IP" />
+    </PreferenceCategory>
+</PreferenceScreen>
