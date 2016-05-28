@@ -23,7 +23,7 @@
     </style>
 
     <style name="PreferencesTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:textColorPrimary">@color/icsblue</item>
+        <item name="android:textColor">@color/icsblue</item>
         <item name="android:textColorSecondary">@color/white</item>
         <item name="android:windowBackground">@color/black</item>
     </style>
