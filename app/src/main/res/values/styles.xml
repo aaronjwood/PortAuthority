@@ -22,8 +22,9 @@
         <item name="android:background">@drawable/cell_shape</item>
     </style>
 
-    <style name="PreferencesTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="PreferencesTheme">
         <item name="android:textColor">@color/icsblue</item>
+        <item name="android:windowNoTitle">true</item>
         <item name="android:textColorSecondary">@color/white</item>
         <item name="android:windowBackground">@color/black</item>
     </style>
