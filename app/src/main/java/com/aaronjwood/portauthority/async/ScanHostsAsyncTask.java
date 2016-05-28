@@ -79,10 +79,11 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
      */
     @Override
     protected final void onProgressUpdate(final Void... params) {
+        BufferedReader reader = null;
         try {
             final List<Map<String, String>> result = new ArrayList<>();
             ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
-            BufferedReader reader = new BufferedReader(new FileReader("/proc/net/arp"));
+            reader = new BufferedReader(new FileReader("/proc/net/arp"));
             reader.readLine();
             String line;
 
@@ -143,10 +144,15 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
                     });
                 }
             }
-
-            reader.close();
             executor.shutdown();
         } catch (IOException ignored) {
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException ignored) {
+            }
         }
     }
 }

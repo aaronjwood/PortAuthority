@@ -36,17 +36,26 @@ public class Database {
      * @param dbName Name of the database to be copied
      */
     private void copyDatabase(String dbName) {
+        InputStream input = null;
+        OutputStream output = null;
         try {
-            InputStream input = this.activity.getAssets().open(dbName);
-            OutputStream output = new FileOutputStream(this.activity.getApplicationInfo().dataDir + "/" + dbName);
+            input = this.activity.getAssets().open(dbName);
+            output = new FileOutputStream(this.activity.getApplicationInfo().dataDir + "/" + dbName);
             byte[] buffer = new byte[1024];
             int length;
             while ((length = input.read(buffer)) > 0) {
                 output.write(buffer, 0, length);
             }
-            output.close();
-            input.close();
+
         } catch (IOException ignored) {
+        } finally {
+            try {
+                if (output != null && input != null) {
+                    output.close();
+                    input.close();
+                }
+            } catch (IOException ignored) {
+            }
         }
     }
 

@@ -253,10 +253,15 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                     return;
                 }
             }
-            reader.close();
         } catch (IOException e) {
             Toast.makeText(getApplicationContext(), "Error reading from port data file!", Toast.LENGTH_SHORT).show();
             return;
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                Toast.makeText(getApplicationContext(), "Failed to clean up port data file resource", Toast.LENGTH_SHORT).show();
+            }
         }
 
         //If a port couldn't be found in the port data file then make sure it's still caught and added to the list of open ports
