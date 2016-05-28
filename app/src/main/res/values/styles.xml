@@ -5,7 +5,7 @@
         <item name="colorPrimary">@color/icsblue</item>
         <item name="colorPrimaryDark">@color/black</item>
         <item name="colorAccent">@color/icsblue</item>
-        <item name="android:textColorSecondary">@color/icsblue</item>
+        <item name="android:textColorSecondary">@color/white</item>
     </style>
 
     <style name="DialogTheme" parent="Theme.AppCompat.Dialog">
