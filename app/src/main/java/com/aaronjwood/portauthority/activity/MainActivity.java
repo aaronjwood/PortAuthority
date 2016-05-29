@@ -202,7 +202,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         });
 
         //Fill the left drawer
-        final ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
+        ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
         ArrayList<String> items = new ArrayList<>();
         items.add("Scan External Host");
         items.add("Settings");
