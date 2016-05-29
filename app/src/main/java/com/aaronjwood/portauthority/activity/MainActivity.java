@@ -63,18 +63,18 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.wifi = new Wireless(this);
-
-        this.setupDrawer();
-        this.setupReceivers();
-        this.setupHostDiscovery();
-
         this.internalIp = (TextView) findViewById(R.id.internalIpAddress);
         this.externalIp = (TextView) findViewById(R.id.externalIpAddress);
         this.signalStrength = (TextView) findViewById(R.id.signalStrength);
         this.ssid = (TextView) findViewById(R.id.ssid);
         this.bssid = (TextView) findViewById(R.id.bssid);
         this.hostList = (ListView) findViewById(R.id.hostList);
+
+        this.wifi = new Wireless(this);
+
+        this.setupDrawer();
+        this.setupReceivers();
+        this.setupHostDiscovery();
     }
 
     /**
