@@ -74,6 +74,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
         this.setupDrawer();
         this.setupReceivers();
+        this.setupMac();
         this.setupHostDiscovery();
     }
 
