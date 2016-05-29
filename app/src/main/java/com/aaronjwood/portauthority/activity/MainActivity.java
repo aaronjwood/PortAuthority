@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -189,7 +190,8 @@ public class MainActivity extends Activity implements MainAsyncResponse {
      */
     private void setupDrawer() {
         final DrawerLayout leftDrawer = (DrawerLayout) findViewById(R.id.mainLeftDrawer);
-        findViewById(R.id.mainLeftDrawerIcon).setOnClickListener(new View.OnClickListener() {
+        ImageView drawerIcon = (ImageView) findViewById(R.id.mainLeftDrawerIcon);
+        drawerIcon.setOnClickListener(new View.OnClickListener() {
 
             /**
              * Open the left drawer when the users taps on the icon
