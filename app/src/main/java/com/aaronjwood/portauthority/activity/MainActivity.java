@@ -75,15 +75,24 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
         this.wifi = new Wireless(this);
 
+        this.setupReceivers();
+        this.setupHostDiscovery();
+    }
+
+    /**
+     * Sets up the device's MAC address and vendor
+     */
+    private void setupMac() {
+        //Set MAC address
         TextView macAddress = (TextView) findViewById(R.id.deviceMacAddress);
         String mac = this.wifi.getMacAddress();
         macAddress.setText(mac);
 
-        TextView macVendor = (TextView) findViewById(R.id.deviceMacVendor);
-        macVendor.setText(new Host().getMacVendor(mac.replace(":", "").substring(0, 6), this));
-
-        this.setupReceivers();
-        this.setupHostDiscovery();
+        //Set the device's vendor
+        if (mac != null) {
+            TextView macVendor = (TextView) findViewById(R.id.deviceMacVendor);
+            macVendor.setText(new Host().getMacVendor(mac.replace(":", "").substring(0, 6), this));
+        }
     }
 
     /**
