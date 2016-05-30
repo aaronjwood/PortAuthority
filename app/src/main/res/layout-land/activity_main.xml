@@ -268,5 +268,6 @@
         android:background="#111"
         android:choiceMode="singleChoice"
         android:divider="@color/icsblue"
-        android:dividerHeight="1dp" />
+        android:dividerHeight="1dp"
+        android:entries="@array/drawer" />
 </android.support.v4.widget.DrawerLayout>

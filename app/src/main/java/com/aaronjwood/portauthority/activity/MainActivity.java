@@ -14,7 +14,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -203,13 +202,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
             }
         });
 
-        //Fill the left drawer
         ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
-        ArrayList<String> items = new ArrayList<>();
-        items.add("Scan External Host");
-        items.add("Settings");
-        leftDrawerList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items));
-
         leftDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             /**
