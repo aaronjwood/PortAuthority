@@ -14,8 +14,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -63,27 +63,35 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.setupDrawer();
-
-        this.hostList = (ListView) findViewById(R.id.hostList);
         this.internalIp = (TextView) findViewById(R.id.internalIpAddress);
         this.externalIp = (TextView) findViewById(R.id.externalIpAddress);
         this.signalStrength = (TextView) findViewById(R.id.signalStrength);
-
         this.ssid = (TextView) findViewById(R.id.ssid);
         this.bssid = (TextView) findViewById(R.id.bssid);
+        this.hostList = (ListView) findViewById(R.id.hostList);
 
         this.wifi = new Wireless(this);
 
+        this.setupDrawer();
+        this.setupReceivers();
+        this.setupMac();
+        this.setupHostDiscovery();
+    }
+
+    /**
+     * Sets up the device's MAC address and vendor
+     */
+    private void setupMac() {
+        //Set MAC address
         TextView macAddress = (TextView) findViewById(R.id.deviceMacAddress);
         String mac = this.wifi.getMacAddress();
         macAddress.setText(mac);
 
-        TextView macVendor = (TextView) findViewById(R.id.deviceMacVendor);
-        macVendor.setText(new Host().getMacVendor(mac.replace(":", "").substring(0, 6), this));
-
-        this.setupReceivers();
-        this.setupHostDiscovery();
+        //Set the device's vendor
+        if (mac != null) {
+            TextView macVendor = (TextView) findViewById(R.id.deviceMacVendor);
+            macVendor.setText(new Host().getMacVendor(mac.replace(":", "").substring(0, 6), this));
+        }
     }
 
     /**
@@ -181,7 +189,8 @@ public class MainActivity extends Activity implements MainAsyncResponse {
      */
     private void setupDrawer() {
         final DrawerLayout leftDrawer = (DrawerLayout) findViewById(R.id.mainLeftDrawer);
-        findViewById(R.id.mainLeftDrawerIcon).setOnClickListener(new View.OnClickListener() {
+        ImageView drawerIcon = (ImageView) findViewById(R.id.mainLeftDrawerIcon);
+        drawerIcon.setOnClickListener(new View.OnClickListener() {
 
             /**
              * Open the left drawer when the users taps on the icon
@@ -193,13 +202,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
             }
         });
 
-        //Fill the left drawer
-        final ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
-        ArrayList<String> items = new ArrayList<>();
-        items.add("Scan External Host");
-        items.add("Settings");
-        leftDrawerList.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items));
-
+        ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
         leftDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             /**

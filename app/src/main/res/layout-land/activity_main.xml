@@ -265,8 +265,9 @@
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#111"
+        android:background="@color/black"
         android:choiceMode="singleChoice"
         android:divider="@color/icsblue"
-        android:dividerHeight="1dp" />
+        android:dividerHeight="1dp"
+        android:entries="@array/drawer" />
 </android.support.v4.widget.DrawerLayout>

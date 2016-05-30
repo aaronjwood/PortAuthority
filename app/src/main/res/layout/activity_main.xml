@@ -47,6 +47,7 @@
                 <TextView
                     android:id="@+id/deviceMacAddressLabel"
                     style="@style/DeviceInfoItem"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:text="@string/macAddress"
                     android:textColor="@color/white" />
@@ -54,6 +55,7 @@
                 <TextView
                     android:id="@+id/deviceMacAddress"
                     style="@style/DeviceInfoItem"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end"
                     android:textColor="@color/icsblue" />
@@ -64,6 +66,7 @@
                 <TextView
                     android:id="@+id/deviceMacVendorLabel"
                     style="@style/DeviceInfoItem"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:text="@string/macVendor"
                     android:textColor="@color/white" />
@@ -71,6 +74,7 @@
                 <TextView
                     android:id="@+id/deviceMacVendor"
                     style="@style/DeviceInfoItem"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end"
                     android:textColor="@color/icsblue" />
@@ -81,6 +85,7 @@
                 <TextView
                     android:id="@+id/internalIpAddressLabel"
                     style="@style/DeviceInfoItem"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:text="@string/internalIpLabel"
                     android:textColor="@color/white" />
@@ -88,6 +93,7 @@
                 <TextView
                     android:id="@+id/internalIpAddress"
                     style="@style/DeviceInfoItem"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end"
                     android:textColor="@color/icsblue" />
@@ -98,6 +104,7 @@
                 <TextView
                     android:id="@+id/externalIpAddressLabel"
                     style="@style/DeviceInfoItem"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:text="@string/externalIpLabel"
                     android:textColor="@color/white" />
@@ -105,6 +112,7 @@
                 <TextView
                     android:id="@+id/externalIpAddress"
                     style="@style/DeviceInfoItem"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end"
                     android:text="@string/fetching"
@@ -116,6 +124,7 @@
                 <TextView
                     android:id="@+id/signalStrengthLabel"
                     style="@style/DeviceInfoItem"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:text="@string/signalLabel"
                     android:textColor="@color/white" />
@@ -123,6 +132,7 @@
                 <TextView
                     android:id="@+id/signalStrength"
                     style="@style/DeviceInfoItem"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end"
                     android:textColor="@color/icsblue" />
@@ -133,6 +143,7 @@
                 <TextView
                     android:id="@+id/ssidLabel"
                     style="@style/DeviceInfoItem"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:text="@string/ssid"
                     android:textColor="@color/white" />
@@ -140,6 +151,7 @@
                 <TextView
                     android:id="@+id/ssid"
                     style="@style/DeviceInfoItem"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end"
                     android:textColor="@color/icsblue" />
@@ -150,6 +162,7 @@
                 <TextView
                     android:id="@+id/bssidLabel"
                     style="@style/DeviceInfoItem"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:text="@string/bssid"
                     android:textColor="@color/white" />
@@ -157,6 +170,7 @@
                 <TextView
                     android:id="@+id/bssid"
                     style="@style/DeviceInfoItem"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end"
                     android:textColor="@color/icsblue" />
@@ -199,5 +213,6 @@
         android:background="@color/black"
         android:choiceMode="singleChoice"
         android:divider="@color/icsblue"
-        android:dividerHeight="1dp" />
+        android:dividerHeight="1dp"
+        android:entries="@array/drawer" />
 </android.support.v4.widget.DrawerLayout>
