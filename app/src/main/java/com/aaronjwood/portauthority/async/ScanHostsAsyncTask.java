@@ -10,9 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -81,7 +79,6 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
     protected final void onProgressUpdate(final Void... params) {
         BufferedReader reader = null;
         try {
-            final List<Map<String, String>> result = new ArrayList<>();
             ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
             reader = new BufferedReader(new FileReader("/proc/net/arp"));
             reader.readLine();
@@ -98,50 +95,33 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            String hostname = null;
+                            try {
+                                NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
+                                for (NbtAddress addr : netbios) {
+                                    if (addr.getNameType() == 0x20) {
+                                        Map<String, String> item = new HashMap<>();
+                                        item.put("First Line", addr.getHostName());
+                                        item.put("Second Line", ip + " [" + macAddress + "]");
+                                        delegate.processFinish(item);
+                                        break;
+                                    }
+                                }
+                            } catch (UnknownHostException ignored) {
+                            }
+                        }
+                    });
 
+                    executor.execute(new Runnable() {
+                        @Override
+                        public void run() {
                             try {
                                 InetAddress add = InetAddress.getByName(ip);
-                                hostname = add.getCanonicalHostName();
+                                String hostname = add.getCanonicalHostName();
 
                                 Map<String, String> entry = new HashMap<>();
                                 entry.put("First Line", hostname);
                                 entry.put("Second Line", ip + " [" + macAddress + "]");
-                                synchronized (result) {
-                                    result.add(entry);
-                                    delegate.processFinish(result);
-                                }
-                            } catch (UnknownHostException ignored) {
-                            }
-
-                            try {
-                                NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
-                                String netbiosName = null;
-                                for (NbtAddress addr : netbios) {
-                                    if (addr.getNameType() == 0x20) {
-                                        netbiosName = addr.getHostName();
-                                        break;
-                                    }
-                                }
-
-                                if(netbiosName == null) {
-                                    return;
-                                }
-
-                                Map<String, String> item = new HashMap<>();
-                                item.put("First Line", hostname);
-                                item.put("Second Line", ip + " [" + macAddress + "]");
-
-                                synchronized (result) {
-                                    if (result.contains(item)) {
-                                        Map<String, String> newItem = new HashMap<>();
-                                        newItem.put("First Line", netbiosName);
-                                        newItem.put("Second Line", ip + " [" + macAddress + "]");
-
-                                        result.set(result.indexOf(item), newItem);
-                                        delegate.processFinish(result);
-                                    }
-                                }
+                                delegate.processFinish(entry);
                             } catch (UnknownHostException ignored) {
                             }
                         }
