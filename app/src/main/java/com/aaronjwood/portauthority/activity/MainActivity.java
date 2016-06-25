@@ -138,6 +138,9 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                     return;
                 }
 
+                hosts.clear();
+                hostsAdapter.notifyDataSetChanged();
+
                 scanProgressDialog = new ProgressDialog(MainActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning For Hosts");
