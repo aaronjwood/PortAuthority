@@ -20,7 +20,8 @@ import jcifs.netbios.NbtAddress;
 
 public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
     private MainAsyncResponse delegate;
-    private final int NUM_THREADS = 8;
+    private final int SCAN_THREADS = 8;
+    private final int HOST_THREADS = 255;
 
     /**
      * Constructor to set the delegate
@@ -41,13 +42,13 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
         String ip = params[0];
         String parts[] = ip.split("\\.");
 
-        ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
+        ExecutorService executor = Executors.newFixedThreadPool(SCAN_THREADS);
 
-        int chunk = (int) Math.ceil((double) 255 / NUM_THREADS);
+        int chunk = (int) Math.ceil((double) 255 / SCAN_THREADS);
         int previousStart = 1;
         int previousStop = chunk;
 
-        for (int i = 0; i < NUM_THREADS; i++) {
+        for (int i = 0; i < SCAN_THREADS; i++) {
             if (previousStop >= 255) {
                 previousStop = 255;
                 executor.execute(new ScanHostsRunnable(parts, previousStart, previousStop, delegate));
@@ -79,7 +80,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
     protected final void onProgressUpdate(final Void... params) {
         BufferedReader reader = null;
         try {
-            ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
+            ExecutorService executor = Executors.newFixedThreadPool(HOST_THREADS);
             reader = new BufferedReader(new FileReader("/proc/net/arp"));
             reader.readLine();
             String line;
@@ -95,33 +96,42 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
+                            Map<String, String> item = new HashMap<String, String>() {
+                                @Override
+                                public boolean equals(Object object) {
+                                    if (this == object) {
+                                        return true;
+                                    }
+                                    if (object == null) {
+                                        return false;
+                                    }
+
+                                    Map<String, String> entry = (Map<String, String>) object;
+                                    return entry.get("Second Line").equals(this.get("Second Line"));
+                                }
+                            };
+
+                            String secondLine = ip + " [" + macAddress + "]";
+                            item.put("Second Line", secondLine);
+
+                            try {
+                                InetAddress add = InetAddress.getByName(ip);
+                                String hostname = add.getCanonicalHostName();
+                                item.put("First Line", hostname);
+                                delegate.processFinish(item);
+                            } catch (UnknownHostException ignored) {
+                                return;
+                            }
+
                             try {
                                 NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
                                 for (NbtAddress addr : netbios) {
                                     if (addr.getNameType() == 0x20) {
-                                        Map<String, String> item = new HashMap<>();
                                         item.put("First Line", addr.getHostName());
-                                        item.put("Second Line", ip + " [" + macAddress + "]");
                                         delegate.processFinish(item);
-                                        break;
+                                        return;
                                     }
                                 }
-                            } catch (UnknownHostException ignored) {
-                            }
-                        }
-                    });
-
-                    executor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                InetAddress add = InetAddress.getByName(ip);
-                                String hostname = add.getCanonicalHostName();
-
-                                Map<String, String> entry = new HashMap<>();
-                                entry.put("First Line", hostname);
-                                entry.put("Second Line", ip + " [" + macAddress + "]");
-                                delegate.processFinish(entry);
                             } catch (UnknownHostException ignored) {
                             }
                         }

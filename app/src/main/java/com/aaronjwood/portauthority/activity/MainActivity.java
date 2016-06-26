@@ -375,7 +375,12 @@ public class MainActivity extends Activity implements MainAsyncResponse {
             @Override
             public void run() {
                 synchronized (hosts) {
-                    hosts.add(output);
+                    if (!hosts.contains(output)) {
+                        hosts.add(output);
+                    } else {
+                        hosts.set(hosts.indexOf(output), output);
+                    }
+
                     Collections.sort(hosts, new Comparator<Map<String, String>>() {
 
                         @Override
