@@ -354,6 +354,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
      * @param savedState Saved data from the saved state
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void onRestoreInstanceState(Bundle savedState) {
         super.onRestoreInstanceState(savedState);
 
