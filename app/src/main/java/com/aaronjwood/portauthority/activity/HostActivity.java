@@ -130,6 +130,9 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String item = (String) portList.getItemAtPosition(position);
+                if(item == null) {
+                    return;
+                }
 
                 if (item.contains("80 -")) {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + ip)));
