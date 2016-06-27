@@ -45,6 +45,10 @@ public class LanHostActivity extends HostActivity {
             ports = savedInstanceState.getStringArrayList("ports");
         } else if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
+            if (extras == null) {
+                return;
+            }
+
             this.hostName = extras.getString("HOSTNAME");
             this.hostIp = extras.getString("IP");
             this.hostMac = extras.getString("MAC");
