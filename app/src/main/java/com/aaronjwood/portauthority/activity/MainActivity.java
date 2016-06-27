@@ -11,6 +11,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.View;
@@ -227,7 +228,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
              */
             @Override
             public void onClick(View v) {
-                leftDrawer.openDrawer(Gravity.LEFT);
+                leftDrawer.openDrawer(GravityCompat.START);
             }
         });
 
