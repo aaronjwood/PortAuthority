@@ -106,6 +106,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
                                         return false;
                                     }
 
+                                    @SuppressWarnings("unchecked")
                                     Map<String, String> entry = (Map<String, String>) object;
                                     return entry.get("Second Line").equals(this.get("Second Line"));
                                 }
