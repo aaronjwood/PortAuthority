@@ -1,16 +1,15 @@
 package com.aaronjwood.portauthority.response;
 
-import java.util.List;
 import java.util.Map;
 
 public interface MainAsyncResponse {
 
     /**
-     * Delegate to handle array list outputs
+     * Delegate to handle map outputs
      *
      * @param output
      */
-    void processFinish(List<Map<String, String>> output);
+    void processFinish(Map<String, String> output);
 
     /**
      * Delegate to handle integer outputs

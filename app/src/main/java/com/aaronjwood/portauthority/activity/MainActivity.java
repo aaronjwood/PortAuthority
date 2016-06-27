@@ -10,15 +10,18 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +55,8 @@ public class MainActivity extends Activity implements MainAsyncResponse {
     private Handler mHandler = new Handler();
     private BroadcastReceiver receiver;
     private IntentFilter intentFilter = new IntentFilter();
+    private ArrayAdapter hostsAdapter;
+    private List<Map<String, String>> hosts = new ArrayList<>();
 
     /**
      * Activity created
@@ -72,10 +77,31 @@ public class MainActivity extends Activity implements MainAsyncResponse {
 
         this.wifi = new Wireless(this);
 
+        this.setupHostsAdapter();
         this.setupDrawer();
         this.setupReceivers();
         this.setupMac();
         this.setupHostDiscovery();
+    }
+
+    /**
+     * Sets up the adapter to handle discovered hosts
+     */
+    private void setupHostsAdapter() {
+        this.hostsAdapter = new ArrayAdapter<Map<String, String>>(this, android.R.layout.simple_list_item_2, android.R.id.text1, this.hosts) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+                text2.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.icsblue));
+
+                text1.setText(hosts.get(position).get("First Line"));
+                text2.setText(hosts.get(position).get("Second Line"));
+                return view;
+            }
+        };
+        this.hostList.setAdapter(this.hostsAdapter);
     }
 
     /**
@@ -113,6 +139,9 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                     return;
                 }
 
+                hosts.clear();
+                hostsAdapter.notifyDataSetChanged();
+
                 scanProgressDialog = new ProgressDialog(MainActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning For Hosts");
@@ -136,6 +165,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
              */
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                @SuppressWarnings("unchecked")
                 HashMap<String, String> map = (HashMap) hostList.getItemAtPosition(position);
                 Intent intent = new Intent(MainActivity.this, LanHostActivity.class);
                 String firstLine = map.get("First Line");
@@ -198,7 +228,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
              */
             @Override
             public void onClick(View v) {
-                leftDrawer.openDrawer(Gravity.LEFT);
+                leftDrawer.openDrawer(GravityCompat.START);
             }
         });
 
@@ -312,6 +342,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         if (adapter != null) {
             ArrayList<Map<String, String>> adapterData = new ArrayList<>();
             for (int i = 0; i < adapter.getCount(); i++) {
+                @SuppressWarnings("unchecked")
                 HashMap<String, String> item = (HashMap) adapter.getItem(i);
                 adapterData.add(item);
             }
@@ -325,13 +356,13 @@ public class MainActivity extends Activity implements MainAsyncResponse {
      * @param savedState Saved data from the saved state
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void onRestoreInstanceState(Bundle savedState) {
         super.onRestoreInstanceState(savedState);
 
-        ArrayList<Map<String, String>> hosts = (ArrayList) savedState.getSerializable("hosts");
-        if (hosts != null) {
-            SimpleAdapter newAdapter = new SimpleAdapter(this, hosts, R.layout.host_list_item, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
-            this.hostList.setAdapter(newAdapter);
+        this.hosts = (ArrayList<Map<String, String>>) savedState.getSerializable("hosts");
+        if (this.hosts != null) {
+            this.setupHostsAdapter();
         }
     }
 
@@ -342,13 +373,19 @@ public class MainActivity extends Activity implements MainAsyncResponse {
      * @param output The list of hosts to bind to the list view
      */
     @Override
-    public void processFinish(final List<Map<String, String>> output) {
+    public void processFinish(final Map<String, String> output) {
         runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
-                synchronized (output) {
-                    Collections.sort(output, new Comparator<Map<String, String>>() {
+                synchronized (hosts) {
+                    if (!hosts.contains(output)) {
+                        hosts.add(output);
+                    } else {
+                        hosts.set(hosts.indexOf(output), output);
+                    }
+
+                    Collections.sort(hosts, new Comparator<Map<String, String>>() {
 
                         @Override
                         public int compare(Map<String, String> lhs, Map<String, String> rhs) {
@@ -358,10 +395,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                             return left - right;
                         }
                     });
-
-                    SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), output, R.layout.host_list_item, new String[]{"First Line", "Second Line"}, new int[]{android.R.id.text1, android.R.id.text2});
-                    ListView hostList = (ListView) findViewById(R.id.hostList);
-                    hostList.setAdapter(adapter);
+                    hostsAdapter.notifyDataSetChanged();
                 }
 
                 if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
