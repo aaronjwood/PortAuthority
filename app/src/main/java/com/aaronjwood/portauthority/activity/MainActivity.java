@@ -357,7 +357,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         super.onRestoreInstanceState(savedState);
 
         this.hosts = (ArrayList<Map<String, String>>) savedState.getSerializable("hosts");
-        if (hosts != null) {
+        if (this.hosts != null) {
             this.setupHostsAdapter();
         }
     }
