@@ -167,6 +167,10 @@ public class MainActivity extends Activity implements MainAsyncResponse {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 @SuppressWarnings("unchecked")
                 HashMap<String, String> map = (HashMap) hostList.getItemAtPosition(position);
+                if (map == null) {
+                    return;
+                }
+                
                 Intent intent = new Intent(MainActivity.this, LanHostActivity.class);
                 String firstLine = map.get("First Line");
                 String secondLine = map.get("Second Line");
