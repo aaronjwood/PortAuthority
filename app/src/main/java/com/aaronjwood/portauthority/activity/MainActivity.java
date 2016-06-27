@@ -340,6 +340,7 @@ public class MainActivity extends Activity implements MainAsyncResponse {
         if (adapter != null) {
             ArrayList<Map<String, String>> adapterData = new ArrayList<>();
             for (int i = 0; i < adapter.getCount(); i++) {
+                @SuppressWarnings("unchecked")
                 HashMap<String, String> item = (HashMap) adapter.getItem(i);
                 adapterData.add(item);
             }
