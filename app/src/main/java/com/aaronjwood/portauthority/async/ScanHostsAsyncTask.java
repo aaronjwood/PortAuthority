@@ -105,6 +105,9 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
                                     if (object == null) {
                                         return false;
                                     }
+                                    if (!(object instanceof HashMap)) {
+                                        return false;
+                                    }
 
                                     @SuppressWarnings("unchecked")
                                     Map<String, String> entry = (Map<String, String>) object;
