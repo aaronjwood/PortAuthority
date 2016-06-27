@@ -13,7 +13,6 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -170,7 +169,6 @@ public class MainActivity extends Activity implements MainAsyncResponse {
                 if (map == null) {
                     return;
                 }
-                
                 Intent intent = new Intent(MainActivity.this, LanHostActivity.class);
                 String firstLine = map.get("First Line");
                 String secondLine = map.get("Second Line");
