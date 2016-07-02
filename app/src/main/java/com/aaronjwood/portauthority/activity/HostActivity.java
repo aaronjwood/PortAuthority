@@ -258,6 +258,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
             item += " (" + entry.get(scannedPort) + ")";
         }
 
+        //If the port is in any way related to HTTP then present a nice globe icon next to it via unicode
         if (scannedPort == 80 || scannedPort == 443 || scannedPort == 8080) {
             item += " \uD83C\uDF0E";
         }
