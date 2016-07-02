@@ -257,6 +257,11 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         this.addOpenPort(item);
     }
 
+    /**
+     * Adds an open port that was found on a host to the list
+     *
+     * @param port Port number and description
+     */
     private void addOpenPort(final String port) {
         runOnUiThread(new Runnable() {
 
