@@ -200,13 +200,10 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                     name = portInfo[0];
                     port = portInfo[1];
                 } else {
-                    name = "unknown";
-                    port = null;
+                    continue;
                 }
-
-                if (name.isEmpty()) {
-                    name = "unknown";
-                }
+                
+                name = (name.isEmpty()) ? "unknown" : name;
 
                 int filePort;
 
