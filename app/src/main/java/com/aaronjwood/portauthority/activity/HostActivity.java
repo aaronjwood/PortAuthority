@@ -218,14 +218,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                 }
 
                 if (scannedPort == filePort) {
-                    item = item + " - " + name;
-                    if (output.get(scannedPort) != null) {
-                        item += " (" + output.get(scannedPort) + ")";
-                    }
-
-                    if (scannedPort == 80 || scannedPort == 443 || scannedPort == 8080) {
-                        item += " \uD83C\uDF0E";
-                    }
+                    item = this.formatOpenPort(output, scannedPort, name, item);
 
                     this.addOpenPort(item);
 
@@ -245,16 +238,22 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         }
 
         //If a port couldn't be found in the port data file then make sure it's still caught and added to the list of open ports
-        item = item + " - unknown";
-        if (output.get(scannedPort) != null) {
-            item += " (" + output.get(scannedPort) + ")";
+        item = this.formatOpenPort(output, scannedPort, "unknown", item);
+
+        this.addOpenPort(item);
+    }
+
+    private String formatOpenPort(Map<Integer, String> entry, int scannedPort, String portName, String item) {
+        item = item + " - " + portName;
+        if (entry.get(scannedPort) != null) {
+            item += " (" + entry.get(scannedPort) + ")";
         }
 
         if (scannedPort == 80 || scannedPort == 443 || scannedPort == 8080) {
             item += " \uD83C\uDF0E";
         }
 
-        this.addOpenPort(item);
+        return item;
     }
 
     /**
