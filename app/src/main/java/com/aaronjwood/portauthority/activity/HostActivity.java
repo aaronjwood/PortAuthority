@@ -243,6 +243,15 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         this.addOpenPort(item);
     }
 
+    /**
+     * Formats a found open port with its name, description, and associated visualization
+     *
+     * @param entry       Structure holding information about the found open port with its description
+     * @param scannedPort The port number
+     * @param portName    Friendly name for the port
+     * @param item        Contains the transformed output for the open port
+     * @return If all associated data is found a port along with its description, underlying service, and visualization is constructed
+     */
     private String formatOpenPort(Map<Integer, String> entry, int scannedPort, String portName, String item) {
         item = item + " - " + portName;
         if (entry.get(scannedPort) != null) {
