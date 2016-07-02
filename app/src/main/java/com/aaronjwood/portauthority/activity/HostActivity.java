@@ -130,7 +130,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String item = (String) portList.getItemAtPosition(position);
-                if(item == null) {
+                if (item == null) {
                     return;
                 }
 
@@ -227,30 +227,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                         item += " \uD83C\uDF0E";
                     }
 
-                    final String finalItem = item;
-
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            synchronized (ports) {
-                                ports.add(finalItem);
-
-                                Collections.sort(ports, new Comparator<String>() {
-
-                                    @Override
-                                    public int compare(String lhs, String rhs) {
-                                        int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
-                                        int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
-
-                                        return left - right;
-                                    }
-                                });
-
-                                adapter.notifyDataSetChanged();
-                            }
-                        }
-                    });
+                    this.addOpenPort(item);
 
                     //Make sure to return so that we don't fall through and add the port again!
                     return;
@@ -277,14 +254,16 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
             item += " \uD83C\uDF0E";
         }
 
-        final String finalItem = item;
+        this.addOpenPort(item);
+    }
 
+    private void addOpenPort(final String port) {
         runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
                 synchronized (ports) {
-                    ports.add(finalItem);
+                    ports.add(port);
 
                     Collections.sort(ports, new Comparator<String>() {
 
