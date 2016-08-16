@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,6 +30,7 @@ import java.util.Map;
 
 public abstract class HostActivity extends AppCompatActivity implements HostAsyncResponse {
 
+    protected int layout;
     protected Host host = new Host();
     protected ArrayAdapter<String> adapter;
     protected ListView portList;
@@ -36,6 +38,17 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
     protected int scanProgress;
+
+    /**
+     * Activity created
+     *
+     * @param savedInstanceState Data from a saved state
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(this.layout);
+    }
 
     /**
      * Activity paused
@@ -202,7 +215,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                 } else {
                     continue;
                 }
-                
+
                 name = (name.isEmpty()) ? "unknown" : name;
 
                 int filePort;

@@ -30,8 +30,8 @@ public class LanHostActivity extends HostActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.layout = R.layout.activity_lanhost;
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lanhost);
 
         TextView hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
         TextView hostMacVendor = (TextView) findViewById(R.id.hostMacVendor);
