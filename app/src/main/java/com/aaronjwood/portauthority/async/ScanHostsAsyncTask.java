@@ -79,8 +79,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
     protected final void onProgressUpdate(final Void... params) {
         BufferedReader reader = null;
         try {
-            int HOST_THREADS = 255;
-            ExecutorService executor = Executors.newFixedThreadPool(HOST_THREADS);
+            ExecutorService executor = Executors.newCachedThreadPool();
             reader = new BufferedReader(new FileReader("/proc/net/arp"));
             reader.readLine();
             String line;
