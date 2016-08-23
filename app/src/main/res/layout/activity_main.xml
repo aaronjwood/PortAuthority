@@ -25,21 +25,11 @@
             android:textColor="@color/white"
             android:textSize="30sp" />
 
-        <TextView
-            android:id="@+id/deviceInfoLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/programTitle"
-            android:layout_centerHorizontal="true"
-            android:text="@string/deviceInfoLabel"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/icsblue" />
-
         <TableLayout
             android:id="@+id/deviceInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/deviceInfoLabel"
+            android:layout_below="@id/programTitle"
             android:stretchColumns="*">
 
             <TableRow android:layout_width="0dp">
