@@ -8,7 +8,7 @@
         <item>100</item>
     </string-array>
     <string-array name="drawer">
-        <item>Scan External Host</item>
+        <item>Scan WAN Host</item>
         <item>Settings</item>
     </string-array>
 </resources>
