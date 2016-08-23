@@ -207,7 +207,7 @@
 
     <ListView
         android:id="@+id/mainLeftDrawerList"
-        android:layout_width="240dp"
+        android:layout_width="160dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/black"
