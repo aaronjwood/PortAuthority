@@ -1,11 +1,13 @@
 language: android
+jdk:
+  - oraclejdk8
 sudo: required
 dist: precise
 android:
   components:
     - tools
     - build-tools-23.0.3
-    - android-23
+    - android-24
     - extra-android-m2repository
 
 env:

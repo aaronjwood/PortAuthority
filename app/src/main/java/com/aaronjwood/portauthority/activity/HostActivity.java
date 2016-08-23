@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,6 +30,7 @@ import java.util.Map;
 
 public abstract class HostActivity extends AppCompatActivity implements HostAsyncResponse {
 
+    protected int layout;
     protected Host host = new Host();
     protected ArrayAdapter<String> adapter;
     protected ListView portList;
@@ -36,6 +38,17 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
     protected int scanProgress;
+
+    /**
+     * Activity created
+     *
+     * @param savedInstanceState Data from a saved state
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(this.layout);
+    }
 
     /**
      * Activity paused
@@ -130,6 +143,9 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String item = (String) portList.getItemAtPosition(position);
+                if (item == null) {
+                    return;
+                }
 
                 if (item.contains("80 -")) {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + ip)));
@@ -197,13 +213,10 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                     name = portInfo[0];
                     port = portInfo[1];
                 } else {
-                    name = "unknown";
-                    port = null;
+                    continue;
                 }
 
-                if (name.isEmpty()) {
-                    name = "unknown";
-                }
+                name = (name.isEmpty()) ? "unknown" : name;
 
                 int filePort;
 
@@ -215,39 +228,9 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                 }
 
                 if (scannedPort == filePort) {
-                    item = item + " - " + name;
-                    if (output.get(scannedPort) != null) {
-                        item += " (" + output.get(scannedPort) + ")";
-                    }
+                    item = this.formatOpenPort(output, scannedPort, name, item);
 
-                    if (scannedPort == 80 || scannedPort == 443 || scannedPort == 8080) {
-                        item += " \uD83C\uDF0E";
-                    }
-
-                    final String finalItem = item;
-
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            synchronized (ports) {
-                                ports.add(finalItem);
-
-                                Collections.sort(ports, new Comparator<String>() {
-
-                                    @Override
-                                    public int compare(String lhs, String rhs) {
-                                        int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
-                                        int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
-
-                                        return left - right;
-                                    }
-                                });
-
-                                adapter.notifyDataSetChanged();
-                            }
-                        }
-                    });
+                    this.addOpenPort(item);
 
                     //Make sure to return so that we don't fall through and add the port again!
                     return;
@@ -265,23 +248,46 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         }
 
         //If a port couldn't be found in the port data file then make sure it's still caught and added to the list of open ports
-        item = item + " - unknown";
-        if (output.get(scannedPort) != null) {
-            item += " (" + output.get(scannedPort) + ")";
+        item = this.formatOpenPort(output, scannedPort, "unknown", item);
+
+        this.addOpenPort(item);
+    }
+
+    /**
+     * Formats a found open port with its name, description, and associated visualization
+     *
+     * @param entry       Structure holding information about the found open port with its description
+     * @param scannedPort The port number
+     * @param portName    Friendly name for the port
+     * @param item        Contains the transformed output for the open port
+     * @return If all associated data is found a port along with its description, underlying service, and visualization is constructed
+     */
+    private String formatOpenPort(Map<Integer, String> entry, int scannedPort, String portName, String item) {
+        item = item + " - " + portName;
+        if (entry.get(scannedPort) != null) {
+            item += " (" + entry.get(scannedPort) + ")";
         }
 
+        //If the port is in any way related to HTTP then present a nice globe icon next to it via unicode
         if (scannedPort == 80 || scannedPort == 443 || scannedPort == 8080) {
             item += " \uD83C\uDF0E";
         }
 
-        final String finalItem = item;
+        return item;
+    }
 
+    /**
+     * Adds an open port that was found on a host to the list
+     *
+     * @param port Port number and description
+     */
+    private void addOpenPort(final String port) {
         runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
                 synchronized (ports) {
-                    ports.add(finalItem);
+                    ports.add(port);
 
                     Collections.sort(ports, new Comparator<String>() {
 

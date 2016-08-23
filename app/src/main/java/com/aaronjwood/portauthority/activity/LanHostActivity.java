@@ -30,25 +30,21 @@ public class LanHostActivity extends HostActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.layout = R.layout.activity_lanhost;
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lanhost);
 
         TextView hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
         TextView hostMacVendor = (TextView) findViewById(R.id.hostMacVendor);
         TextView hostMacLabel = (TextView) findViewById(R.id.hostMac);
         this.portList = (ListView) findViewById(R.id.portList);
-
-        if (savedInstanceState != null) {
-            this.hostName = savedInstanceState.getString("hostName");
-            this.hostIp = savedInstanceState.getString("hostIp");
-            this.hostMac = savedInstanceState.getString("hostMac");
-            ports = savedInstanceState.getStringArrayList("ports");
-        } else if (savedInstanceState == null) {
-            Bundle extras = getIntent().getExtras();
-            this.hostName = extras.getString("HOSTNAME");
-            this.hostIp = extras.getString("IP");
-            this.hostMac = extras.getString("MAC");
+        Bundle extras = getIntent().getExtras();
+        if (extras == null) {
+            return;
         }
+
+        this.hostName = extras.getString("HOSTNAME");
+        this.hostIp = extras.getString("IP");
+        this.hostMac = extras.getString("MAC");
 
         this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, ports);
         this.portList.setAdapter(adapter);
@@ -60,6 +56,18 @@ public class LanHostActivity extends HostActivity {
         hostMacLabel.setText(this.hostMac);
 
         this.setupPortScan();
+    }
+
+    /**
+     * Restore saved data
+     *
+     * @param savedInstanceState Data from a saved state
+     */
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        this.hostName = savedInstanceState.getString("hostName");
+        this.hostIp = savedInstanceState.getString("hostIp");
+        this.hostMac = savedInstanceState.getString("hostMac");
+        ports = savedInstanceState.getStringArrayList("ports");
     }
 
     /**

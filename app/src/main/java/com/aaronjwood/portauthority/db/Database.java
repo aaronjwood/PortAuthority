@@ -63,7 +63,6 @@ public class Database {
      * Opens a connection to a SQLite database
      *
      * @param dbName The database to open a connection to
-     * @return Database connection
      */
     private void openDatabase(String dbName) {
         if (!this.checkDatabase(dbName)) {

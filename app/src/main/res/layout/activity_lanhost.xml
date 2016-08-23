@@ -46,7 +46,7 @@
     <View
         android:id="@+id/macAddressSeparator"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="1px"
         android:layout_below="@id/hostMac"
         android:background="@color/icsblue" />
 
@@ -76,7 +76,7 @@
     <View
         android:id="@+id/macVendorSeparator"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="1px"
         android:layout_below="@id/hostMacVendor"
         android:background="@color/icsblue" />
 

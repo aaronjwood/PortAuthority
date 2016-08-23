@@ -20,8 +20,6 @@ import jcifs.netbios.NbtAddress;
 
 public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
     private MainAsyncResponse delegate;
-    private final int SCAN_THREADS = 8;
-    private final int HOST_THREADS = 255;
 
     /**
      * Constructor to set the delegate
@@ -42,8 +40,9 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
         String ip = params[0];
         String parts[] = ip.split("\\.");
 
-        ExecutorService executor = Executors.newFixedThreadPool(SCAN_THREADS);
+        ExecutorService executor = Executors.newCachedThreadPool();
 
+        int SCAN_THREADS = 8;
         int chunk = (int) Math.ceil((double) 255 / SCAN_THREADS);
         int previousStart = 1;
         int previousStop = chunk;
@@ -80,7 +79,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
     protected final void onProgressUpdate(final Void... params) {
         BufferedReader reader = null;
         try {
-            ExecutorService executor = Executors.newFixedThreadPool(HOST_THREADS);
+            ExecutorService executor = Executors.newCachedThreadPool();
             reader = new BufferedReader(new FileReader("/proc/net/arp"));
             reader.readLine();
             String line;

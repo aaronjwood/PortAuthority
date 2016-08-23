@@ -27,23 +27,25 @@ public class WanHostActivity extends HostActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.layout = R.layout.activity_wanhost;
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wanhost);
 
         this.wanHost = (EditText) findViewById(R.id.hostAddress);
         this.portList = (ListView) findViewById(R.id.portList);
-
-
-        if (savedInstanceState != null) {
-            ports = savedInstanceState.getStringArrayList("ports");
-        } else {
-            this.wanHost.setText(UserPreference.getLastUsedHostAddress(this));
-        }
-
+        this.wanHost.setText(UserPreference.getLastUsedHostAddress(this));
         this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, ports);
         this.portList.setAdapter(adapter);
 
         this.setupPortScan();
+    }
+
+    /**
+     * Restore saved data
+     *
+     * @param savedInstanceState Data from a saved state
+     */
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        ports = savedInstanceState.getStringArrayList("ports");
     }
 
     @Override

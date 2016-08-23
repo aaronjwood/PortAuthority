@@ -4,12 +4,12 @@
     <string name="deviceInfoLabel">Device Info</string>
     <string name="app_name">Port Authority</string>
     <string name="action_settings">Settings</string>
-    <string name="macAddress">MAC Address</string>
-    <string name="macVendor">MAC Vendor</string>
-    <string name="internalIpLabel">Internal IP Address</string>
-    <string name="externalIpLabel">External IP Address</string>
+    <string name="macAddress">MAC</string>
+    <string name="macVendor">Vendor</string>
+    <string name="internalIpLabel">LAN IP</string>
+    <string name="externalIpLabel">WAN IP</string>
     <string name="fetching">Fetching…</string>
-    <string name="signalLabel">Signal Strength</string>
+    <string name="signalLabel">Signal</string>
     <string name="hostDiscovery">Discover LAN Hosts</string>
     <string name="ssid">SSID</string>
     <string name="bssid">BSSID</string>
