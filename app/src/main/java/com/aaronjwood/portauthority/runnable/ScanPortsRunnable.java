@@ -75,10 +75,13 @@ public class ScanPortsRunnable implements Runnable {
                 }
 
                 portData.put(i, data);
-                socket.close();
-
                 this.delegate.processFinish(portData);
             } catch (IOException ignored) {
+            } finally {
+                try {
+                    socket.close();
+                } catch (IOException ignored) {
+                }
             }
         }
     }
