@@ -27,7 +27,7 @@ public class Host {
      * @param mac      MAC address
      * @param activity The calling activity
      */
-    public String getMacVendor(String mac, Activity activity) {
+    public static String getMacVendor(String mac, Activity activity) {
         Database db = new Database(activity);
         Cursor cursor = db.queryDatabase("oui.db", "SELECT vendor FROM oui WHERE mac LIKE ?", new String[]{mac});
         String vendor;

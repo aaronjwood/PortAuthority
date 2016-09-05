@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
+import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
@@ -50,7 +51,7 @@ public class LanHostActivity extends HostActivity {
         this.portList.setAdapter(adapter);
         this.wifi = new Wireless(this);
 
-        hostMacVendor.setText(this.host.getMacVendor(hostMac.replace(":", "").substring(0, 6), this));
+        hostMacVendor.setText(Host.getMacVendor(hostMac.replace(":", "").substring(0, 6), this));
 
         hostIpLabel.setText(this.hostName);
         hostMacLabel.setText(this.hostMac);
