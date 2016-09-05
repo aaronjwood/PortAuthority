@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
                         getNetworkInfo();
                     } else {
                         mHandler.removeCallbacksAndMessages(null);
-                        internalIp.setText(wifi.getInternalMobileIpAddress());
+                        internalIp.setText(Wireless.getInternalMobileIpAddress());
                         getExternalIp();
                         signalStrength.setText(R.string.noWifi);
                         ssid.setText(R.string.noWifi);

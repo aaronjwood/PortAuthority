@@ -150,7 +150,7 @@ public class Wireless {
      *
      * @return Local cellular network LAN IP address
      */
-    public String getInternalMobileIpAddress() {
+    public static String getInternalMobileIpAddress() {
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en != null && en.hasMoreElements(); ) {
                 NetworkInterface intf = en.nextElement();
