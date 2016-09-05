@@ -49,6 +49,7 @@ public class ScanPortsRunnable implements Runnable {
                 socket.setTcpNoDelay(true);
                 socket.connect(new InetSocketAddress(this.ip, i), 4000);
 
+                //TODO: this is a bit messy, refactor and break it up
                 if (i == 22) {
                     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     data = in.readLine();
