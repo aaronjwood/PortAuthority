@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
         //Set the device's vendor
         if (mac != null) {
             TextView macVendor = (TextView) findViewById(R.id.deviceMacVendor);
-            macVendor.setText(new Host().getMacVendor(mac.replace(":", "").substring(0, 6), this));
+            macVendor.setText(Host.getMacVendor(mac.replace(":", "").substring(0, 6), this));
         }
     }
 
