@@ -40,9 +40,13 @@ public class ScanHostsRunnable implements Runnable {
             try {
                 socket.setTcpNoDelay(true);
                 socket.connect(new InetSocketAddress(ip, 7), 150);
-                socket.close();
             } catch (IOException ignored) {
             } finally {
+                try {
+                    socket.close();
+                } catch (IOException ignored) {
+                }
+
                 this.delegate.processFinish(1);
             }
         }
