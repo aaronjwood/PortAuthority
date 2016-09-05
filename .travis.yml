@@ -8,6 +8,13 @@ android:
     - android-24
     - extra-android-m2repository
 
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
 env:
   global:
    - secure: "YT/7/BbtCbOhHpiDCFKsBYl49u7d/+wDCZdkj1QUl+4u54u+2b/p5oX9ASoK8taYrUijE84mdJhBlLrX9Rplo12jQOlCkKdrW4oaDhUq2Mio63hNGIx4JSe+ycuIeDCWNK+JQ2qUnNWdagFlLPM+3KJZKudewkAlfZp+BQAmFA735UmbVoNSTKV2KToitb0H6NbCzu6ZRyfz0ncqM1ZgidJ+9vI5S18Y+l2EPnaLmIuiK34P0Q2hwULdrCsPvkstFWRdukqu3kTSv3ATtlqU/kOzeWiXmqySIG5sZX1EHTW871n3+WF8IF+5D5ocQzzkUI3KpreQWwwO8pfP0v1aiyhi4GfGHgHj1ZGa6JfD3W/uQCUOD9ovow/tkhgdt1DIoPEi4z3Ct0o6JQUC7npDCcRPj/dJAHQ0JT0uo1UcIjq63pibIrW1fT6Bd+iZITR8d18wAOwWOaBhsgHscQ0YVfxqaK/XX13gFwvdxt4TsAnWpWWW3ugG7QsbDya+PO4jfWbSDFDVnDYzbIsABOvJ6CtQhlt3bmbDzii4BAjF82QpDQ+T0xIIMlf5c6TbzyQOrt1Pw1SpK3L5iWit2fZwVUrIuBMP73CbK6F52Hxa763iQqdqWPFRGjsPBwgJOsdkUc/mXD9pbwGEEGSvAvOesJd5ctgmwXWlAkoBKUNew7w="
