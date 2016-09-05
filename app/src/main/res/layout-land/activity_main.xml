@@ -17,10 +17,10 @@
 
         <TextView
             android:id="@+id/textView"
-            android:layout_width="1dp"
+            android:layout_width="1px"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/deviceMacVendorLabel"
-            android:layout_below="@+id/deviceInfoLabel"
+            android:layout_alignBottom="@+id/deviceMacVendor"
+            android:layout_below="@+id/programTitle"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
@@ -32,27 +32,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:paddingBottom="20dp"
+            android:paddingBottom="5dp"
             android:text="@string/app_name"
             android:textColor="@color/white"
             android:textSize="30sp" />
-
-        <TextView
-            android:id="@+id/deviceInfoLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/programTitle"
-            android:layout_centerHorizontal="true"
-            android:text="@string/deviceInfoLabel"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/icsblue" />
 
         <TextView
             android:id="@+id/deviceMacAddressLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/deviceInfoLabel"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/programTitle"
             android:layout_toLeftOf="@+id/deviceMacAddress"
             android:layout_toStartOf="@+id/programTitle"
             android:paddingBottom="5dp"
@@ -65,8 +56,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/externalIpAddressLabel"
-            android:layout_below="@+id/deviceInfoLabel"
+            android:layout_below="@+id/programTitle"
             android:layout_toLeftOf="@+id/textView"
+            android:layout_toStartOf="@id/textView"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
             android:textColor="@color/icsblue" />
@@ -76,9 +68,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/internalIpAddress"
-            android:layout_below="@+id/deviceInfoLabel"
+            android:layout_below="@+id/programTitle"
+            android:layout_toEndOf="@id/textView"
             android:layout_toLeftOf="@+id/internalIpAddress"
             android:layout_toRightOf="@+id/textView"
+            android:layout_toStartOf="@id/internalIpAddress"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
             android:text="@string/internalIpLabel"
@@ -90,14 +84,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/deviceInfoLabel"
+            android:layout_below="@+id/programTitle"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
             android:textColor="@color/icsblue" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="1px"
             android:layout_below="@id/internalIpAddress"
             android:background="@color/icsblue" />
 
@@ -106,8 +100,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_below="@id/internalIpAddressLabel"
             android:layout_toLeftOf="@+id/externalIpAddress"
+            android:layout_toStartOf="@id/externalIpAddress"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
             android:text="@string/externalIpLabel"
@@ -133,6 +129,7 @@
             android:layout_toEndOf="@+id/textView"
             android:layout_toLeftOf="@+id/signalStrength"
             android:layout_toRightOf="@+id/textView"
+            android:layout_toStartOf="@id/signalStrength"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
             android:text="@string/signalLabel"
@@ -142,6 +139,7 @@
             android:id="@+id/signalStrength"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/internalIpAddressLabel"
             android:paddingBottom="5dp"
@@ -150,7 +148,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="1px"
             android:layout_below="@id/signalStrength"
             android:background="@color/icsblue" />
 
@@ -159,8 +157,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_below="@id/externalIpAddress"
             android:layout_toLeftOf="@+id/ssid"
+            android:layout_toStartOf="@id/ssid"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
             android:text="@string/ssid"
@@ -172,6 +172,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/externalIpAddressLabel"
             android:layout_toLeftOf="@+id/textView"
+            android:layout_toStartOf="@id/textView"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
             android:textColor="@color/icsblue" />
@@ -181,6 +182,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/signalStrengthLabel"
+            android:layout_toEndOf="@id/textView"
             android:layout_toLeftOf="@+id/bssid"
             android:layout_toRightOf="@+id/textView"
             android:layout_toStartOf="@+id/bssid"
@@ -193,6 +195,7 @@
             android:id="@+id/bssid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/signalStrengthLabel"
             android:paddingBottom="5dp"
@@ -201,7 +204,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="1px"
             android:layout_below="@id/bssid"
             android:background="@color/icsblue" />
 
@@ -210,8 +213,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_below="@+id/ssidLabel"
             android:layout_toLeftOf="@+id/deviceMacVendor"
+            android:layout_toStartOf="@+id/deviceMacVendor"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
             android:text="@string/macVendor"
@@ -219,24 +224,26 @@
 
         <TextView
             android:id="@+id/deviceMacVendor"
-            android:layout_width="wrap_content"
+            android:layout_width="235dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/ssidLabel"
             android:layout_toLeftOf="@id/textView"
+            android:layout_toStartOf="@id/textView"
+            android:gravity="end"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
             android:textColor="@color/icsblue" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="1px"
             android:layout_below="@id/deviceMacVendor"
             android:background="@color/icsblue" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/deviceMacVendorLabel"
+            android:layout_below="@id/deviceMacVendor"
             android:orientation="vertical">
 
             <ListView
@@ -268,6 +275,6 @@
         android:background="@color/black"
         android:choiceMode="singleChoice"
         android:divider="@color/icsblue"
-        android:dividerHeight="1dp"
+        android:dividerHeight="1px"
         android:entries="@array/drawer" />
 </android.support.v4.widget.DrawerLayout>

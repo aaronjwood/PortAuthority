@@ -187,6 +187,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
 
     /**
      * Delegate to handle open ports
+     * TODO: this method is gross, get a fresh copy of the data from IANA and CLEAN IT so that we don't need so many checks
      *
      * @param output Contains the port number and associated banner (if any)
      */
