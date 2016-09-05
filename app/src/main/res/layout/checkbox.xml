@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- It's important that the ID be named exactly as is, otherwise you won't see updates when tapping other areas of the element! -->
 <android.support.v7.widget.AppCompatCheckBox xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@android:id/checkbox"
