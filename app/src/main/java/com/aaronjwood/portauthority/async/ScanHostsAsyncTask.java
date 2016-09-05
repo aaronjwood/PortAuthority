@@ -72,6 +72,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
     /**
      * Scans the ARP table and updates the list with hosts on the network
      * Resolves both DNS and NetBIOS
+     * TODO: this method is gross, refactor it and break it up
      *
      * @param params
      */
