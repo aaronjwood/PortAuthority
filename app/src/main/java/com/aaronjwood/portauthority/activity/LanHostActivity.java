@@ -43,7 +43,7 @@ public class LanHostActivity extends HostActivity {
         this.hostName = extras.getString("HOSTNAME");
         this.hostIp = extras.getString("IP");
         this.hostMac = extras.getString("MAC");
-        this.wifi = new Wireless(this);
+        this.wifi = new Wireless(getApplicationContext());
 
         hostMacVendor.setText(Host.getMacVendor(hostMac.replace(":", "").substring(0, 6), this));
 
