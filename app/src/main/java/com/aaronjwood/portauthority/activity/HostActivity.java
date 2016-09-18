@@ -48,6 +48,17 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(this.layout);
+
+        setupPortsAdapter();
+    }
+
+    /**
+     * Sets up the adapter to handle discovered ports
+     */
+    private void setupPortsAdapter() {
+        this.portList = (ListView) findViewById(R.id.portList);
+        this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, ports);
+        this.portList.setAdapter(this.adapter);
     }
 
     /**
@@ -65,6 +76,31 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         }
         this.scanProgressDialog = null;
         this.portRangeDialog = null;
+    }
+
+    /**
+     * Save the state of the activity
+     *
+     * @param savedState Data to save
+     */
+    @Override
+    public void onSaveInstanceState(Bundle savedState) {
+        super.onSaveInstanceState(savedState);
+
+        savedState.putStringArrayList("ports", ports);
+    }
+
+    /**
+     * Restore saved data
+     *
+     * @param savedInstanceState Data from a saved state
+     */
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        ports = savedInstanceState.getStringArrayList("ports");
+
+        this.setupPortsAdapter();
     }
 
     /**

@@ -39,15 +39,6 @@ public class WanHostActivity extends HostActivity {
         this.setupPortScan();
     }
 
-    /**
-     * Restore saved data
-     *
-     * @param savedInstanceState Data from a saved state
-     */
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        ports = savedInstanceState.getStringArrayList("ports");
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
