@@ -259,6 +259,8 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
                     case 1:
                         startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                         break;
+                    default:
+                        break;
                 }
                 leftDrawer.closeDrawer(parent);
             }
