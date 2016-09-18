@@ -181,6 +181,21 @@ public class Wireless {
     }
 
     /**
+     * Returns the number of hosts in the subnet.
+     *
+     * @return Number of hosts as an integer.
+     */
+    public int getNumberOfHostsInWifiSubnet(){
+        Double subnet = (double) getInternalWifiSubnet();
+        double hosts;
+        double bitsLeft = 32.0d - subnet;
+        hosts = Math.pow(2.0d, bitsLeft) - 2.0d;
+
+        return (int) hosts;
+    }
+
+
+    /**
      * Gets the device's internal LAN IP address associated with the cellular network
      *
      * @return Local cellular network LAN IP address
