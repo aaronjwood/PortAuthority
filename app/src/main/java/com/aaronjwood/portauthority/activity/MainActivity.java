@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
         this.bssid = (TextView) findViewById(R.id.bssid);
         this.hostList = (ListView) findViewById(R.id.hostList);
 
-        this.wifi = new Wireless(this);
+        this.wifi = new Wireless(getApplicationContext());
 
         this.setupHostsAdapter();
         this.setupDrawer();
@@ -288,12 +288,13 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
      * This gets the netmask, counts the bits set (subnet size),
      * then prints it along side the IP.
      */
-    private void getInternalIp(){
+    private void getInternalIp() {
         int netmask = this.wifi.getInternalWifiSubnet();
         int count = Integer.bitCount(netmask);
         String InternalIpWithSubnet = this.wifi.getInternalWifiIpAddress() + "/" + Integer.toString(count);
         this.internalIp.setText(InternalIpWithSubnet);
     }
+
     /**
      * Wrapper for getting the external IP address
      * We can control whether or not to do this based on the user's preference

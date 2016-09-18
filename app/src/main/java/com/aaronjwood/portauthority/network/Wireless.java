@@ -1,13 +1,11 @@
 package com.aaronjwood.portauthority.network;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.text.format.Formatter;
 
 import com.aaronjwood.portauthority.async.GetExternalIpAsyncTask;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
@@ -19,20 +17,19 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteOrder;
-import java.text.Normalizer;
 import java.util.Enumeration;
 
 public class Wireless {
 
-    private Activity activity;
+    private Context context;
 
     /**
      * Constructor to set the activity for context
      *
-     * @param activity The activity to use for context
+     * @param context The activity to use for context
      */
-    public Wireless(Activity activity) {
-        this.activity = activity;
+    public Wireless(Context context) {
+        this.context = context;
     }
 
     /**
@@ -229,7 +226,7 @@ public class Wireless {
      * @return WifiManager
      */
     public WifiManager getWifiManager() {
-        return (WifiManager) this.activity.getSystemService(Context.WIFI_SERVICE);
+        return (WifiManager) this.context.getSystemService(Context.WIFI_SERVICE);
     }
 
     /**
@@ -247,7 +244,7 @@ public class Wireless {
      * @return Connectivity manager
      */
     private ConnectivityManager getConnectivityManager() {
-        return (ConnectivityManager) this.activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return (ConnectivityManager) this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     /**
