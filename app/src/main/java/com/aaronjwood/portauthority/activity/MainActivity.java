@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
                 scanProgressDialog.setMax(255);
                 scanProgressDialog.show();
 
-                discovery.scanHosts(wifi.getInternalWifiIpAddress(), MainActivity.this);
+                Discovery.scanHosts(wifi.getInternalWifiIpAddress(), MainActivity.this);
             }
         });
 
