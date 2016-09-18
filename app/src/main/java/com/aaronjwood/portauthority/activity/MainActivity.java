@@ -31,6 +31,7 @@ import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.utils.UserPreference;
+import com.squareup.leakcanary.LeakCanary;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
         super.onCreate(savedInstanceState);
 
         if (BuildConfig.DEBUG) {
-            com.squareup.leakcanary.LeakCanary.install(getApplication());
+            LeakCanary.install(getApplication());
         }
 
         setContentView(R.layout.activity_main);
