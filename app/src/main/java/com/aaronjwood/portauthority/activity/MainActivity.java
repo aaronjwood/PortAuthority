@@ -270,12 +270,23 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
                 mHandler.postDelayed(this, TIMER_INTERVAL);
             }
         }, 0);
-        this.internalIp.setText(this.wifi.getInternalWifiIpAddress());
+        this.getInternalIp();
         this.getExternalIp();
         this.ssid.setText(this.wifi.getSSID());
         this.bssid.setText(this.wifi.getBSSID());
     }
 
+    /**
+     * Wrapper method for getting the internal wireless IP address.
+     * This gets the netmask, counts the bits set (subnet size),
+     * then prints it along side the IP.
+     */
+    private void getInternalIp(){
+        int netmask = this.wifi.getInternalWifiSubnet();
+        int count = Integer.bitCount(netmask);
+        String InternalIpWithSubnet = this.wifi.getInternalWifiIpAddress() + "/" + Integer.toString(count);
+        this.internalIp.setText(InternalIpWithSubnet);
+    }
     /**
      * Wrapper for getting the external IP address
      * We can control whether or not to do this based on the user's preference
