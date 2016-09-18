@@ -3,9 +3,11 @@ package com.aaronjwood.portauthority.network;
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.text.format.Formatter;
 
 import com.aaronjwood.portauthority.async.GetExternalIpAsyncTask;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
@@ -17,6 +19,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteOrder;
+import java.text.Normalizer;
 import java.util.Enumeration;
 
 public class Wireless {
@@ -143,6 +146,19 @@ public class Wireless {
         } catch (UnknownHostException ex) {
             return null;
         }
+    }
+
+    /*
+     * Gets the Wifi Manager DHCP information and returns the Netmask of the
+     * internal Wifi Network as an int
+     *
+     * @return Internal Wifi Subnet Netmask
+     */
+    public int getInternalWifiSubnet() {
+        // ToDo: Make sure this works with static DHCP reservations.
+        WifiManager wifiManager = this.getWifiManager();
+        DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
+        return dhcpInfo.netmask;
     }
 
     /**
