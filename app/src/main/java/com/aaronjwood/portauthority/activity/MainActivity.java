@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aaronjwood.portauthority.BuildConfig;
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Discovery;
 import com.aaronjwood.portauthority.network.Host;
@@ -65,6 +66,11 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (BuildConfig.DEBUG) {
+            com.squareup.leakcanary.LeakCanary.install(getApplication());
+        }
+
         setContentView(R.layout.activity_main);
 
         this.internalIp = (TextView) findViewById(R.id.internalIpAddress);
