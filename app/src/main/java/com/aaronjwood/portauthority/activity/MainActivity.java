@@ -359,6 +359,8 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
+        mHandler.removeCallbacksAndMessages(null);
+
         ListAdapter adapter = this.hostList.getAdapter();
         if (adapter != null) {
             ArrayList<Map<String, String>> adapterData = new ArrayList<>();
