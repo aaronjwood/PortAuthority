@@ -78,7 +78,6 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
             activity.processFinish(true);
         }
 
-
         return null;
     }
 }
