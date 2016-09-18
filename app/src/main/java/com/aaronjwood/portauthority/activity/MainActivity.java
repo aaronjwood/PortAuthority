@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
     private final static int TIMER_INTERVAL = 1500;
 
     private Wireless wifi;
-    private Discovery discovery = new Discovery();
     private ListView hostList;
     private TextView internalIp;
     private TextView externalIp;
