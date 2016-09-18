@@ -156,9 +156,10 @@ public class Wireless {
      */
     public int getInternalWifiSubnet() {
         // ToDo: Make sure this works with static DHCP reservations.
+        //FIXME this seems to have issues on some phones running 5.0+ https://code.google.com/p/android/issues/detail?id=82477
         WifiManager wifiManager = this.getWifiManager();
         DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
-        return dhcpInfo.netmask;
+        return dhcpInfo.netmask; //FIXME returns 0
     }
 
     /**
