@@ -334,6 +334,8 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
     public void onDestroy() {
         super.onDestroy();
 
+        mHandler.removeCallbacksAndMessages(null);
+
         if (this.receiver != null) {
             unregisterReceiver(this.receiver);
         }
@@ -357,8 +359,6 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
     @Override
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
-
-        mHandler.removeCallbacksAndMessages(null);
 
         ListAdapter adapter = this.hostList.getAdapter();
         if (adapter != null) {
