@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -226,8 +227,10 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
      * Sets up event handlers and items for the left drawer
      */
     private void setupDrawer() {
-        final DrawerLayout leftDrawer = (DrawerLayout) findViewById(R.id.mainLeftDrawer);
-        ImageView drawerIcon = (ImageView) findViewById(R.id.mainLeftDrawerIcon);
+        final DrawerLayout leftDrawer = (DrawerLayout) findViewById(R.id.leftDrawer);
+        final RelativeLayout leftDrawerLayout = (RelativeLayout) findViewById(R.id.leftDrawerLayout);
+
+        ImageView drawerIcon = (ImageView) findViewById(R.id.leftDrawerIcon);
         drawerIcon.setOnClickListener(new View.OnClickListener() {
 
             /**
@@ -240,8 +243,10 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
             }
         });
 
-        ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
-        leftDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ListView upperList = (ListView) findViewById(R.id.upperLeftDrawerList);
+        ListView lowerList = (ListView) findViewById(R.id.lowerLeftDrawerList);
+
+        upperList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             /**
              * Click handler for the left side navigation drawer items
@@ -256,11 +261,28 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
                     case 0:
                         startActivity(new Intent(MainActivity.this, WanHostActivity.class));
                         break;
-                    case 1:
+                }
+                leftDrawer.closeDrawer(leftDrawerLayout);
+            }
+        });
+
+        lowerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            /**
+             * Click handler for the left side navigation drawer items
+             * @param parent
+             * @param view
+             * @param position
+             * @param id
+             */
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
                         startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                         break;
                 }
-                leftDrawer.closeDrawer(parent);
+                leftDrawer.closeDrawer(leftDrawerLayout);
             }
         });
     }
