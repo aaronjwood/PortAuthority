@@ -6,6 +6,9 @@
         <item>300</item>
         <item>200</item>
         <item>100</item>
+        <item>50</item>
+        <item>25</item>
+        <item>10</item>
     </string-array>
     <string-array name="upperDrawer">
         <item>Scan WAN Host</item>
