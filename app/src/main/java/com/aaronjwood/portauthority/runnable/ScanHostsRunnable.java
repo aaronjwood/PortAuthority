@@ -40,7 +40,7 @@ public class ScanHostsRunnable implements Runnable {
 
             try {
                 socket.setTcpNoDelay(true);
-                socket.connect(new InetSocketAddress(ip, 7), 150);
+                socket.connect(new InetSocketAddress(ip, 7), 200);
             } catch (IOException ignored) {
             } finally {
                 try {
