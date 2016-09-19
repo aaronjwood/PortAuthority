@@ -293,10 +293,11 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
      * Gets network information about the device and updates various UI elements
      */
     private void getNetworkInfo() {
+        final int linkSpeed = wifi.getLinkSpeed();
         this.mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm");
+                signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm/" + linkSpeed + "Mbps");
                 mHandler.postDelayed(this, TIMER_INTERVAL);
             }
         }, 0);
