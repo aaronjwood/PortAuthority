@@ -7,6 +7,8 @@
 [![Build Status](https://travis-ci.org/aaronjwood/PortAuthority.svg?branch=development)](https://travis-ci.org/aaronjwood/PortAuthority)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/8687/badge.svg)](https://scan.coverity.com/projects/aaronjwood-portauthority)
 
+## Overview
+
 A handy systems and security-focused tool, Port Authority is a *very* fast port scanner.
 Port Authority also allows you to quickly discover hosts on your network and will display useful network information about your device and other hosts.
 
@@ -17,12 +19,17 @@ If the device you're scanning rejects packets, it takes less than **30 seconds t
 
 Port Authority has no ads and will *never* have ads.
 It requires extremely limited permissions since it only needs to interact with your network.
-The internals are designed to take advantage of today's modern phones with multiple cores to ensure you can scan your network as fast as possible.
+The internals are designed to take advantage of today's modern phones/tablets with multiple cores to ensure you can scan your network as fast as possible. This means that lower end devices may struggle a bit with port scans.
+
+## I have a lower end and/or older device, will this work?
+Absolutely! Just lower the number of threads that are used for port scans in the settings.
+
+## Donate
 
 Like the application and the work I put into it? Consider purchasing the donate version:
 <a href="https://play.google.com/store/apps/details?id=com.aaronjwood.portauthority.donate"><img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="60"></a>
 
-# Contributing
+## Contributing
 
 Contributions of any kind are welcome!
 Please submit any pull requests to the development branch.
