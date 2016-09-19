@@ -8,7 +8,7 @@
     <string name="internalIpLabel">ЛАН ИП</string>
     <string name="externalIpLabel">ВАН ИП</string>
     <string name="fetching">Добављам…</string>
-    <string name="signalLabel">Сигнал / Брзина</string>
+    <string name="signalLabel">Сигнал/Брзина</string>
     <string name="hostDiscovery">Откријте ЛАН Домаћини</string>
     <string name="ssid">ССИД</string>
     <string name="bssid">БССИД</string>
@@ -21,8 +21,8 @@
     <string name="portRangeStop">Крајњи</string>
     <string name="macVendor">продавац</string>
     <string name="noWifi">Не Ви-Фи повезивање</string>
-    <string name="resolvingNames">Решавање днс / НетБИОС имена…</string>
-    <string name="wanHostHint">УРЛ адреса / ИП-</string>
+    <string name="resolvingNames">Решавање днс/НетБИОС имена…</string>
+    <string name="wanHostHint">УРЛ адреса/ИП-</string>
     <string name="scanningWarning">УПОЗОРЕЊЕ</string>
     <string name="scanningDisclaimer">
         Имајте на уму да је трчање порт скенови против јавних серверима обично сматра злонамерни .
