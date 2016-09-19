@@ -261,6 +261,8 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
                     case 0:
                         startActivity(new Intent(MainActivity.this, WanHostActivity.class));
                         break;
+                    case 1:
+                        startActivity(new Intent(MainActivity.this, DnsActivity.class));
                 }
                 leftDrawer.closeDrawer(leftDrawerLayout);
             }

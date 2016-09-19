@@ -9,6 +9,7 @@
     </string-array>
     <string-array name="upperDrawer">
         <item>Scan WAN Host</item>
+        <item>DNS Lookup</item>
     </string-array>
     <string-array name="lowerDrawer">
         <item>\u2699 Settings</item>
