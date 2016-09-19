@@ -13,7 +13,7 @@ Port Authority also allows you to quickly discover hosts on your network and wil
 One of the fastest port scanners with host discovery on the market!
 Host discovery is typically performed in less than **5 seconds**.
 If the device you're scanning drops packets, it takes about 10 seconds to scan 1000 ports.
-If the device you're scanning rejects packets, it takes less than **30 seconds seconds to scan all 65,535 ports!**
+If the device you're scanning rejects packets, it takes less than **30 seconds to scan all 65,535 ports!**
 
 Port Authority has no ads and will *never* have ads.
 It requires extremely limited permissions since it only needs to interact with your network.
