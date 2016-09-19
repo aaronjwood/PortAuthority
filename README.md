@@ -21,7 +21,12 @@ Port Authority has no ads and will *never* have ads.
 It requires extremely limited permissions since it only needs to interact with your network.
 The internals are designed to take advantage of today's modern phones/tablets with multiple cores to ensure you can scan your network as fast as possible. This means that lower end devices may struggle a bit with port scans.
 
+## How are scans so fast?
+
+This application makes *heavy* use of threading. Because most of the operations performed are I/O bound a lot more threads can be used than the number of cores on a device. In fact, one of the most intensive parts of the application is updating the UI during scans. This has gone through many optimizations but still remains a bit of a hotspot. 
+
 ## I have a lower end and/or older device, will this work?
+
 Absolutely! Just lower the number of threads that are used for port scans in the settings.
 
 ## Donate
