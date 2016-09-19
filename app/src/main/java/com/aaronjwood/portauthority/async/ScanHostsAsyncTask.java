@@ -40,17 +40,18 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
     protected Void doInBackground(String... params) {
         String ip = params[0];
         String parts[] = ip.split("\\.");
+        int hosts = Integer.decode(params[1]);
 
         ExecutorService executor = Executors.newCachedThreadPool();
 
         int SCAN_THREADS = 8;
-        int chunk = (int) Math.ceil((double) 255 / SCAN_THREADS);
+        int chunk = (int) Math.ceil((double) hosts / SCAN_THREADS);
         int previousStart = 1;
         int previousStop = chunk;
 
         for (int i = 0; i < SCAN_THREADS; i++) {
-            if (previousStop >= 255) {
-                previousStop = 255;
+            if (previousStop >= hosts) {
+                previousStop = hosts;
                 executor.execute(new ScanHostsRunnable(parts, previousStart, previousStop, delegate));
                 break;
             }

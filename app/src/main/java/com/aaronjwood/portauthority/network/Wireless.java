@@ -6,6 +6,7 @@ import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import com.aaronjwood.portauthority.async.GetExternalIpAsyncTask;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
@@ -13,6 +14,7 @@ import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -152,12 +154,46 @@ public class Wireless {
      * @return Internal Wifi Subnet Netmask
      */
     public int getInternalWifiSubnet() {
-        // ToDo: Make sure this works with static DHCP reservations.
-        //FIXME this seems to have issues on some phones running 5.0+ https://code.google.com/p/android/issues/detail?id=82477
         WifiManager wifiManager = this.getWifiManager();
         DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
-        return dhcpInfo.netmask; //FIXME returns 0
+        int netmask = Integer.bitCount(dhcpInfo.netmask);
+        /*
+         * Workaround for #82477
+         * https://code.google.com/p/android/issues/detail?id=82477
+         * If dhcpInfo returns a subnet that cannot exist, then
+         * look up the Network interface instead.
+         */
+        if (dhcpInfo.netmask < 8 || dhcpInfo.netmask > 32) {
+            try {
+                InetAddress inetAddress = this.getWifiInetAddress();
+                NetworkInterface networkInterface = NetworkInterface.getByInetAddress(inetAddress);
+                for (InterfaceAddress address : networkInterface.getInterfaceAddresses()){
+                    if (inetAddress != null && inetAddress.equals(address.getAddress())){
+                        return address.getNetworkPrefixLength(); // This returns a short of the CIDR notation.
+                    }
+                }
+            } catch (SocketException e){
+                Log.d("SocketException", e.toString());
+            }
+        }
+
+        return netmask;
     }
+
+    /**
+     * Returns the number of hosts in the subnet.
+     *
+     * @return Number of hosts as an integer.
+     */
+    public int getNumberOfHostsInWifiSubnet(){
+        Double subnet = (double) getInternalWifiSubnet();
+        double hosts;
+        double bitsLeft = 32.0d - subnet;
+        hosts = Math.pow(2.0d, bitsLeft) - 2.0d;
+
+        return (int) hosts;
+    }
+
 
     /**
      * Gets the device's internal LAN IP address associated with the cellular network

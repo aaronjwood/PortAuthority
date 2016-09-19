@@ -147,16 +147,16 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
 
                 hosts.clear();
                 hostsAdapter.notifyDataSetChanged();
-
+                int numberOfHosts = wifi.getNumberOfHostsInWifiSubnet();
                 scanProgressDialog = new ProgressDialog(MainActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning For Hosts");
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 scanProgressDialog.setProgress(0);
-                scanProgressDialog.setMax(255);
+                scanProgressDialog.setMax(numberOfHosts);
                 scanProgressDialog.show();
 
-                Discovery.scanHosts(wifi.getInternalWifiIpAddress(), MainActivity.this);
+                Discovery.scanHosts(wifi.getInternalWifiIpAddress(), Integer.toString(numberOfHosts), MainActivity.this);
             }
         });
 
@@ -283,6 +283,8 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
                     case 0:
                         startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                         break;
+                    default:
+                        break;
                 }
                 leftDrawer.closeDrawer(leftDrawerLayout);
             }
@@ -314,8 +316,7 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
      */
     private void getInternalIp() {
         int netmask = this.wifi.getInternalWifiSubnet();
-        int count = Integer.bitCount(netmask);
-        String InternalIpWithSubnet = this.wifi.getInternalWifiIpAddress() + "/" + Integer.toString(count);
+        String InternalIpWithSubnet = this.wifi.getInternalWifiIpAddress() + "/" + Integer.toString(netmask);
         this.internalIp.setText(InternalIpWithSubnet);
     }
 
