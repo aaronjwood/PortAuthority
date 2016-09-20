@@ -17,6 +17,7 @@ public class Database {
 
     public Database(Activity activity) {
         this.activity = activity;
+        openDatabase("network.db"); //Hardcode this for now since we only have one DB
     }
 
     /**
@@ -84,7 +85,6 @@ public class Database {
      * @return Cursor for iterating over results
      */
     public Cursor queryDatabase(String dbName, String query, String[] args) {
-        this.openDatabase(dbName);
         if (this.db != null) {
             return db.rawQuery(query, args);
         } else {
