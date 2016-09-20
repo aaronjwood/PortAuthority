@@ -3,6 +3,7 @@ package com.aaronjwood.portauthority.activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,14 +17,12 @@ import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
+import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,6 +37,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
     protected int scanProgress;
+    protected Database db = new Database(this);
 
     /**
      * Activity created
@@ -223,71 +223,30 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
 
     /**
      * Delegate to handle open ports
-     * TODO: this method is gross, get a fresh copy of the data from IANA and CLEAN IT so that we don't need so many checks
      *
      * @param output Contains the port number and associated banner (if any)
      */
     @Override
     public void processFinish(SparseArray<String> output) {
-        BufferedReader reader;
-        try {
-            reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
-        } catch (IOException e) {
-            Toast.makeText(getApplicationContext(), "Can't open port data file!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        String line;
         int scannedPort = output.keyAt(0);
         String item = String.valueOf(scannedPort);
 
-        try {
-            while ((line = reader.readLine()) != null) {
-                String[] portInfo = line.split(",");
-                String name;
-                String port;
+        Cursor cursor = db.queryDatabase("network.db", "SELECT name, port FROM ports WHERE port = ?", new String[]{Integer.toString(scannedPort)});
 
-                if (portInfo.length > 2) {
-                    name = portInfo[0];
-                    port = portInfo[1];
-                } else {
-                    continue;
-                }
-
-                name = (name.isEmpty()) ? "unknown" : name;
-
-                int filePort;
-
-                //Watch out for inconsistent formatting of the CSV file we're reading!
-                try {
-                    filePort = Integer.parseInt(port);
-                } catch (NumberFormatException e) {
-                    continue;
-                }
-
-                if (scannedPort == filePort) {
-                    item = this.formatOpenPort(output, scannedPort, name, item);
-
-                    this.addOpenPort(item);
-
-                    //Make sure to return so that we don't fall through and add the port again!
-                    return;
-                }
-            }
-        } catch (IOException e) {
-            Toast.makeText(getApplicationContext(), "Error reading from port data file!", Toast.LENGTH_SHORT).show();
-            return;
-        } finally {
+        if (cursor != null) {
             try {
-                reader.close();
-            } catch (IOException e) {
-                Toast.makeText(getApplicationContext(), "Failed to clean up port data file resource", Toast.LENGTH_SHORT).show();
+                if (cursor.moveToFirst()) {
+                    String name = cursor.getString(cursor.getColumnIndex("name"));
+                    name = (name.isEmpty()) ? "unknown" : name;
+                    item = this.formatOpenPort(output, scannedPort, name, item);
+                    this.addOpenPort(item);
+                }
+
+            } finally {
+                cursor.close();
+                db.close();
             }
         }
-
-        //If a port couldn't be found in the port data file then make sure it's still caught and added to the list of open ports
-        item = this.formatOpenPort(output, scannedPort, "unknown", item);
-
-        this.addOpenPort(item);
     }
 
     /**
