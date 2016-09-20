@@ -39,6 +39,9 @@ public class WanHostActivity extends HostActivity {
         this.setupPortScan();
     }
 
+    /**
+     * Clean up
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
