@@ -241,7 +241,6 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                     item = this.formatOpenPort(output, scannedPort, name, item);
                     this.addOpenPort(item);
                 }
-
             } finally {
                 cursor.close();
                 db.close();
