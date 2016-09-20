@@ -1,5 +1,7 @@
 package com.aaronjwood.portauthority.runnable;
 
+import android.util.SparseArray;
+
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 import java.io.BufferedReader;
@@ -9,7 +11,6 @@ import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.HashMap;
 
 public class ScanPortsRunnable implements Runnable {
     private String ip;
@@ -43,7 +44,7 @@ public class ScanPortsRunnable implements Runnable {
 
                 activity.processFinish(1);
 
-                HashMap<Integer, String> portData = new HashMap<>();
+                SparseArray<String> portData = new SparseArray<>();
                 BufferedReader in;
                 String data = null;
                 Socket socket = new Socket();

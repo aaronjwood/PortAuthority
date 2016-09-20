@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,7 +27,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Map;
 
 public abstract class HostActivity extends AppCompatActivity implements HostAsyncResponse {
 
@@ -228,7 +228,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * @param output Contains the port number and associated banner (if any)
      */
     @Override
-    public void processFinish(Map<Integer, String> output) {
+    public void processFinish(SparseArray<String> output) {
         BufferedReader reader;
         try {
             reader = new BufferedReader(new InputStreamReader(getAssets().open("ports.csv")));
@@ -237,7 +237,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
             return;
         }
         String line;
-        int scannedPort = output.keySet().iterator().next();
+        int scannedPort = output.keyAt(0);
         String item = String.valueOf(scannedPort);
 
         try {
@@ -299,7 +299,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * @param item        Contains the transformed output for the open port
      * @return If all associated data is found a port along with its description, underlying service, and visualization is constructed
      */
-    private String formatOpenPort(Map<Integer, String> entry, int scannedPort, String portName, String item) {
+    private String formatOpenPort(SparseArray<String> entry, int scannedPort, String portName, String item) {
         item = item + " - " + portName;
         if (entry.get(scannedPort) != null) {
             item += " (" + entry.get(scannedPort) + ")";

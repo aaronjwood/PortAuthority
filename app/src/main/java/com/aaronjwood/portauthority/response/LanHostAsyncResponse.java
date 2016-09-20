@@ -1,6 +1,6 @@
 package com.aaronjwood.portauthority.response;
 
-import java.util.Map;
+import android.util.SparseArray;
 
 public interface LanHostAsyncResponse {
 
@@ -23,5 +23,5 @@ public interface LanHostAsyncResponse {
      *
      * @param output
      */
-    void processFinish(Map<Integer, String> output);
+    void processFinish(SparseArray<String> output);
 }
