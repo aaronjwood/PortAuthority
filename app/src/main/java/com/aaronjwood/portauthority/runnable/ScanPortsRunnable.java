@@ -48,7 +48,6 @@ public class ScanPortsRunnable implements Runnable {
                 BufferedReader in;
                 String data = null;
                 Socket socket = new Socket();
-                socket.setPerformancePreferences(1, 0, 0);
 
                 try {
                     socket.setReuseAddress(true);
