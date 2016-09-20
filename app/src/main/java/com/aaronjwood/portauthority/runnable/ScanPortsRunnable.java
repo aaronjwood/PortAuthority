@@ -51,6 +51,7 @@ public class ScanPortsRunnable implements Runnable {
                 socket.setPerformancePreferences(1, 0, 0);
 
                 try {
+                    socket.setReuseAddress(true);
                     socket.setTcpNoDelay(true);
                     socket.connect(new InetSocketAddress(this.ip, i), 4000);
 
