@@ -37,7 +37,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
     protected int scanProgress;
-    protected Database db = new Database(this);
+    private Database db;
 
     /**
      * Activity created
@@ -49,6 +49,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         super.onCreate(savedInstanceState);
         setContentView(this.layout);
 
+        db = new Database(this);
         setupPortsAdapter();
     }
 
@@ -76,6 +77,15 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         }
         this.scanProgressDialog = null;
         this.portRangeDialog = null;
+    }
+
+    /**
+     * Clean up
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        db.close();
     }
 
     /**
@@ -243,7 +253,6 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                 }
             } finally {
                 cursor.close();
-                db.close();
             }
         }
     }
