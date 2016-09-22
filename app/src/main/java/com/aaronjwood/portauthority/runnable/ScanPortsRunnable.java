@@ -74,7 +74,7 @@ public class ScanPortsRunnable implements Runnable {
                         } else if (data.contains("iis") || data.contains("microsoft")) {
                             data = "IIS";
                         } else if (data.contains("nginx")) {
-                            data = "Nginx";
+                            data = "NGINX";
                         } else {
                             data = null;
                         }
