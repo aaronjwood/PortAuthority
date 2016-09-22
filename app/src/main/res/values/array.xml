@@ -22,6 +22,7 @@
         <item>\u2699 Settings</item>
     </string-array>
     <string-array name="records">
+        <item>Record Type</item>
         <item>A</item>
         <item>A6</item>
         <item>AAAA</item>
