@@ -21,4 +21,40 @@
     <string-array name="lowerDrawer">
         <item>\u2699 Settings</item>
     </string-array>
+    <string-array name="records">
+        <item>A</item>
+        <item>A6</item>
+        <item>AAAA</item>
+        <item>AFSDB</item>
+        <item>APL</item>
+        <item>CERT</item>
+        <item>CNAME</item>
+        <item>DHCID</item>
+        <item>DLV</item>
+        <item>DNAME</item>
+        <item>DNSKEY</item>
+        <item>DS</item>
+        <item>IPSECKEY</item>
+        <item>KEY</item>
+        <item>KX</item>
+        <item>LOC</item>
+        <item>MX</item>
+        <item>NAPTR</item>
+        <item>NS</item>
+        <item>NSEC</item>
+        <item>NSEC3</item>
+        <item>NSEC3PARAM</item>
+        <item>PTR</item>
+        <item>RP</item>
+        <item>RRSIG</item>
+        <item>SIG</item>
+        <item>SOA</item>
+        <item>SRV</item>
+        <item>SSHFP</item>
+        <item>TKEY</item>
+        <item>TLSA</item>
+        <item>TSIG</item>
+        <item>TXT</item>
+        <item>URI</item>
+    </string-array>
 </resources>
