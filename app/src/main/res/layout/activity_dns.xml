@@ -18,4 +18,30 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/icsblue" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <LinearLayout
+            style="?attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/scanPortRange"
+                style="?attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button"
+                android:minHeight="1dp"
+                android:minWidth="1dp"
+                android:text="@string/dnsLookup"
+                android:textColor="@drawable/button_text"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
 </RelativeLayout>
