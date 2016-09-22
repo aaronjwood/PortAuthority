@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 public class UserPreference {
 
     private static final String KEY_HOST_ADDRESS = "HOST_ADDRESS_STRING";
+    private static final String KEY_DOMAIN_NAME = "DOMAIN_NAME_STRING";
     private static final String KEY_PORT_RANGE_START = "KEY_PORT_RANGE_MIN_INT";
     private static final String KEY_PORT_RANGE_STOP = "KEY_PORT_RANGE_HIGH_INT";
     private static final String PORT_SCAN_THREADS = "portScanThreads";
@@ -39,6 +40,31 @@ public class UserPreference {
     public static String getLastUsedHostAddress(@NonNull Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(KEY_HOST_ADDRESS, "");
+    }
+
+    /**
+     * Saves the last entered domain name for DNS lookups
+     *
+     * @param context
+     * @param domainName
+     */
+    public static void saveLastUsedDomainName(@NonNull Context context, @Nullable String domainName) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if (domainName == null) {
+            preferences.edit().remove(KEY_DOMAIN_NAME).apply();
+        } else {
+            preferences.edit().putString(KEY_DOMAIN_NAME, domainName).apply();
+        }
+    }
+
+    /**
+     * Gets the last entered domain name for DNS lookups
+     *
+     * @param context
+     */
+    public static String getLastUsedDomainName(@NonNull Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(KEY_DOMAIN_NAME, "");
     }
 
     /**
