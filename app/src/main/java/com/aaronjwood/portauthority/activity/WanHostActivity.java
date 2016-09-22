@@ -15,8 +15,7 @@ import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
-
-public class WanHostActivity extends HostActivity {
+public final class WanHostActivity extends HostActivity {
 
     private EditText wanHost;
 

@@ -15,8 +15,7 @@ import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
-
-public class LanHostActivity extends HostActivity {
+public final class LanHostActivity extends HostActivity {
     private Wireless wifi;
     private String hostName;
     private String hostIp;
