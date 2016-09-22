@@ -62,7 +62,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
         executor.shutdown();
 
         try {
-            executor.awaitTermination(10, TimeUnit.SECONDS);
+            executor.awaitTermination(5, TimeUnit.MINUTES);
         } catch (InterruptedException ignored) {
         }
 
