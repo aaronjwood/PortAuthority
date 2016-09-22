@@ -23,11 +23,11 @@ The internals are designed to take advantage of today's modern phones/tablets wi
 
 ## How are scans so fast?
 
-This application makes *heavy* use of threading. Because most of the operations performed are I/O bound a lot more threads can be used than the number of cores on a device. In fact, one of the most intensive parts of the application is updating the UI during scans. This has gone through many optimizations but still remains a bit of a hotspot. 
+This application makes *heavy* use of threading. Because most of the operations performed are I/O bound a lot more threads can be used than the number of cores on a device. In fact, one of the most intensive parts of the application is updating the UI during scans. This has gone through many optimizations but still remains a bit of a hotspot.
 
 ## I have a lower end and/or older device, will this work?
 
-Absolutely! Just lower the number of threads that are used for port scans in the settings.
+Absolutely! Just lower the number of threads that are used for port scans in the settings. I'm always working on improving the efficiency and memory footprint of the application, and things have been greatly improved since the original version!
 
 ## Donate
 
