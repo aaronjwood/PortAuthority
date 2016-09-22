@@ -24,6 +24,7 @@
     <string name="resolvingNames">Resolving DNS/NetBIOS names…</string>
     <string name="wanHostHint">URL/IP</string>
     <string name="scanningWarning">WARNING</string>
+    <string name="domainName">Domain Name</string>
     <string name="scanningDisclaimer">
         Please be aware that running port scans against public servers is normally considered malicious.
         Additionally, running these kinds of scans over your carrier\'s network instead of your own WiFi connection will sometimes produce inaccurate results due to traffic shaping.
