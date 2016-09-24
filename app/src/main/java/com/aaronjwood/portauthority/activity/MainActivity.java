@@ -314,8 +314,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     private void getInternalIp() {
         int netmask = this.wifi.getInternalWifiSubnet();
-        int count = Integer.bitCount(netmask);
-        String InternalIpWithSubnet = this.wifi.getInternalWifiIpAddress() + "/" + Integer.toString(count);
+        String InternalIpWithSubnet = this.wifi.getInternalWifiIpAddress() + "/" + Integer.toString(netmask);
         this.internalIp.setText(InternalIpWithSubnet);
     }
 
