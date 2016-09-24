@@ -6,7 +6,6 @@ import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
 import com.aaronjwood.portauthority.async.GetExternalIpAsyncTask;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
@@ -173,7 +172,6 @@ public class Wireless {
                     }
                 }
             } catch (SocketException e){
-                Log.d("SocketException", e.toString());
             }
         }
 
