@@ -8,6 +8,7 @@
     tools:context="com.aaronjwood.portauthority.activity.DnsActivity">
 
     <LinearLayout
+        android:id="@+id/dnsInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -32,10 +33,16 @@
             android:entries="@array/records" />
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_height="match_parent"
+        android:layout_below="@id/dnsInput"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <LinearLayout
             style="?attr/buttonBarButtonStyle"
@@ -56,6 +63,7 @@
                 android:textColor="@drawable/button_text"
                 android:textSize="12sp" />
         </LinearLayout>
-    </RelativeLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>
