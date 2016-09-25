@@ -44,7 +44,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/scanPortRange"
+                android:id="@+id/dnsLookup"
                 style="?attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
