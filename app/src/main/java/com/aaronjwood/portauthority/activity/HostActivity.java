@@ -30,7 +30,6 @@ import java.util.Comparator;
 public abstract class HostActivity extends AppCompatActivity implements HostAsyncResponse {
 
     protected int layout;
-    protected Host host = new Host();
     protected ArrayAdapter<String> adapter;
     protected ListView portList;
     protected ArrayList<String> ports = new ArrayList<>();
@@ -168,7 +167,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                 scanProgressDialog.setMax(stopPort - startPort + 1);
                 scanProgressDialog.show();
 
-                host.scanPorts(ip, startPort, stopPort, activity);
+                Host.scanPorts(ip, startPort, stopPort, activity);
             }
         });
     }

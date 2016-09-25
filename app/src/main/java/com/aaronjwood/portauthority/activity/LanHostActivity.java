@@ -107,7 +107,7 @@ public final class LanHostActivity extends HostActivity {
                 scanProgressDialog.setMax(1024);
                 scanProgressDialog.show();
 
-                host.scanPorts(hostIp, 1, 1024, LanHostActivity.this);
+                Host.scanPorts(hostIp, 1, 1024, LanHostActivity.this);
             }
         });
     }

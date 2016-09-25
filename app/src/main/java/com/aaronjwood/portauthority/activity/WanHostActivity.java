@@ -12,6 +12,7 @@ import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
+import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
@@ -70,7 +71,7 @@ public final class WanHostActivity extends HostActivity {
                 scanProgressDialog.setMax(1024);
                 scanProgressDialog.show();
 
-                host.scanPorts(wanHost.getText().toString(), 1, 1024, WanHostActivity.this);
+                Host.scanPorts(wanHost.getText().toString(), 1, 1024, WanHostActivity.this);
                 portListClick(wanHost.getText().toString());
             }
         });
