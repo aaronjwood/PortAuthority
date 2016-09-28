@@ -9,9 +9,8 @@ import org.xbill.DNS.Record;
 import org.xbill.DNS.TextParseException;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
-public class DnsLookupAsyncTask extends AsyncTask<List<String>, Void, String> {
+public class DnsLookupAsyncTask extends AsyncTask<String, Void, String> {
 
     private final WeakReference<DnsAsyncResponse> delegate;
 
@@ -31,9 +30,9 @@ public class DnsLookupAsyncTask extends AsyncTask<List<String>, Void, String> {
      * @return DNS answer
      */
     @Override
-    protected String doInBackground(List<String>... params) {
-        String domain = params[0].get(0);
-        int recordType = Integer.parseInt(params[0].get(1));
+    protected String doInBackground(String... params) {
+        String domain = params[0];
+        int recordType = Integer.parseInt(params[1]);
         Record[] records;
 
         try {

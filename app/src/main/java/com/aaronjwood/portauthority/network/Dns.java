@@ -5,9 +5,6 @@ import com.aaronjwood.portauthority.response.DnsAsyncResponse;
 
 import org.xbill.DNS.Type;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public final class Dns {
 
     /**
@@ -28,11 +25,7 @@ public final class Dns {
                 return;
         }
 
-        List<String> data = new ArrayList<>();
-        data.add(domain);
-        data.add(type);
-
-        new DnsLookupAsyncTask(delegate).execute(data);
+        new DnsLookupAsyncTask(delegate).execute(domain, type);
     }
 
 }
