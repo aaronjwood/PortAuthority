@@ -10,6 +10,13 @@ import java.util.List;
 
 public final class Dns {
 
+    /**
+     * Kicks off a DNS lookup
+     *
+     * @param domain     Domain name
+     * @param recordType The type of DNS record to look up
+     * @param delegate   Delegate to be called when the lookup has finished
+     */
     public static void lookup(String domain, String recordType, DnsAsyncResponse delegate) {
         String type;
 
