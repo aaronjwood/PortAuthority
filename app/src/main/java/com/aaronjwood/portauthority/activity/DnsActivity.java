@@ -71,6 +71,11 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
         });
     }
 
+    /**
+     * Displays the DNS answers to the user
+     *
+     * @param output
+     */
     @Override
     public void processFinish(String output) {
         this.dnsAnswer.setText(output);
