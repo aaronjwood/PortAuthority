@@ -18,8 +18,7 @@ public final class Dns {
                 type = Integer.toString(Type.A);
                 break;
             default:
-                type = Integer.toString(-1);
-                break;
+                return;
         }
 
         List<String> data = new ArrayList<>();
