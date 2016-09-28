@@ -38,6 +38,10 @@ public class DnsLookupAsyncTask extends AsyncTask<List<String>, Void, String> {
 
         try {
             records = new Lookup(domain, recordType).run();
+            if (records == null) {
+                return "No records found.";
+            }
+
             String answer = "";
 
             for (Record record : records) {
@@ -46,7 +50,7 @@ public class DnsLookupAsyncTask extends AsyncTask<List<String>, Void, String> {
 
             return answer;
         } catch (TextParseException e) {
-            return "Could not lookup record!";
+            return "Error performing lookup!";
         }
     }
 
