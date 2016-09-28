@@ -1,27 +1,32 @@
 package com.aaronjwood.portauthority.network;
 
-import org.xbill.DNS.Lookup;
-import org.xbill.DNS.Record;
-import org.xbill.DNS.TextParseException;
+import com.aaronjwood.portauthority.async.DnsLookupAsyncTask;
+import com.aaronjwood.portauthority.response.DnsAsyncResponse;
+
 import org.xbill.DNS.Type;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class Dns {
 
-    public static String lookupA(String domain) {
-        Record[] records;
+    public static void lookup(String domain, String recordType, DnsAsyncResponse delegate) {
+        String type;
 
-        try {
-            records = new Lookup(domain, Type.A).run();
-            String data = "";
-
-            for(Record record : records) {
-                data += record.rdataToString();
-            }
-
-            return data;
-        } catch (TextParseException e) {
-            return "Could not lookup record!";
+        switch (recordType) {
+            case "A":
+                type = Integer.toString(Type.A);
+                break;
+            default:
+                type = Integer.toString(-1);
+                break;
         }
+
+        List<String> data = new ArrayList<>();
+        data.add(domain);
+        data.add(type);
+
+        new DnsLookupAsyncTask(delegate).execute(data);
     }
 
 }
