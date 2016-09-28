@@ -59,6 +59,10 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
              */
             @Override
             public void onClick(View view) {
+                if (domainElement.getText().toString().isEmpty() || recordElement.getSelectedItemPosition() == 0) {
+                    return;
+                }
+
                 String domain = domainElement.getText().toString();
                 String recordType = recordElement.getSelectedItem().toString();
 
