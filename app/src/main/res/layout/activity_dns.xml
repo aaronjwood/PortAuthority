@@ -47,7 +47,7 @@
             android:paddingTop="20dp"
             android:textColor="@color/white"
             android:textIsSelectable="true"
-            android:textSize="13sp" />
+            android:textSize="12sp" />
 
         <LinearLayout
             style="?attr/buttonBarButtonStyle"
