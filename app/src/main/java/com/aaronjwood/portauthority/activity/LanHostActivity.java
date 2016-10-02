@@ -4,20 +4,18 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
+import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
-
-public class LanHostActivity extends HostActivity {
+public final class LanHostActivity extends HostActivity {
     private Wireless wifi;
     private String hostName;
     private String hostIp;
@@ -36,7 +34,6 @@ public class LanHostActivity extends HostActivity {
         TextView hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
         TextView hostMacVendor = (TextView) findViewById(R.id.hostMacVendor);
         TextView hostMacLabel = (TextView) findViewById(R.id.hostMac);
-        this.portList = (ListView) findViewById(R.id.portList);
         Bundle extras = getIntent().getExtras();
         if (extras == null) {
             return;
@@ -45,12 +42,9 @@ public class LanHostActivity extends HostActivity {
         this.hostName = extras.getString("HOSTNAME");
         this.hostIp = extras.getString("IP");
         this.hostMac = extras.getString("MAC");
+        this.wifi = new Wireless(getApplicationContext());
 
-        this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, ports);
-        this.portList.setAdapter(adapter);
-        this.wifi = new Wireless(this);
-
-        hostMacVendor.setText(this.host.getMacVendor(hostMac.replace(":", "").substring(0, 6), this));
+        hostMacVendor.setText(Host.getMacVendor(hostMac.replace(":", "").substring(0, 6), this));
 
         hostIpLabel.setText(this.hostName);
         hostMacLabel.setText(this.hostMac);
@@ -59,15 +53,30 @@ public class LanHostActivity extends HostActivity {
     }
 
     /**
+     * Save the state of the activity
+     *
+     * @param savedState Data to save
+     */
+    @Override
+    public void onSaveInstanceState(Bundle savedState) {
+        super.onSaveInstanceState(savedState);
+
+        savedState.putString("hostName", this.hostName);
+        savedState.putString("hostIp", this.hostIp);
+        savedState.putString("hostMac", this.hostMac);
+    }
+
+    /**
      * Restore saved data
      *
      * @param savedInstanceState Data from a saved state
      */
     public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
         this.hostName = savedInstanceState.getString("hostName");
         this.hostIp = savedInstanceState.getString("hostIp");
         this.hostMac = savedInstanceState.getString("hostMac");
-        ports = savedInstanceState.getStringArrayList("ports");
     }
 
     /**
@@ -98,7 +107,7 @@ public class LanHostActivity extends HostActivity {
                 scanProgressDialog.setMax(1024);
                 scanProgressDialog.show();
 
-                host.scanPorts(hostIp, 1, 1024, LanHostActivity.this);
+                Host.scanPorts(hostIp, 1, 1024, LanHostActivity.this);
             }
         });
     }
@@ -151,21 +160,6 @@ public class LanHostActivity extends HostActivity {
         this.scanWellKnownPortsClick();
         this.scanPortRangeClick();
         this.portListClick(hostIp);
-    }
-
-    /**
-     * Save the state of the activity
-     *
-     * @param savedState Data to save
-     */
-    @Override
-    public void onSaveInstanceState(Bundle savedState) {
-        super.onSaveInstanceState(savedState);
-
-        savedState.putString("hostName", this.hostName);
-        savedState.putString("hostIp", this.hostIp);
-        savedState.putString("hostMac", this.hostMac);
-        savedState.putStringArrayList("ports", ports);
     }
 
 

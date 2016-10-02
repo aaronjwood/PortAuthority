@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="deviceInfoLabel">Device Info</string>
     <string name="app_name">Port Authority</string>
     <string name="action_settings">Settings</string>
     <string name="macAddress">MAC</string>
@@ -9,11 +8,10 @@
     <string name="internalIpLabel">LAN IP</string>
     <string name="externalIpLabel">WAN IP</string>
     <string name="fetching">Fetching…</string>
-    <string name="signalLabel">Signal</string>
-    <string name="hostDiscovery">Discover LAN Hosts</string>
+    <string name="signalLabel">Signal/Speed</string>
+    <string name="hostDiscovery">Discover Hosts</string>
     <string name="ssid">SSID</string>
     <string name="bssid">BSSID</string>
-    <string name="hostname">Hostname</string>
     <string name="scanWellKnownPorts">Scan Well Known Ports</string>
     <string name="scanPortRange">Scan Port Range</string>
     <string name="resetPortRange">Reset Port Range</string>
@@ -21,9 +19,10 @@
     <string name="portRangeStart">Start Port</string>
     <string name="portRangeStop">Stop Port</string>
     <string name="noWifi">No WiFi connection</string>
-    <string name="resolvingNames">Resolving DNS/NetBIOS names…</string>
     <string name="wanHostHint">URL/IP</string>
     <string name="scanningWarning">WARNING</string>
+    <string name="domainName">Domain Name</string>
+    <string name="dnsLookup">DNS Lookup</string>
     <string name="scanningDisclaimer">
         Please be aware that running port scans against public servers is normally considered malicious.
         Additionally, running these kinds of scans over your carrier\'s network instead of your own WiFi connection will sometimes produce inaccurate results due to traffic shaping.

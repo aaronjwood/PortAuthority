@@ -13,10 +13,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
     private static final String EXTERNAL_IP_SERVICE = "https://ipinfo.io/ip";
-    private MainAsyncResponse delegate;
+    private final WeakReference<MainAsyncResponse> delegate;
 
     /**
      * Constructor to set the delegate
@@ -24,7 +25,7 @@ public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
      * @param delegate Called when the external IP has been fetched
      */
     public GetExternalIpAsyncTask(MainAsyncResponse delegate) {
-        this.delegate = delegate;
+        this.delegate = new WeakReference<>(delegate);
     }
 
     /**
@@ -42,11 +43,9 @@ public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
             HttpResponse response = httpclient.execute(httpget);
             HttpEntity entity = response.getEntity();
             return EntityUtils.toString(entity).trim();
-        }
-        catch(ClientProtocolException e) {
+        } catch (ClientProtocolException e) {
             return "Couldn't get your external IP";
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             return "Couldn't get your external IP";
         }
     }
@@ -58,6 +57,9 @@ public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
      */
     @Override
     protected void onPostExecute(String result) {
-        delegate.processFinish(result);
+        MainAsyncResponse activity = delegate.get();
+        if (activity != null) {
+            activity.processFinish(result);
+        }
     }
 }

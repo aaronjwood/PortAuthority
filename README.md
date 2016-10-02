@@ -7,22 +7,34 @@
 [![Build Status](https://travis-ci.org/aaronjwood/PortAuthority.svg?branch=master)](https://travis-ci.org/aaronjwood/PortAuthority)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/8687/badge.svg)](https://scan.coverity.com/projects/aaronjwood-portauthority)
 
+## Overview
+
 A handy systems and security-focused tool, Port Authority is a *very* fast port scanner.
 Port Authority also allows you to quickly discover hosts on your network and will display useful network information about your device and other hosts.
 
 One of the fastest port scanners with host discovery on the market!
-Host discovery is typically performed in **3 seconds**.
-If the device you're scanning drops packets, it takes less than 10 seconds to scan 1000 ports.
-If the device you're scanning rejects packets, it takes about **~30 seconds seconds to scan all 65,535 ports!**
+Host discovery is typically performed in less than **5 seconds**.
+If the device you're scanning drops packets, it takes about 10 seconds to scan 1000 ports.
+If the device you're scanning rejects packets, it takes less than **30 seconds to scan all 65,535 ports!**
 
 Port Authority has no ads and will *never* have ads.
 It requires extremely limited permissions since it only needs to interact with your network.
-The internals are designed to take advantage of today's modern phones with multiple cores to ensure you can scan your network as fast as possible.
+The internals are designed to take advantage of today's modern phones/tablets with multiple cores to ensure you can scan your network as fast as possible. This means that lower end devices may struggle a bit with port scans.
 
-Like the application and the work I put into it? Consider purchasing the donate version: 
+## How are scans so fast?
+
+This application makes *heavy* use of threading. Because most of the operations performed are I/O bound a lot more threads can be used than the number of cores on a device. In fact, one of the most intensive parts of the application is updating the UI during scans. This has gone through many optimizations but still remains a bit of a hotspot.
+
+## I have a lower end and/or older device, will this work?
+
+Absolutely! Just lower the number of threads that are used for port scans in the settings. I'm always working on improving the efficiency and memory footprint of the application, and things have been greatly improved since the original version!
+
+## Donate
+
+Like the application and the work I put into it? Consider purchasing the donate version:
 <a href="https://play.google.com/store/apps/details?id=com.aaronjwood.portauthority.donate"><img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="60"></a>
 
-# Contributing
+## Contributing
 
 Contributions of any kind are welcome!
 Please submit any pull requests to the development branch.

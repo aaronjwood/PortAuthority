@@ -21,15 +21,18 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aaronjwood.portauthority.BuildConfig;
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Discovery;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.utils.UserPreference;
+import com.squareup.leakcanary.LeakCanary;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,12 +41,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements MainAsyncResponse {
+public final class MainActivity extends AppCompatActivity implements MainAsyncResponse {
 
     private final static int TIMER_INTERVAL = 1500;
 
     private Wireless wifi;
-    private Discovery discovery = new Discovery();
     private ListView hostList;
     private TextView internalIp;
     private TextView externalIp;
@@ -65,6 +67,11 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (BuildConfig.DEBUG) {
+            LeakCanary.install(getApplication());
+        }
+
         setContentView(R.layout.activity_main);
 
         this.internalIp = (TextView) findViewById(R.id.internalIpAddress);
@@ -74,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
         this.bssid = (TextView) findViewById(R.id.bssid);
         this.hostList = (ListView) findViewById(R.id.hostList);
 
-        this.wifi = new Wireless(this);
+        this.wifi = new Wireless(getApplicationContext());
 
         this.setupHostsAdapter();
         this.setupDrawer();
@@ -87,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
      * Sets up the adapter to handle discovered hosts
      */
     private void setupHostsAdapter() {
-        this.hostsAdapter = new ArrayAdapter<Map<String, String>>(this, android.R.layout.simple_list_item_2, android.R.id.text1, this.hosts) {
+        this.hostsAdapter = new ArrayAdapter<Map<String, String>>(this, R.layout.host_list_item, android.R.id.text1, this.hosts) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
@@ -115,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
         //Set the device's vendor
         if (mac != null) {
             TextView macVendor = (TextView) findViewById(R.id.deviceMacVendor);
-            macVendor.setText(new Host().getMacVendor(mac.replace(":", "").substring(0, 6), this));
+            macVendor.setText(Host.getMacVendor(mac.replace(":", "").substring(0, 6), this));
         }
     }
 
@@ -149,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
                 scanProgressDialog.setMax(255);
                 scanProgressDialog.show();
 
-                discovery.scanHosts(wifi.getInternalWifiIpAddress(), MainActivity.this);
+                Discovery.scanHosts(wifi.getInternalWifiIpAddress(), MainActivity.this);
             }
         });
 
@@ -202,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
                         getNetworkInfo();
                     } else {
                         mHandler.removeCallbacksAndMessages(null);
-                        internalIp.setText(wifi.getInternalMobileIpAddress());
+                        internalIp.setText(Wireless.getInternalMobileIpAddress());
                         getExternalIp();
                         signalStrength.setText(R.string.noWifi);
                         ssid.setText(R.string.noWifi);
@@ -220,8 +227,10 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
      * Sets up event handlers and items for the left drawer
      */
     private void setupDrawer() {
-        final DrawerLayout leftDrawer = (DrawerLayout) findViewById(R.id.mainLeftDrawer);
-        ImageView drawerIcon = (ImageView) findViewById(R.id.mainLeftDrawerIcon);
+        final DrawerLayout leftDrawer = (DrawerLayout) findViewById(R.id.leftDrawer);
+        final RelativeLayout leftDrawerLayout = (RelativeLayout) findViewById(R.id.leftDrawerLayout);
+
+        ImageView drawerIcon = (ImageView) findViewById(R.id.leftDrawerIcon);
         drawerIcon.setOnClickListener(new View.OnClickListener() {
 
             /**
@@ -234,8 +243,10 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
             }
         });
 
-        ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
-        leftDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ListView upperList = (ListView) findViewById(R.id.upperLeftDrawerList);
+        ListView lowerList = (ListView) findViewById(R.id.lowerLeftDrawerList);
+
+        upperList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             /**
              * Click handler for the left side navigation drawer items
@@ -251,10 +262,29 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
                         startActivity(new Intent(MainActivity.this, WanHostActivity.class));
                         break;
                     case 1:
+                        startActivity(new Intent(MainActivity.this, DnsActivity.class));
+                }
+                leftDrawer.closeDrawer(leftDrawerLayout);
+            }
+        });
+
+        lowerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            /**
+             * Click handler for the left side navigation drawer items
+             * @param parent
+             * @param view
+             * @param position
+             * @param id
+             */
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
                         startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                         break;
                 }
-                leftDrawer.closeDrawer(parent);
+                leftDrawer.closeDrawer(leftDrawerLayout);
             }
         });
     }
@@ -263,17 +293,29 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
      * Gets network information about the device and updates various UI elements
      */
     private void getNetworkInfo() {
+        final int linkSpeed = wifi.getLinkSpeed();
         this.mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm");
+                signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm/" + linkSpeed + "Mbps");
                 mHandler.postDelayed(this, TIMER_INTERVAL);
             }
         }, 0);
-        this.internalIp.setText(this.wifi.getInternalWifiIpAddress());
+        this.getInternalIp();
         this.getExternalIp();
         this.ssid.setText(this.wifi.getSSID());
         this.bssid.setText(this.wifi.getBSSID());
+    }
+
+    /**
+     * Wrapper method for getting the internal wireless IP address.
+     * This gets the netmask, counts the bits set (subnet size),
+     * then prints it along side the IP.
+     */
+    private void getInternalIp() {
+        int netmask = this.wifi.getInternalWifiSubnet();
+        String InternalIpWithSubnet = this.wifi.getInternalWifiIpAddress() + "/" + Integer.toString(netmask);
+        this.internalIp.setText(InternalIpWithSubnet);
     }
 
     /**
@@ -315,6 +357,8 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        mHandler.removeCallbacksAndMessages(null);
 
         if (this.receiver != null) {
             unregisterReceiver(this.receiver);

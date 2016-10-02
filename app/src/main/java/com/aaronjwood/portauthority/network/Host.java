@@ -17,7 +17,7 @@ public class Host {
      * @param stopPort  The port to stop scanning at
      * @param delegate  Delegate to be called when the port scan has finished
      */
-    public void scanPorts(String ip, int startPort, int stopPort, HostAsyncResponse delegate) {
+    public static void scanPorts(String ip, int startPort, int stopPort, HostAsyncResponse delegate) {
         new ScanPortsAsyncTask(delegate).execute(ip, startPort, stopPort);
     }
 
@@ -27,9 +27,9 @@ public class Host {
      * @param mac      MAC address
      * @param activity The calling activity
      */
-    public String getMacVendor(String mac, Activity activity) {
+    public static String getMacVendor(String mac, Activity activity) {
         Database db = new Database(activity);
-        Cursor cursor = db.queryDatabase("oui.db", "SELECT vendor FROM oui WHERE mac LIKE ?", new String[]{mac});
+        Cursor cursor = db.queryDatabase("network.db", "SELECT vendor FROM ouis WHERE mac LIKE ?", new String[]{mac});
         String vendor;
 
         try {

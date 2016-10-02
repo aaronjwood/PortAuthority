@@ -123,7 +123,7 @@
                 android:minWidth="1dp"
                 android:text="@string/scanWellKnownPorts"
                 android:textColor="@drawable/button_text"
-                android:textSize="14sp" />
+                android:textSize="12sp" />
 
             <Button
                 android:id="@+id/scanPortRange"
@@ -136,7 +136,7 @@
                 android:minWidth="1dp"
                 android:text="@string/scanPortRange"
                 android:textColor="@drawable/button_text"
-                android:textSize="14sp" />
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 

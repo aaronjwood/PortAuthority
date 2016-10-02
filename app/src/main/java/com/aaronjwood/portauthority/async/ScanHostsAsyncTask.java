@@ -8,6 +8,7 @@ import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import jcifs.netbios.NbtAddress;
 
 public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
-    private MainAsyncResponse delegate;
+    private final WeakReference<MainAsyncResponse> delegate;
 
     /**
      * Constructor to set the delegate
@@ -27,7 +28,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
      * @param delegate Called when host discovery has finished
      */
     public ScanHostsAsyncTask(MainAsyncResponse delegate) {
-        this.delegate = delegate;
+        this.delegate = new WeakReference<>(delegate);
     }
 
     /**
@@ -61,7 +62,7 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
         executor.shutdown();
 
         try {
-            executor.awaitTermination(10, TimeUnit.SECONDS);
+            executor.awaitTermination(5, TimeUnit.MINUTES);
         } catch (InterruptedException ignored) {
         }
 
@@ -72,6 +73,9 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
     /**
      * Scans the ARP table and updates the list with hosts on the network
      * Resolves both DNS and NetBIOS
+     * Don't update the UI in onPostExecute since we want to do multiple UI updates here
+     * onPostExecute seems to perform all UI updates at once which would hinder what we're doing here
+     * TODO: this method is gross, refactor it and break it up
      *
      * @param params
      */
@@ -121,7 +125,11 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
                                 InetAddress add = InetAddress.getByName(ip);
                                 String hostname = add.getCanonicalHostName();
                                 item.put("First Line", hostname);
-                                delegate.processFinish(item);
+
+                                MainAsyncResponse activity = delegate.get();
+                                if (activity != null) {
+                                    activity.processFinish(item);
+                                }
                             } catch (UnknownHostException ignored) {
                                 return;
                             }
@@ -131,7 +139,11 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
                                 for (NbtAddress addr : netbios) {
                                     if (addr.getNameType() == 0x20) {
                                         item.put("First Line", addr.getHostName());
-                                        delegate.processFinish(item);
+
+                                        MainAsyncResponse activity = delegate.get();
+                                        if (activity != null) {
+                                            activity.processFinish(item);
+                                        }
                                         return;
                                     }
                                 }

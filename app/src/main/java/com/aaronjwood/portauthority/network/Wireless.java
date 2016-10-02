@@ -1,8 +1,8 @@
 package com.aaronjwood.portauthority.network;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -13,6 +13,7 @@ import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -21,15 +22,15 @@ import java.util.Enumeration;
 
 public class Wireless {
 
-    private Activity activity;
+    private Context context;
 
     /**
      * Constructor to set the activity for context
      *
-     * @param activity The activity to use for context
+     * @param context The activity to use for context
      */
-    public Wireless(Activity activity) {
-        this.activity = activity;
+    public Wireless(Context context) {
+        this.context = context;
     }
 
     /**
@@ -145,12 +146,44 @@ public class Wireless {
         }
     }
 
+    /*
+     * Gets the Wifi Manager DHCP information and returns the Netmask of the
+     * internal Wifi Network as an int
+     *
+     * @return Internal Wifi Subnet Netmask
+     */
+    public int getInternalWifiSubnet() {
+        WifiManager wifiManager = this.getWifiManager();
+        DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
+        int netmask = Integer.bitCount(dhcpInfo.netmask);
+        /*
+         * Workaround for #82477
+         * https://code.google.com/p/android/issues/detail?id=82477
+         * If dhcpInfo returns a subnet that cannot exist, then
+         * look up the Network interface instead.
+         */
+        if (dhcpInfo.netmask < 8 || dhcpInfo.netmask > 32) {
+            try {
+                InetAddress inetAddress = this.getWifiInetAddress();
+                NetworkInterface networkInterface = NetworkInterface.getByInetAddress(inetAddress);
+                for (InterfaceAddress address : networkInterface.getInterfaceAddresses()) {
+                    if (inetAddress != null && inetAddress.equals(address.getAddress())) {
+                        return address.getNetworkPrefixLength(); // This returns a short of the CIDR notation.
+                    }
+                }
+            } catch (SocketException ignored) {
+            }
+        }
+
+        return netmask;
+    }
+
     /**
      * Gets the device's internal LAN IP address associated with the cellular network
      *
      * @return Local cellular network LAN IP address
      */
-    public String getInternalMobileIpAddress() {
+    public static String getInternalMobileIpAddress() {
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en != null && en.hasMoreElements(); ) {
                 NetworkInterface intf = en.nextElement();
@@ -212,7 +245,7 @@ public class Wireless {
      * @return WifiManager
      */
     public WifiManager getWifiManager() {
-        return (WifiManager) this.activity.getSystemService(Context.WIFI_SERVICE);
+        return (WifiManager) this.context.getSystemService(Context.WIFI_SERVICE);
     }
 
     /**
@@ -230,7 +263,7 @@ public class Wireless {
      * @return Connectivity manager
      */
     private ConnectivityManager getConnectivityManager() {
-        return (ConnectivityManager) this.activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return (ConnectivityManager) this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     /**

@@ -7,6 +7,7 @@ import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.runnable.ScanPortsRunnable;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
+import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
@@ -14,7 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
-    private HostAsyncResponse delegate;
+    private final WeakReference<HostAsyncResponse> delegate;
 
     /**
      * Constructor to set the delegate
@@ -22,7 +23,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
      * @param delegate Called when a port scan has finished
      */
     public ScanPortsAsyncTask(HostAsyncResponse delegate) {
-        this.delegate = delegate;
+        this.delegate = new WeakReference<>(delegate);
     }
 
     /**
@@ -36,42 +37,46 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
         String ip = (String) params[0];
         int startPort = (int) params[1];
         int stopPort = (int) params[2];
-        Context context = (Context) this.delegate;
-        final int NUM_THREADS = UserPreference.getPortScanThreads(context);
 
-        try {
-            InetAddress address = InetAddress.getByName(ip);
-            ip = address.getHostAddress();
-        } catch (UnknownHostException e) {
-            this.delegate.processFinish(false);
-            return null;
-        }
+        HostAsyncResponse activity = delegate.get();
+        if (activity != null) {
+            Context context = (Context) activity;
+            final int NUM_THREADS = UserPreference.getPortScanThreads(context);
 
-        ExecutorService executor = Executors.newCachedThreadPool();
-
-        int chunk = (int) Math.ceil((double) (stopPort - startPort) / NUM_THREADS);
-        int previousStart = startPort;
-        int previousStop = (startPort - 1) + chunk;
-
-        for (int i = 0; i < NUM_THREADS; i++) {
-            if (previousStop >= stopPort) {
-                previousStop = stopPort;
-                executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, delegate));
-                break;
+            try {
+                InetAddress address = InetAddress.getByName(ip);
+                ip = address.getHostAddress();
+            } catch (UnknownHostException e) {
+                activity.processFinish(false);
+                return null;
             }
-            executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, delegate));
-            previousStart = previousStop + 1;
-            previousStop = previousStop + chunk;
+
+            ExecutorService executor = Executors.newCachedThreadPool();
+
+            int chunk = (int) Math.ceil((double) (stopPort - startPort) / NUM_THREADS);
+            int previousStart = startPort;
+            int previousStop = (startPort - 1) + chunk;
+
+            for (int i = 0; i < NUM_THREADS; i++) {
+                if (previousStop >= stopPort) {
+                    previousStop = stopPort;
+                    executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, delegate));
+                    break;
+                }
+                executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, delegate));
+                previousStart = previousStop + 1;
+                previousStop = previousStop + chunk;
+            }
+
+            executor.shutdown();
+
+            try {
+                executor.awaitTermination(5, TimeUnit.MINUTES);
+            } catch (InterruptedException ignored) {
+            }
+
+            activity.processFinish(true);
         }
-
-        executor.shutdown();
-
-        try {
-            executor.awaitTermination(10, TimeUnit.MINUTES);
-        } catch (InterruptedException ignored) {
-        }
-
-        this.delegate.processFinish(true);
 
         return null;
     }

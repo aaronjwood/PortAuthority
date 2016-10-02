@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="deviceInfoLabel">Подаци о уређају</string>
     <string name="app_name">Стручњак за портове</string>
     <string name="action_settings">Поставке</string>
     <string name="macAddress">МАК</string>
     <string name="internalIpLabel">ЛАН ИП</string>
     <string name="externalIpLabel">ВАН ИП</string>
     <string name="fetching">Добављам…</string>
-    <string name="signalLabel">сигнал</string>
-    <string name="hostDiscovery">Откријте ЛАН Домаћини</string>
+    <string name="signalLabel">Сигнал/Брзина</string>
+    <string name="hostDiscovery">Откријте Домаћини</string>
     <string name="ssid">ССИД</string>
     <string name="bssid">БССИД</string>
-    <string name="hostname">Име домаћина</string>
     <string name="scanWellKnownPorts">Скенирај познате портове</string>
     <string name="scanPortRange">Скенирај распон портова</string>
     <string name="resetPortRange">Ресет Порт Ранге</string>
@@ -21,8 +19,7 @@
     <string name="portRangeStop">Крајњи</string>
     <string name="macVendor">продавац</string>
     <string name="noWifi">Не Ви-Фи повезивање</string>
-    <string name="resolvingNames">Решавање днс / НетБИОС имена…</string>
-    <string name="wanHostHint">УРЛ адреса / ИП-</string>
+    <string name="wanHostHint">УРЛ адреса/ИП-</string>
     <string name="scanningWarning">УПОЗОРЕЊЕ</string>
     <string name="scanningDisclaimer">
         Имајте на уму да је трчање порт скенови против јавних серверима обично сматра злонамерни .
