@@ -166,12 +166,12 @@ public class Wireless {
             try {
                 InetAddress inetAddress = this.getWifiInetAddress();
                 NetworkInterface networkInterface = NetworkInterface.getByInetAddress(inetAddress);
-                for (InterfaceAddress address : networkInterface.getInterfaceAddresses()){
-                    if (inetAddress != null && inetAddress.equals(address.getAddress())){
+                for (InterfaceAddress address : networkInterface.getInterfaceAddresses()) {
+                    if (inetAddress != null && inetAddress.equals(address.getAddress())) {
                         return address.getNetworkPrefixLength(); // This returns a short of the CIDR notation.
                     }
                 }
-            } catch (SocketException e){
+            } catch (SocketException ignored) {
             }
         }
 
