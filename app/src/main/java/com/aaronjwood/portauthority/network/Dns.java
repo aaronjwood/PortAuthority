@@ -15,17 +15,14 @@ public final class Dns {
      * @param delegate   Delegate to be called when the lookup has finished
      */
     public static void lookup(String domain, String recordType, DnsAsyncResponse delegate) {
-        String type;
-
-        switch (recordType) {
-            case "A":
-                type = Integer.toString(Type.A);
-                break;
-            default:
-                return;
+        try {
+            String type = Integer.toString(Type.class.getField(recordType).getInt(null));
+            new DnsLookupAsyncTask(delegate).execute(domain, type);
+        } catch (NoSuchFieldException e) {
+            return;
+        } catch (IllegalAccessException e) {
+            return;
         }
-
-        new DnsLookupAsyncTask(delegate).execute(domain, type);
     }
 
 }
