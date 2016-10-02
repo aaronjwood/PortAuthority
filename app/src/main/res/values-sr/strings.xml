@@ -8,7 +8,7 @@
     <string name="externalIpLabel">ВАН ИП</string>
     <string name="fetching">Добављам…</string>
     <string name="signalLabel">Сигнал/Брзина</string>
-    <string name="hostDiscovery">Откријте ЛАН Домаћини</string>
+    <string name="hostDiscovery">Откријте Домаћини</string>
     <string name="ssid">ССИД</string>
     <string name="bssid">БССИД</string>
     <string name="scanWellKnownPorts">Скенирај познате портове</string>

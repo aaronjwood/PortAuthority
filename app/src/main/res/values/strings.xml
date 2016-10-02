@@ -9,7 +9,7 @@
     <string name="externalIpLabel">WAN IP</string>
     <string name="fetching">Fetching…</string>
     <string name="signalLabel">Signal/Speed</string>
-    <string name="hostDiscovery">Discover LAN Hosts</string>
+    <string name="hostDiscovery">Discover Hosts</string>
     <string name="ssid">SSID</string>
     <string name="bssid">BSSID</string>
     <string name="scanWellKnownPorts">Scan Well Known Ports</string>
