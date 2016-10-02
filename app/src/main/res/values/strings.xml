@@ -12,7 +12,6 @@
     <string name="hostDiscovery">Discover LAN Hosts</string>
     <string name="ssid">SSID</string>
     <string name="bssid">BSSID</string>
-    <string name="hostname">Hostname</string>
     <string name="scanWellKnownPorts">Scan Well Known Ports</string>
     <string name="scanPortRange">Scan Port Range</string>
     <string name="resetPortRange">Reset Port Range</string>
@@ -20,7 +19,6 @@
     <string name="portRangeStart">Start Port</string>
     <string name="portRangeStop">Stop Port</string>
     <string name="noWifi">No WiFi connection</string>
-    <string name="resolvingNames">Resolving DNS/NetBIOS names…</string>
     <string name="wanHostHint">URL/IP</string>
     <string name="scanningWarning">WARNING</string>
     <string name="domainName">Domain Name</string>
