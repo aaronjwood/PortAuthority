@@ -44,12 +44,34 @@ public class DnsLookupAsyncTask extends AsyncTask<String, Void, String> {
             String answer = "";
 
             for (Record record : records) {
-                answer += record.rdataToString();
+                String rClass = this.parseRecordClass(record.getDClass());
+                answer += String.format("%s\t\t\t%s\t\t\t%s\t\t\t%s%n%n", record.getName(), record.getTTL(), rClass, record.rdataToString());
             }
 
             return answer;
         } catch (TextParseException e) {
             return "Error performing lookup!";
+        }
+    }
+
+    /**
+     * Determines the string representation of the DNS record class
+     *
+     * @param recordClass Numeric record class
+     * @return Human readable record class
+     */
+    private String parseRecordClass(int recordClass) {
+        switch (recordClass) {
+            case 1:
+                return "IN";
+            case 2:
+                return "CS";
+            case 3:
+                return "CH";
+            case 4:
+                return "HS";
+            default:
+                return "IN";
         }
     }
 
