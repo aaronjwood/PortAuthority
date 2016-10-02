@@ -18,10 +18,7 @@ public final class Dns {
         try {
             String type = Integer.toString(Type.class.getField(recordType).getInt(null));
             new DnsLookupAsyncTask(delegate).execute(domain, type);
-        } catch (NoSuchFieldException e) {
-            return;
-        } catch (IllegalAccessException e) {
-            return;
+        } catch (Exception ignored) {
         }
     }
 
