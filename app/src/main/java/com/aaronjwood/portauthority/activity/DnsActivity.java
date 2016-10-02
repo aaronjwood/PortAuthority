@@ -1,5 +1,6 @@
 package com.aaronjwood.portauthority.activity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -17,6 +18,7 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
 
     private EditText domainName;
     private TextView dnsAnswer;
+    private ProgressDialog lookupProgressDialog;
 
     /**
      * Activity created
@@ -64,6 +66,10 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
                     return;
                 }
 
+                lookupProgressDialog = new ProgressDialog(DnsActivity.this, R.style.DialogTheme);
+                lookupProgressDialog.setMessage("Querying Name Server");
+                lookupProgressDialog.show();
+
                 String recordType = recordElement.getSelectedItem().toString();
 
                 Dns.lookup(domain, recordType, DnsActivity.this);
@@ -79,5 +85,14 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
     @Override
     public void processFinish(String output) {
         this.dnsAnswer.setText(output);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (lookupProgressDialog != null && lookupProgressDialog.isShowing()) {
+                    lookupProgressDialog.dismiss();
+                }
+            }
+        });
     }
 }
