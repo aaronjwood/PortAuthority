@@ -14,6 +14,7 @@ public class UserPreference {
 
     private static final String KEY_HOST_ADDRESS = "HOST_ADDRESS_STRING";
     private static final String KEY_DOMAIN_NAME = "DOMAIN_NAME_STRING";
+    private static final String KEY_DNS_RECORD = "DNS_RECORD_STRING";
     private static final String KEY_PORT_RANGE_START = "KEY_PORT_RANGE_MIN_INT";
     private static final String KEY_PORT_RANGE_STOP = "KEY_PORT_RANGE_HIGH_INT";
     private static final String PORT_SCAN_THREADS = "portScanThreads";
@@ -65,6 +66,28 @@ public class UserPreference {
     public static String getLastUsedDomainName(@NonNull Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(KEY_DOMAIN_NAME, "");
+    }
+
+    /**
+     * Saves the last used DNS record for DNS lookups
+     *
+     * @param context
+     * @param index
+     */
+    public static void saveLastUsedDnsRecord(@NonNull Context context, int index) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        preferences.edit().putInt(KEY_DNS_RECORD, index).apply();
+    }
+
+    /**
+     * Gets the last used DNS record for DNS lookups
+     *
+     * @param context
+     * @return
+     */
+    public static int getLastUsedDnsRecord(@NonNull Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt(KEY_DNS_RECORD, 0);
     }
 
     /**

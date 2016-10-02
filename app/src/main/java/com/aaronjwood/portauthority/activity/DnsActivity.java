@@ -18,6 +18,7 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
 
     private EditText domainName;
     private TextView dnsAnswer;
+    private Spinner dnsRecord;
     private ProgressDialog lookupProgressDialog;
 
     /**
@@ -32,7 +33,9 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
 
         this.domainName = (EditText) findViewById(R.id.domainName);
         this.dnsAnswer = (TextView) findViewById(R.id.dnsAnswer);
+        this.dnsRecord = (Spinner) findViewById(R.id.recordSpinner);
         this.domainName.setText(UserPreference.getLastUsedDomainName(this));
+        this.dnsRecord.setSelection(UserPreference.getLastUsedDnsRecord(this));
 
         this.dnsLookupClick();
     }
@@ -44,6 +47,7 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
     protected void onDestroy() {
         super.onDestroy();
         UserPreference.saveLastUsedDomainName(this, this.domainName.getText().toString());
+        UserPreference.saveLastUsedDnsRecord(this, this.dnsRecord.getSelectedItemPosition());
     }
 
     /**
