@@ -94,7 +94,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * Sets up the adapter to handle discovered hosts
      */
     private void setupHostsAdapter() {
-        this.hostsAdapter = new ArrayAdapter<Map<String, String>>(this, android.R.layout.simple_list_item_2, android.R.id.text1, this.hosts) {
+        this.hostsAdapter = new ArrayAdapter<Map<String, String>>(this, R.layout.host_list_item, android.R.id.text1, this.hosts) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
