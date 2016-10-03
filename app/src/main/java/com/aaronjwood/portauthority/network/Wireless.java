@@ -272,7 +272,11 @@ public class Wireless {
      * @return Network information
      */
     private NetworkInfo getNetworkInfo(int type) {
-        return this.getConnectivityManager().getNetworkInfo(type);
+        ConnectivityManager manager = this.getConnectivityManager();
+        if (manager != null) {
+            return manager.getNetworkInfo(type);
+        }
+        return null;
     }
 
 }
