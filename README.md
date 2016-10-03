@@ -31,6 +31,10 @@ This application makes *heavy* use of threading. Because most of the operations 
 
 Absolutely! Just lower the number of threads that are used for port scans in the settings. I'm always working on improving the efficiency and memory footprint of the application, and things have been greatly improved since the original version!
 
+## I keep getting crashes when scanning a large range of ports
+
+The crash is most likely an out of memory exception that is occurring due to using too many threads. Lower your port scan thread count in the settings. The right value will be highly dependent on the device and its hardware.
+
 ## Donate
 
 Like the application and the work I put into it? Consider purchasing the donate version:
