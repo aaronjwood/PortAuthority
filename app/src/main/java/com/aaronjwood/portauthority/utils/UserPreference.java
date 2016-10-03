@@ -132,7 +132,7 @@ public class UserPreference {
      */
     public static int getPortScanThreads(@NonNull Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return Integer.parseInt(preferences.getString(PORT_SCAN_THREADS, "500"));
+        return preferences.getInt(PORT_SCAN_THREADS, 500);
     }
 
     /**
