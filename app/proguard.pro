@@ -1,2 +1,3 @@
+-dontnote org.xbill.DNS.spi.DNSJavaNameServiceDescriptor
 -dontwarn org.xbill.DNS.spi.DNSJavaNameServiceDescriptor
--keepattributes EnclosingMethod
+-keep class org.xbill.** { *; }
