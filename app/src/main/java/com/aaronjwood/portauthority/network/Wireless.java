@@ -230,16 +230,6 @@ public class Wireless {
     }
 
     /**
-     * Determines if the device is connected to a cellular mobile network or not
-     *
-     * @return True if the device is connected, false if it isn't
-     */
-    public boolean isConnectedMobile() {
-        NetworkInfo info = this.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        return info != null && info.isConnected();
-    }
-
-    /**
      * Gets the Android WiFi manager in the context of the current activity
      *
      * @return WifiManager
