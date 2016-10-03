@@ -154,10 +154,15 @@ public class Wireless {
      */
     public int getInternalWifiSubnet() {
         WifiManager wifiManager = this.getWifiManager();
+        if (wifiManager == null) {
+            return 0;
+        }
+
         DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
         if (dhcpInfo == null) {
             return 0;
         }
+
         int netmask = Integer.bitCount(dhcpInfo.netmask);
         /*
          * Workaround for #82477
