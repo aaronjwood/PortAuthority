@@ -244,7 +244,7 @@ public class Wireless {
      *
      * @return WifiManager
      */
-    public WifiManager getWifiManager() {
+    private WifiManager getWifiManager() {
         return (WifiManager) this.context.getSystemService(Context.WIFI_SERVICE);
     }
 
