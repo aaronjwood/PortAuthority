@@ -74,9 +74,11 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
                 lookupProgressDialog.setMessage("Querying Name Server");
                 lookupProgressDialog.show();
 
-                String recordType = recordElement.getSelectedItem().toString();
-
-                Dns.lookup(domain, recordType, DnsActivity.this);
+                Object recordType = recordElement.getSelectedItem();
+                if (recordType != null) {
+                    String recordName = recordType.toString();
+                    Dns.lookup(domain, recordName, DnsActivity.this);
+                }
             }
         });
     }
