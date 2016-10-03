@@ -52,9 +52,7 @@
         <item>SOA</item>
         <item>SRV</item>
         <item>SSHFP</item>
-        <item>TKEY</item>
         <item>TLSA</item>
-        <item>TSIG</item>
         <item>TXT</item>
         <item>URI</item>
     </string-array>
