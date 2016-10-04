@@ -27,6 +27,15 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard.pro'
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def formattedDate = new Date().format('yyyyMMdd')
+                    def newName = output.outputFile.name
+                    newName = newName.replace("app", "PortAuthority")
+                    newName = newName.replace("-release", "-release-" + formattedDate)
+                    output.outputFile = new File(output.outputFile.parent, newName)
+                }
+            }
         }
     }
 
