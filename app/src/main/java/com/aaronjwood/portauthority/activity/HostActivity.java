@@ -84,7 +84,10 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        db.close();
+
+        if (db != null) {
+            db.close();
+        }
     }
 
     /**
