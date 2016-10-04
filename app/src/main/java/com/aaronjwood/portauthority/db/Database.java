@@ -85,7 +85,7 @@ public class Database {
      * @return Cursor for iterating over results
      */
     public Cursor queryDatabase(String dbName, String query, String[] args) {
-        if (this.db != null) {
+        if (this.db != null && this.db.isOpen()) {
             return db.rawQuery(query, args);
         } else {
             return null;
