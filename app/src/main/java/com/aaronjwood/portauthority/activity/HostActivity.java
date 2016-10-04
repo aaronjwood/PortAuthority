@@ -240,7 +240,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         int scannedPort = output.keyAt(0);
         String item = String.valueOf(scannedPort);
 
-        Cursor cursor = db.queryDatabase("network.db", "SELECT name, port FROM ports WHERE port = ?", new String[]{Integer.toString(scannedPort)});
+        Cursor cursor = db.queryDatabase("SELECT name, port FROM ports WHERE port = ?", new String[]{Integer.toString(scannedPort)});
 
         if (cursor != null) {
             try {
