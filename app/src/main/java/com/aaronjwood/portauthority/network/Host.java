@@ -29,7 +29,7 @@ public class Host {
      */
     public static String getMacVendor(String mac, Activity activity) {
         Database db = new Database(activity);
-        Cursor cursor = db.queryDatabase("network.db", "SELECT vendor FROM ouis WHERE mac LIKE ?", new String[]{mac});
+        Cursor cursor = db.queryDatabase("SELECT vendor FROM ouis WHERE mac LIKE ?", new String[]{mac});
         String vendor;
 
         try {
