@@ -57,7 +57,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      */
     private void setupPortsAdapter() {
         this.portList = (ListView) findViewById(R.id.portList);
-        this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, ports);
+        this.adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.port_list_item, ports);
         this.portList.setAdapter(this.adapter);
     }
 
