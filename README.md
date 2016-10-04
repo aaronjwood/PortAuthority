@@ -17,6 +17,8 @@ Host discovery is typically performed in less than **5 seconds**.
 If the device you're scanning drops packets, it takes about 10 seconds to scan 1000 ports.
 If the device you're scanning rejects packets, it takes less than **30 seconds to scan all 65,535 ports!**
 
+Now includes a DNS lookup tool supporting almost every kind of DNS record!
+
 Port Authority has no ads and will *never* have ads.
 It requires extremely limited permissions since it only needs to interact with your network.
 The internals are designed to take advantage of today's modern phones/tablets with multiple cores to ensure you can scan your network as fast as possible. This means that lower end devices may struggle a bit with port scans.
@@ -28,6 +30,10 @@ This application makes *heavy* use of threading. Because most of the operations 
 ## I have a lower end and/or older device, will this work?
 
 Absolutely! Just lower the number of threads that are used for port scans in the settings. I'm always working on improving the efficiency and memory footprint of the application, and things have been greatly improved since the original version!
+
+## I keep getting crashes when scanning a large range of ports
+
+The crash is most likely an out of memory exception that is occurring due to using too many threads. Lower your port scan thread count in the settings. The right value will be highly dependent on the device and its hardware.
 
 ## Donate
 

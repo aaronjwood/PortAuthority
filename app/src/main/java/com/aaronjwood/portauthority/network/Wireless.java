@@ -154,7 +154,15 @@ public class Wireless {
      */
     public int getInternalWifiSubnet() {
         WifiManager wifiManager = this.getWifiManager();
+        if (wifiManager == null) {
+            return 0;
+        }
+
         DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
+        if (dhcpInfo == null) {
+            return 0;
+        }
+
         int netmask = Integer.bitCount(dhcpInfo.netmask);
         /*
          * Workaround for #82477
@@ -230,21 +238,11 @@ public class Wireless {
     }
 
     /**
-     * Determines if the device is connected to a cellular mobile network or not
-     *
-     * @return True if the device is connected, false if it isn't
-     */
-    public boolean isConnectedMobile() {
-        NetworkInfo info = this.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        return info != null && info.isConnected();
-    }
-
-    /**
      * Gets the Android WiFi manager in the context of the current activity
      *
      * @return WifiManager
      */
-    public WifiManager getWifiManager() {
+    private WifiManager getWifiManager() {
         return (WifiManager) this.context.getSystemService(Context.WIFI_SERVICE);
     }
 
@@ -272,7 +270,11 @@ public class Wireless {
      * @return Network information
      */
     private NetworkInfo getNetworkInfo(int type) {
-        return this.getConnectivityManager().getNetworkInfo(type);
+        ConnectivityManager manager = this.getConnectivityManager();
+        if (manager != null) {
+            return manager.getNetworkInfo(type);
+        }
+        return null;
     }
 
 }

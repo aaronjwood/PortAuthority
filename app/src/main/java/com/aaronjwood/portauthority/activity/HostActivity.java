@@ -57,7 +57,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      */
     private void setupPortsAdapter() {
         this.portList = (ListView) findViewById(R.id.portList);
-        this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, ports);
+        this.adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.port_list_item, ports);
         this.portList.setAdapter(this.adapter);
     }
 
@@ -84,7 +84,10 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        db.close();
+
+        if (db != null) {
+            db.close();
+        }
     }
 
     /**
@@ -240,7 +243,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         int scannedPort = output.keyAt(0);
         String item = String.valueOf(scannedPort);
 
-        Cursor cursor = db.queryDatabase("network.db", "SELECT name, port FROM ports WHERE port = ?", new String[]{Integer.toString(scannedPort)});
+        Cursor cursor = db.queryDatabase("SELECT name, port FROM ports WHERE port = ?", new String[]{Integer.toString(scannedPort)});
 
         if (cursor != null) {
             try {

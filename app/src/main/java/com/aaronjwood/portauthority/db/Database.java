@@ -79,13 +79,12 @@ public class Database {
     /**
      * Performs a query against the database
      *
-     * @param dbName The database to query
-     * @param query  The query itself
-     * @param args   Arguments for any bound parameters
+     * @param query The query itself
+     * @param args  Arguments for any bound parameters
      * @return Cursor for iterating over results
      */
-    public Cursor queryDatabase(String dbName, String query, String[] args) {
-        if (this.db != null) {
+    public Cursor queryDatabase(String query, String[] args) {
+        if (this.db != null && this.db.isOpen()) {
             return db.rawQuery(query, args);
         } else {
             return null;
