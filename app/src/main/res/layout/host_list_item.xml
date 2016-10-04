@@ -3,13 +3,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="6dp"
-    android:layout_marginRight="6dp"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:orientation="vertical"
-    android:padding="@dimen/activity_default_margin"
-    android:paddingBottom="2dp"
-    android:paddingTop="2dp">
+    android:padding="@dimen/activity_default_margin">
 
     <TextView
         android:id="@android:id/text1"
