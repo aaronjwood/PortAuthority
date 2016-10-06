@@ -33,8 +33,6 @@ public final class WanHostActivity extends HostActivity {
         this.wanHost = (EditText) findViewById(R.id.hostAddress);
         this.portList = (ListView) findViewById(R.id.portList);
         this.wanHost.setText(UserPreference.getLastUsedHostAddress(this));
-        this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, ports);
-        this.portList.setAdapter(adapter);
 
         this.setupPortScan();
     }
