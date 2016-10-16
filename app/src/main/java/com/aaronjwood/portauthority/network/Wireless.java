@@ -163,7 +163,7 @@ public class Wireless {
          * If dhcpInfo returns a subnet that cannot exist, then
          * look up the Network interface instead.
          */
-        if (dhcpInfo.netmask < 8 || dhcpInfo.netmask > 32) {
+        if (dhcpInfo.netmask < 4 || dhcpInfo.netmask > 32) {
             try {
                 InetAddress inetAddress = this.getWifiInetAddress();
                 NetworkInterface networkInterface = NetworkInterface.getByInetAddress(inetAddress);
