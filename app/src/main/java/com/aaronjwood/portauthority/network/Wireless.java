@@ -163,7 +163,7 @@ public class Wireless {
          * If dhcpInfo returns a subnet that cannot exist, then
          * look up the Network interface instead.
          */
-        if (dhcpInfo.netmask < 4 || dhcpInfo.netmask > 32) {
+        if (netmask < 4 || netmask > 32) {
             try {
                 InetAddress inetAddress = this.getWifiInetAddress();
                 NetworkInterface networkInterface = NetworkInterface.getByInetAddress(inetAddress);
@@ -179,6 +179,23 @@ public class Wireless {
 
         return netmask;
     }
+
+
+    public int getInternalWifiIpAddressAsInt() {
+        int ip = this.getWifiInfo().getIpAddress();
+        if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
+            ip = Integer.reverseBytes(ip);
+        }
+
+        byte[] ipByteArray = BigInteger.valueOf(ip).toByteArray();
+
+        try {
+            return new BigInteger(InetAddress.getByAddress(ipByteArray).getAddress()).intValue();
+        } catch (UnknownHostException ex) {
+            return 0;
+        }
+    }
+
 
     /**
      * Returns the number of hosts in the subnet.

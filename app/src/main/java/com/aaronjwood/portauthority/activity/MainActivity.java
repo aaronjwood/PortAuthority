@@ -146,16 +146,16 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
 
                 hosts.clear();
                 hostsAdapter.notifyDataSetChanged();
-                int numberOfHosts = wifi.getNumberOfHostsInWifiSubnet();
+
                 scanProgressDialog = new ProgressDialog(MainActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning For Hosts");
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 scanProgressDialog.setProgress(0);
-                scanProgressDialog.setMax(numberOfHosts);
+                scanProgressDialog.setMax(wifi.getNumberOfHostsInWifiSubnet());
                 scanProgressDialog.show();
 
-                Discovery.scanHosts(wifi.getInternalWifiIpAddress(), Integer.toString(numberOfHosts), MainActivity.this);
+                Discovery.scanHosts(wifi.getInternalWifiIpAddressAsInt(), wifi.getInternalWifiSubnet(), MainActivity.this);
             }
         });
 
