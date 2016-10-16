@@ -12,11 +12,11 @@ import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
+import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
-
-public class WanHostActivity extends HostActivity {
+public final class WanHostActivity extends HostActivity {
 
     private EditText wanHost;
 
@@ -33,12 +33,13 @@ public class WanHostActivity extends HostActivity {
         this.wanHost = (EditText) findViewById(R.id.hostAddress);
         this.portList = (ListView) findViewById(R.id.portList);
         this.wanHost.setText(UserPreference.getLastUsedHostAddress(this));
-        this.adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, ports);
-        this.portList.setAdapter(adapter);
 
         this.setupPortScan();
     }
 
+    /**
+     * Clean up
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -68,7 +69,7 @@ public class WanHostActivity extends HostActivity {
                 scanProgressDialog.setMax(1024);
                 scanProgressDialog.show();
 
-                host.scanPorts(wanHost.getText().toString(), 1, 1024, WanHostActivity.this);
+                Host.scanPorts(wanHost.getText().toString(), 1, 1024, WanHostActivity.this);
                 portListClick(wanHost.getText().toString());
             }
         });

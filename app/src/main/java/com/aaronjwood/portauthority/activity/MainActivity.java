@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements MainAsyncResponse {
+public final class MainActivity extends AppCompatActivity implements MainAsyncResponse {
 
     private final static int TIMER_INTERVAL = 1500;
 
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
      * Sets up the adapter to handle discovered hosts
      */
     private void setupHostsAdapter() {
-        this.hostsAdapter = new ArrayAdapter<Map<String, String>>(this, android.R.layout.simple_list_item_2, android.R.id.text1, this.hosts) {
+        this.hostsAdapter = new ArrayAdapter<Map<String, String>>(this, R.layout.host_list_item, android.R.id.text1, this.hosts) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
@@ -226,8 +227,10 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
      * Sets up event handlers and items for the left drawer
      */
     private void setupDrawer() {
-        final DrawerLayout leftDrawer = (DrawerLayout) findViewById(R.id.mainLeftDrawer);
-        ImageView drawerIcon = (ImageView) findViewById(R.id.mainLeftDrawerIcon);
+        final DrawerLayout leftDrawer = (DrawerLayout) findViewById(R.id.leftDrawer);
+        final RelativeLayout leftDrawerLayout = (RelativeLayout) findViewById(R.id.leftDrawerLayout);
+
+        ImageView drawerIcon = (ImageView) findViewById(R.id.leftDrawerIcon);
         drawerIcon.setOnClickListener(new View.OnClickListener() {
 
             /**
@@ -240,8 +243,10 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
             }
         });
 
-        ListView leftDrawerList = (ListView) findViewById(R.id.mainLeftDrawerList);
-        leftDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ListView upperList = (ListView) findViewById(R.id.upperLeftDrawerList);
+        ListView lowerList = (ListView) findViewById(R.id.lowerLeftDrawerList);
+
+        upperList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             /**
              * Click handler for the left side navigation drawer items
@@ -257,10 +262,29 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
                         startActivity(new Intent(MainActivity.this, WanHostActivity.class));
                         break;
                     case 1:
+                        startActivity(new Intent(MainActivity.this, DnsActivity.class));
+                }
+                leftDrawer.closeDrawer(leftDrawerLayout);
+            }
+        });
+
+        lowerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            /**
+             * Click handler for the left side navigation drawer items
+             * @param parent
+             * @param view
+             * @param position
+             * @param id
+             */
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
                         startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                         break;
                 }
-                leftDrawer.closeDrawer(parent);
+                leftDrawer.closeDrawer(leftDrawerLayout);
             }
         });
     }
@@ -269,10 +293,11 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
      * Gets network information about the device and updates various UI elements
      */
     private void getNetworkInfo() {
+        final int linkSpeed = wifi.getLinkSpeed();
         this.mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm");
+                signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm/" + linkSpeed + "Mbps");
                 mHandler.postDelayed(this, TIMER_INTERVAL);
             }
         }, 0);
@@ -333,6 +358,8 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
     public void onDestroy() {
         super.onDestroy();
 
+        mHandler.removeCallbacksAndMessages(null);
+
         if (this.receiver != null) {
             unregisterReceiver(this.receiver);
         }
@@ -356,8 +383,6 @@ public class MainActivity extends AppCompatActivity implements MainAsyncResponse
     @Override
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
-
-        mHandler.removeCallbacksAndMessages(null);
 
         ListAdapter adapter = this.hostList.getAdapter();
         if (adapter != null) {

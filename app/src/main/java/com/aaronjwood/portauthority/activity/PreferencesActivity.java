@@ -6,7 +6,7 @@ import android.preference.PreferenceFragment;
 
 import com.aaronjwood.portauthority.R;
 
-public class PreferencesActivity extends PreferenceActivity {
+public final class PreferencesActivity extends PreferenceActivity {
 
     /**
      * Activity created
