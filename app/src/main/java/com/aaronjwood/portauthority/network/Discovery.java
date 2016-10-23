@@ -11,7 +11,7 @@ public class Discovery {
      * @param ip       IP address
      * @param delegate Delegate to be called when the host scan is finished
      */
-    public static void scanHosts(String ip, MainAsyncResponse delegate) {
-        new ScanHostsAsyncTask(delegate).execute(ip);
+    public static void scanHosts(String ip, String netmask, MainAsyncResponse delegate) {
+        new ScanHostsAsyncTask(delegate).execute(ip, netmask);
     }
 }
