@@ -153,10 +153,10 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 scanProgressDialog.setTitle("Scanning For Hosts");
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 scanProgressDialog.setProgress(0);
-                scanProgressDialog.setMax(255);
+                scanProgressDialog.setMax(wifi.getNumberOfHostsInWifiSubnet());
                 scanProgressDialog.show();
 
-                Discovery.scanHosts(wifi.getInternalWifiIpAddress(), MainActivity.this);
+                Discovery.scanHosts(wifi.getInternalWifiIpAddressAsInt(), wifi.getInternalWifiSubnet(), MainActivity.this);
             }
         });
 
