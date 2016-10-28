@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 import jcifs.netbios.NbtAddress;
 
-public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
+public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     private final WeakReference<MainAsyncResponse> delegate;
 
     /**
@@ -37,26 +37,26 @@ public class ScanHostsAsyncTask extends AsyncTask<String, Void, Void> {
      * @param params IP address
      */
     @Override
-    protected Void doInBackground(String... params) {
-        String ip = params[0];
-        String parts[] = ip.split("\\.");
+    protected Void doInBackground(Integer... params) {
+        int ipv4 = params[0];
+        int cidr = params[1];
 
         ExecutorService executor = Executors.newCachedThreadPool();
 
+        double hostBits = 32.0d - cidr; // How many bits do we have for the hosts.
+        int netmask = (0xffffffff >> (32 - cidr)) << (32 - cidr); // How many bits for the netmask.
+        int numberOfHosts = (int) Math.pow(2.0d, hostBits) - 2; // 2 ^ hostbits = number of hosts in integer.
+        int firstAddr = (ipv4 & netmask) + 1; // AND the bits we care about, then first addr.
+
         int SCAN_THREADS = 8;
-        int chunk = (int) Math.ceil((double) 255 / SCAN_THREADS);
-        int previousStart = 1;
-        int previousStop = chunk;
+        int chunk = (int) Math.ceil((double) numberOfHosts / SCAN_THREADS); // Chunk hosts by number of threads.
+        int previousStart = firstAddr;
+        int previousStop = firstAddr + (chunk - 2); // Ignore network + first addr
 
         for (int i = 0; i < SCAN_THREADS; i++) {
-            if (previousStop >= 255) {
-                previousStop = 255;
-                executor.execute(new ScanHostsRunnable(parts, previousStart, previousStop, delegate));
-                break;
-            }
-            executor.execute(new ScanHostsRunnable(parts, previousStart, previousStop, delegate));
+            executor.execute(new ScanHostsRunnable(previousStart, previousStop, delegate));
             previousStart = previousStop + 1;
-            previousStop = previousStop + chunk;
+            previousStop = previousStart + (chunk - 1);
         }
 
         executor.shutdown();
