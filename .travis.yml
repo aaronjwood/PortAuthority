@@ -5,7 +5,7 @@ android:
   components:
     - tools
     - build-tools-24.0.1
-    - android-24
+    - android-25
     - extra-android-m2repository
 
 before_cache:
