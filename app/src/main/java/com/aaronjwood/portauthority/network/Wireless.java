@@ -171,6 +171,10 @@ public class Wireless {
             try {
                 InetAddress inetAddress = this.getWifiInetAddress();
                 NetworkInterface networkInterface = NetworkInterface.getByInetAddress(inetAddress);
+                if (networkInterface == null) {
+                    return 0;
+                }
+
                 for (InterfaceAddress address : networkInterface.getInterfaceAddresses()) {
                     if (inetAddress != null && inetAddress.equals(address.getAddress())) {
                         return address.getNetworkPrefixLength(); // This returns a short of the CIDR notation.
