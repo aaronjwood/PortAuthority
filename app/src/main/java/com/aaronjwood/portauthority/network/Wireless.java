@@ -86,15 +86,6 @@ public class Wireless {
     }
 
     /**
-     * Determines if the network that the device is connected to is a hidden network
-     *
-     * @return True if the network is hidden, false if it's not
-     */
-    public boolean isHidden() {
-        return this.getWifiInfo().getHiddenSSID();
-    }
-
-    /**
      * Gets the signal strength of the wireless network that the device is connected to
      *
      * @return Signal strength
