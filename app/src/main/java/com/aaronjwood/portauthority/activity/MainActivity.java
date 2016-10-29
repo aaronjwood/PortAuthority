@@ -156,7 +156,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 scanProgressDialog.setMax(wifi.getNumberOfHostsInWifiSubnet());
                 scanProgressDialog.show();
 
-                Discovery.scanHosts(wifi.getInternalWifiIpAddressAsInt(), wifi.getInternalWifiSubnet(), MainActivity.this);
+                Discovery.scanHosts(wifi.getInternalWifiIpAddress(Integer.class), wifi.getInternalWifiSubnet(), MainActivity.this);
             }
         });
 
@@ -314,7 +314,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     private void getInternalIp() {
         int netmask = this.wifi.getInternalWifiSubnet();
-        String InternalIpWithSubnet = this.wifi.getInternalWifiIpAddress() + "/" + Integer.toString(netmask);
+        String InternalIpWithSubnet = this.wifi.getInternalWifiIpAddress(String.class) + "/" + Integer.toString(netmask);
         this.internalIp.setText(InternalIpWithSubnet);
     }
 

@@ -77,7 +77,7 @@ public class Wireless {
      * @return Wireless address
      */
     private InetAddress getWifiInetAddress() {
-        String ipAddress = this.getInternalWifiIpAddress();
+        String ipAddress = this.getInternalWifiIpAddress(String.class);
         try {
             return InetAddress.getByName(ipAddress);
         } catch (UnknownHostException e) {
@@ -126,12 +126,15 @@ public class Wireless {
         return ssid;
     }
 
+
     /**
      * Gets the device's internal LAN IP address associated with the WiFi network
      *
+     * @param type
+     * @param <T>
      * @return Local WiFi network LAN IP address
      */
-    public String getInternalWifiIpAddress() {
+    public <T> T getInternalWifiIpAddress(Class<T> type) {
         int ip = this.getWifiInfo().getIpAddress();
         if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
             ip = Integer.reverseBytes(ip);
@@ -140,7 +143,11 @@ public class Wireless {
         byte[] ipByteArray = BigInteger.valueOf(ip).toByteArray();
 
         try {
-            return InetAddress.getByAddress(ipByteArray).getHostAddress();
+            if (type.isInstance("")) {
+                return type.cast(InetAddress.getByAddress(ipByteArray).getHostAddress());
+            } else {
+                return type.cast(new BigInteger(InetAddress.getByAddress(ipByteArray).getAddress()).intValue());
+            }
         } catch (UnknownHostException ex) {
             return null;
         }
@@ -187,28 +194,12 @@ public class Wireless {
     }
 
 
-    public int getInternalWifiIpAddressAsInt() {
-        int ip = this.getWifiInfo().getIpAddress();
-        if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
-            ip = Integer.reverseBytes(ip);
-        }
-
-        byte[] ipByteArray = BigInteger.valueOf(ip).toByteArray();
-
-        try {
-            return new BigInteger(InetAddress.getByAddress(ipByteArray).getAddress()).intValue();
-        } catch (UnknownHostException ex) {
-            return 0;
-        }
-    }
-
-
     /**
      * Returns the number of hosts in the subnet.
      *
      * @return Number of hosts as an integer.
      */
-    public int getNumberOfHostsInWifiSubnet(){
+    public int getNumberOfHostsInWifiSubnet() {
         Double subnet = (double) getInternalWifiSubnet();
         double hosts;
         double bitsLeft = 32.0d - subnet;
