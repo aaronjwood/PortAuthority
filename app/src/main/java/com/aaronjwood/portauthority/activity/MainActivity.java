@@ -151,6 +151,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 scanProgressDialog = new ProgressDialog(MainActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning For Hosts");
+                scanProgressDialog.setMessage(wifi.getNumberOfHostsInWifiSubnet() + " hosts in your subnet");
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 scanProgressDialog.setProgress(0);
                 scanProgressDialog.setMax(wifi.getNumberOfHostsInWifiSubnet());
