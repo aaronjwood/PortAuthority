@@ -16,6 +16,7 @@ public class ScanPortsRunnable implements Runnable {
     private String ip;
     private int startPort;
     private int stopPort;
+    private int timeout;
     private final WeakReference<HostAsyncResponse> delegate;
 
     /**
@@ -24,12 +25,14 @@ public class ScanPortsRunnable implements Runnable {
      * @param ip        IP address
      * @param startPort Port to start scanning at
      * @param stopPort  Port to stop scanning at
+     * @param timeout   Socket timeout
      * @param delegate  Called when this chunk of ports has finished scanning
      */
-    public ScanPortsRunnable(String ip, int startPort, int stopPort, WeakReference<HostAsyncResponse> delegate) {
+    public ScanPortsRunnable(String ip, int startPort, int stopPort, int timeout, WeakReference<HostAsyncResponse> delegate) {
         this.ip = ip;
         this.startPort = startPort;
         this.stopPort = stopPort;
+        this.timeout = timeout;
         this.delegate = delegate;
     }
 
@@ -52,7 +55,7 @@ public class ScanPortsRunnable implements Runnable {
                 try {
                     socket.setReuseAddress(true);
                     socket.setTcpNoDelay(true);
-                    socket.connect(new InetSocketAddress(this.ip, i), 4000);
+                    socket.connect(new InetSocketAddress(this.ip, i), this.timeout);
 
                     //TODO: this is a bit messy, refactor and break it up
                     if (i == 22) {

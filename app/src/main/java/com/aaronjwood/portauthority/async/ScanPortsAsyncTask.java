@@ -37,6 +37,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
         String ip = (String) params[0];
         int startPort = (int) params[1];
         int stopPort = (int) params[2];
+        int timeout = (int) params[3];
 
         HostAsyncResponse activity = delegate.get();
         if (activity != null) {
@@ -60,10 +61,10 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
             for (int i = 0; i < NUM_THREADS; i++) {
                 if (previousStop >= stopPort) {
                     previousStop = stopPort;
-                    executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, delegate));
+                    executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, timeout, delegate));
                     break;
                 }
-                executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, delegate));
+                executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, timeout, delegate));
                 previousStart = previousStop + 1;
                 previousStop = previousStop + chunk;
             }

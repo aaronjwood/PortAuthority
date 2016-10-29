@@ -15,10 +15,11 @@ public class Host {
      * @param ip        IP address
      * @param startPort The port to start scanning at
      * @param stopPort  The port to stop scanning at
+     * @param timeout   Socket timeout
      * @param delegate  Delegate to be called when the port scan has finished
      */
-    public static void scanPorts(String ip, int startPort, int stopPort, HostAsyncResponse delegate) {
-        new ScanPortsAsyncTask(delegate).execute(ip, startPort, stopPort);
+    public static void scanPorts(String ip, int startPort, int stopPort, int timeout, HostAsyncResponse delegate) {
+        new ScanPortsAsyncTask(delegate).execute(ip, startPort, stopPort, timeout);
     }
 
     /**

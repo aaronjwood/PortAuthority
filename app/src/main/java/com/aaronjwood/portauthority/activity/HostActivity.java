@@ -36,6 +36,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
     protected int scanProgress;
+    protected int timeout;
     private Database db;
 
     /**
@@ -170,7 +171,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                 scanProgressDialog.setMax(stopPort - startPort + 1);
                 scanProgressDialog.show();
 
-                Host.scanPorts(ip, startPort, stopPort, activity);
+                Host.scanPorts(ip, startPort, stopPort, timeout, activity);
             }
         });
     }
