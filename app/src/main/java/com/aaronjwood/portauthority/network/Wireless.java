@@ -127,6 +127,8 @@ public class Wireless {
      */
     public <T> T getInternalWifiIpAddress(Class<T> type) {
         int ip = this.getWifiInfo().getIpAddress();
+
+        //Endianness can be a potential issue on some hardware
         if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
             ip = Integer.reverseBytes(ip);
         }
