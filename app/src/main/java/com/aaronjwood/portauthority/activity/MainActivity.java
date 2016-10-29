@@ -157,7 +157,10 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 scanProgressDialog.setMax(wifi.getNumberOfHostsInWifiSubnet());
                 scanProgressDialog.show();
 
-                Discovery.scanHosts(wifi.getInternalWifiIpAddress(Integer.class), wifi.getInternalWifiSubnet(), MainActivity.this);
+                Integer ip = wifi.getInternalWifiIpAddress(Integer.class);
+                if (ip != null) {
+                    Discovery.scanHosts(ip, wifi.getInternalWifiSubnet(), MainActivity.this);
+                }
             }
         });
 

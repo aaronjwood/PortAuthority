@@ -3,6 +3,7 @@ package com.aaronjwood.portauthority.activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -210,8 +211,9 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                     intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + ip + ":8080"));
                 }
 
-                if (intent != null) {
-                    if (getPackageManager().resolveActivity(intent, 0) != null) {
+                PackageManager packageManager = getPackageManager();
+                if (intent != null && packageManager != null) {
+                    if (packageManager.resolveActivity(intent, 0) != null) {
                         startActivity(intent);
                     } else {
                         Toast.makeText(getApplicationContext(), "No application found to open this to the browser!", Toast.LENGTH_SHORT).show();
