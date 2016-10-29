@@ -153,9 +153,8 @@ public class Wireless {
         }
     }
 
-    /*
-     * Gets the Wifi Manager DHCP information and returns the Netmask of the
-     * internal Wifi Network as an int
+    /**
+     * Gets the Wifi Manager DHCP information and returns the Netmask of the internal Wifi Network as an int
      *
      * @return Internal Wifi Subnet Netmask
      */
