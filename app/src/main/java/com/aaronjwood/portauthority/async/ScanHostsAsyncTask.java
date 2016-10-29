@@ -48,7 +48,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         int numberOfHosts = (int) Math.pow(2.0d, hostBits) - 2; // 2 ^ hostbits = number of hosts in integer.
         int firstAddr = (ipv4 & netmask) + 1; // AND the bits we care about, then first addr.
 
-        int SCAN_THREADS = 8;
+        int SCAN_THREADS = (int) hostBits;
         int chunk = (int) Math.ceil((double) numberOfHosts / SCAN_THREADS); // Chunk hosts by number of threads.
         int previousStart = firstAddr;
         int previousStop = firstAddr + (chunk - 2); // Ignore network + first addr
