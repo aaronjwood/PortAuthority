@@ -35,7 +35,6 @@ public class ScanHostsRunnable implements Runnable {
         byte[] bytes;
         for (int i = this.start; i <= this.stop; i++) {
             Socket socket = new Socket();
-            socket.setPerformancePreferences(1, 0, 0);
             try {
                 socket.setTcpNoDelay(true);
                 bytes = BigInteger.valueOf(i).toByteArray();
