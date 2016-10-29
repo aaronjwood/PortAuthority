@@ -36,6 +36,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
     protected int scanProgress;
+    protected int timeout;
     private Database db;
 
     /**
@@ -170,7 +171,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                 scanProgressDialog.setMax(stopPort - startPort + 1);
                 scanProgressDialog.show();
 
-                Host.scanPorts(ip, startPort, stopPort, activity);
+                Host.scanPorts(ip, startPort, stopPort, timeout, activity);
             }
         });
     }
@@ -195,16 +196,26 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                     return;
                 }
 
+                Intent intent = null;
+
                 if (item.contains("80 -")) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + ip)));
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + ip));
                 }
 
                 if (item.contains("443 -")) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + ip)));
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + ip));
                 }
 
                 if (item.contains("8080 -")) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + ip + ":8080")));
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + ip + ":8080"));
+                }
+
+                if (intent != null) {
+                    if (getPackageManager().resolveActivity(intent, 0) != null) {
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "No application found to open this to the browser!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

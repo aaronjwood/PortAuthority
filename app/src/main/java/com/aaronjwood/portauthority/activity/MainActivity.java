@@ -151,12 +151,13 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 scanProgressDialog = new ProgressDialog(MainActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle("Scanning For Hosts");
+                scanProgressDialog.setMessage(wifi.getNumberOfHostsInWifiSubnet() + " hosts in your subnet");
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 scanProgressDialog.setProgress(0);
-                scanProgressDialog.setMax(255);
+                scanProgressDialog.setMax(wifi.getNumberOfHostsInWifiSubnet());
                 scanProgressDialog.show();
 
-                Discovery.scanHosts(wifi.getInternalWifiIpAddress(), MainActivity.this);
+                Discovery.scanHosts(wifi.getInternalWifiIpAddress(Integer.class), wifi.getInternalWifiSubnet(), MainActivity.this);
             }
         });
 
@@ -314,7 +315,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     private void getInternalIp() {
         int netmask = this.wifi.getInternalWifiSubnet();
-        String InternalIpWithSubnet = this.wifi.getInternalWifiIpAddress() + "/" + Integer.toString(netmask);
+        String InternalIpWithSubnet = this.wifi.getInternalWifiIpAddress(String.class) + "/" + Integer.toString(netmask);
         this.internalIp.setText(InternalIpWithSubnet);
     }
 
