@@ -41,8 +41,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
 
         HostAsyncResponse activity = delegate.get();
         if (activity != null) {
-            Context context = (Context) activity;
-            final int NUM_THREADS = UserPreference.getPortScanThreads(context);
+            final int NUM_THREADS = UserPreference.getPortScanThreads((Context) activity);
 
             try {
                 InetAddress address = InetAddress.getByName(ip);
