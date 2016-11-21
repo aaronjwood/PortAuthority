@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -55,12 +57,21 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     }
 
     /**
+     * Sets up animations for the activity
+     */
+    protected void setAnimations() {
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_slide_in_bottom);
+        portList.setLayoutAnimation(animation);
+    }
+
+    /**
      * Sets up the adapter to handle discovered ports
      */
     private void setupPortsAdapter() {
         this.portList = (ListView) findViewById(R.id.portList);
         this.adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.port_list_item, ports);
         this.portList.setAdapter(this.adapter);
+        this.setAnimations();
     }
 
     /**
@@ -301,6 +312,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * @param port Port number and description
      */
     private void addOpenPort(final String port) {
+        setAnimations();
         runOnUiThread(new Runnable() {
 
             @Override
