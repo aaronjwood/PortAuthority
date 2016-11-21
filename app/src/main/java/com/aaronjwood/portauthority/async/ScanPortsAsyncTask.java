@@ -72,6 +72,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
 
             try {
                 executor.awaitTermination(5, TimeUnit.MINUTES);
+                executor.shutdownNow();
             } catch (InterruptedException ignored) {
             }
 
