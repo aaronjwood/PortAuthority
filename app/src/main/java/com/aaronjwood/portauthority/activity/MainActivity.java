@@ -15,6 +15,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -91,9 +93,18 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     }
 
     /**
+     * Sets up animations for the activity
+     */
+    private void setAnimations() {
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(MainActivity.this, R.anim.layout_slide_in_bottom);
+        hostList.setLayoutAnimation(animation);
+    }
+
+    /**
      * Sets up the adapter to handle discovered hosts
      */
     private void setupHostsAdapter() {
+        this.setAnimations();
         this.hostsAdapter = new ArrayAdapter<Map<String, String>>(this, R.layout.host_list_item, android.R.id.text1, this.hosts) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -144,6 +155,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     Toast.makeText(getApplicationContext(), "You're not connected to a WiFi network!", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                setAnimations();
 
                 hosts.clear();
                 hostsAdapter.notifyDataSetChanged();
