@@ -10,8 +10,8 @@ import com.aaronjwood.portauthority.utils.UserPreference;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Random;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
@@ -51,7 +51,8 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
                 return null;
             }
 
-            ExecutorService executor = Executors.newCachedThreadPool();
+            ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(NUM_THREADS);
+            Random rand = new Random();
 
             int chunk = (int) Math.ceil((double) (stopPort - startPort) / NUM_THREADS);
             int previousStart = startPort;
@@ -63,7 +64,10 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
                     executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, timeout, delegate));
                     break;
                 }
-                executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, timeout, delegate));
+
+                int schedule = rand.nextInt(10) + 1;
+                executor.schedule(new ScanPortsRunnable(ip, previousStart, previousStop, timeout, delegate), i % schedule, TimeUnit.SECONDS);
+
                 previousStart = previousStop + 1;
                 previousStop = previousStop + chunk;
             }

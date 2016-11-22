@@ -38,7 +38,6 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     protected ArrayList<String> ports = new ArrayList<>();
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
-    protected int scanProgress;
     protected int timeout;
     private Database db;
 
@@ -241,17 +240,11 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      */
     @Override
     public void processFinish(final int output) {
-        this.scanProgress += output;
-
-        if (this.scanProgress % 75 != 0) {
-            return;
-        }
-
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (scanProgressDialog != null) {
-                    scanProgressDialog.setProgress(scanProgress);
+                    scanProgressDialog.incrementProgressBy(output);
                 }
             }
         });

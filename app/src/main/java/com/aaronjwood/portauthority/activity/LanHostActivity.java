@@ -175,7 +175,6 @@ public final class LanHostActivity extends HostActivity {
     public void processFinish(boolean output) {
         if (output && this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.dismiss();
-            this.scanProgress = 0;
         }
         if (output && this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
             this.portRangeDialog.dismiss();
