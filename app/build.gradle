@@ -59,9 +59,9 @@ dependencies {
     compile 'jcifs:jcifs:1.3.17'
     compile 'dnsjava:dnsjava:2.1.7'
     //This does absolutely nothing
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 }
