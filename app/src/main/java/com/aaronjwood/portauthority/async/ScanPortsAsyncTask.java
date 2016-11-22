@@ -65,7 +65,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
                     break;
                 }
 
-                int schedule = rand.nextInt(((stopPort - startPort) / NUM_THREADS) / 2) + 1;
+                int schedule = rand.nextInt((((stopPort - startPort) / NUM_THREADS) / 2) + 1) + 1;
                 executor.schedule(new ScanPortsRunnable(ip, previousStart, previousStop, timeout, delegate), i % schedule, TimeUnit.SECONDS);
 
                 previousStart = previousStop + 1;
