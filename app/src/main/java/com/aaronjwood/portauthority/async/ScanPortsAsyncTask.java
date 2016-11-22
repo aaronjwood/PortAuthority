@@ -60,8 +60,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
 
             for (int i = 0; i < NUM_THREADS; i++) {
                 if (previousStop >= stopPort) {
-                    previousStop = stopPort;
-                    executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, timeout, delegate));
+                    executor.execute(new ScanPortsRunnable(ip, previousStart, stopPort, timeout, delegate));
                     break;
                 }
 
