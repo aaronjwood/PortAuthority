@@ -44,9 +44,6 @@ public class ScanPortsRunnable implements Runnable {
         HostAsyncResponse activity = this.delegate.get();
         if (activity != null) {
             for (int i = this.startPort; i <= this.stopPort; i++) {
-
-                activity.processFinish(1);
-
                 SparseArray<String> portData = new SparseArray<>();
                 BufferedReader in;
                 String data = null;
@@ -87,6 +84,7 @@ public class ScanPortsRunnable implements Runnable {
                     activity.processFinish(portData);
                 } catch (IOException ignored) {
                 } finally {
+                    activity.processFinish(1);
                     try {
                         socket.close();
                     } catch (IOException ignored) {

@@ -3,12 +3,15 @@ package com.aaronjwood.portauthority.activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -35,7 +38,6 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     protected ArrayList<String> ports = new ArrayList<>();
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
-    protected int scanProgress;
     protected int timeout;
     private Database db;
 
@@ -54,12 +56,21 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     }
 
     /**
+     * Sets up animations for the activity
+     */
+    protected void setAnimations() {
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_slide_in_bottom);
+        portList.setLayoutAnimation(animation);
+    }
+
+    /**
      * Sets up the adapter to handle discovered ports
      */
     private void setupPortsAdapter() {
         this.portList = (ListView) findViewById(R.id.portList);
         this.adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.port_list_item, ports);
         this.portList.setAdapter(this.adapter);
+        this.setAnimations();
     }
 
     /**
@@ -210,8 +221,9 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                     intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + ip + ":8080"));
                 }
 
-                if (intent != null) {
-                    if (getPackageManager().resolveActivity(intent, 0) != null) {
+                PackageManager packageManager = getPackageManager();
+                if (intent != null && packageManager != null) {
+                    if (packageManager.resolveActivity(intent, 0) != null) {
                         startActivity(intent);
                     } else {
                         Toast.makeText(getApplicationContext(), "No application found to open this to the browser!", Toast.LENGTH_SHORT).show();
@@ -228,17 +240,11 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      */
     @Override
     public void processFinish(final int output) {
-        this.scanProgress += output;
-
-        if (this.scanProgress % 75 != 0) {
-            return;
-        }
-
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (scanProgressDialog != null) {
-                    scanProgressDialog.setProgress(scanProgress);
+                    scanProgressDialog.incrementProgressBy(output);
                 }
             }
         });
@@ -299,6 +305,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * @param port Port number and description
      */
     private void addOpenPort(final String port) {
+        setAnimations();
         runOnUiThread(new Runnable() {
 
             @Override

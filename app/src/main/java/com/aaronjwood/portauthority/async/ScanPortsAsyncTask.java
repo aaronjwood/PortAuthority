@@ -10,8 +10,8 @@ import com.aaronjwood.portauthority.utils.UserPreference;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Random;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
@@ -41,8 +41,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
 
         HostAsyncResponse activity = delegate.get();
         if (activity != null) {
-            Context context = (Context) activity;
-            final int NUM_THREADS = UserPreference.getPortScanThreads(context);
+            final int NUM_THREADS = UserPreference.getPortScanThreads((Context) activity);
 
             try {
                 InetAddress address = InetAddress.getByName(ip);
@@ -52,7 +51,8 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
                 return null;
             }
 
-            ExecutorService executor = Executors.newCachedThreadPool();
+            ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(NUM_THREADS);
+            Random rand = new Random();
 
             int chunk = (int) Math.ceil((double) (stopPort - startPort) / NUM_THREADS);
             int previousStart = startPort;
@@ -60,11 +60,13 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
 
             for (int i = 0; i < NUM_THREADS; i++) {
                 if (previousStop >= stopPort) {
-                    previousStop = stopPort;
-                    executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, timeout, delegate));
+                    executor.execute(new ScanPortsRunnable(ip, previousStart, stopPort, timeout, delegate));
                     break;
                 }
-                executor.execute(new ScanPortsRunnable(ip, previousStart, previousStop, timeout, delegate));
+
+                int schedule = rand.nextInt((int) ((((stopPort - startPort) / NUM_THREADS) / 1.5)) + 1) + 1;
+                executor.schedule(new ScanPortsRunnable(ip, previousStart, previousStop, timeout, delegate), i % schedule, TimeUnit.SECONDS);
+
                 previousStart = previousStop + 1;
                 previousStop = previousStop + chunk;
             }
@@ -73,6 +75,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
 
             try {
                 executor.awaitTermination(5, TimeUnit.MINUTES);
+                executor.shutdownNow();
             } catch (InterruptedException ignored) {
             }
 

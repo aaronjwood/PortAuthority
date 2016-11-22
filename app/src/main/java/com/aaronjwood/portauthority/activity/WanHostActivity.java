@@ -144,7 +144,6 @@ public final class WanHostActivity extends HostActivity {
     public void processFinish(boolean output) {
         if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.dismiss();
-            this.scanProgress = 0;
         }
         if (this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
             this.portRangeDialog.dismiss();
