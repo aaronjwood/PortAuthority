@@ -96,7 +96,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                 String[] arpLine = line.split("\\s+");
 
                 final String ip = arpLine[0];
-                String flag = arpLine[2];
+                final String flag = arpLine[2];
                 final String macAddress = arpLine[3];
 
                 if (!ARP_INCOMPLETE.equals(flag) && !ARP_INACTIVE.equals(macAddress)) {
