@@ -27,6 +27,33 @@ public class Host {
     }
 
     /**
+     * Returns this host's hostname
+     *
+     * @return
+     */
+    public String getHostname() {
+        return this.hostname;
+    }
+
+    /**
+     * Returns this host's IP address
+     *
+     * @return
+     */
+    public String getIp() {
+        return this.ip;
+    }
+
+    /**
+     * Returns this host's MAC address
+     *
+     * @return
+     */
+    public String getMac() {
+        return this.mac;
+    }
+
+    /**
      * Starts a port scan
      *
      * @param ip        IP address
