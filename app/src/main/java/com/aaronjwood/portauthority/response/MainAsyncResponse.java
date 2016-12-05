@@ -1,15 +1,15 @@
 package com.aaronjwood.portauthority.response;
 
-import java.util.Map;
+import com.aaronjwood.portauthority.network.Host;
 
 public interface MainAsyncResponse {
 
     /**
-     * Delegate to handle map outputs
+     * Delegate to handle Host outputs
      *
      * @param output
      */
-    void processFinish(Map<String, String> output);
+    void processFinish(Host output);
 
     /**
      * Delegate to handle integer outputs

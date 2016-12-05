@@ -7,14 +7,26 @@ import com.aaronjwood.portauthority.async.ScanPortsAsyncTask;
 import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
-public class Host {
+import java.io.Serializable;
+
+public class Host implements Serializable {
 
     private String hostname;
     private String ip;
     private String mac;
 
     /**
-     * Constructor to set necessary information
+     * Constructor to set necessary information without a known hostname
+     *
+     * @param ip  This host's IP address
+     * @param mac This host's MAC address
+     */
+    public Host(String ip, String mac) {
+        this(null, ip, mac);
+    }
+
+    /**
+     * Constructor to set necessary information with a known hostname
      *
      * @param hostname This host's hostname
      * @param ip       This host's IP address
@@ -33,6 +45,18 @@ public class Host {
      */
     public String getHostname() {
         return this.hostname;
+    }
+
+    /**
+     * Sets this host's hostname to the given value
+     *
+     * @param hostname Hostname for this host
+     * @return
+     */
+    public Host setHostname(String hostname) {
+        this.hostname = hostname;
+
+        return this;
     }
 
     /**
@@ -92,21 +116,5 @@ public class Host {
 
         return vendor;
     }
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (object == null) {
-            return false;
-        }
-        if (!(object instanceof Host)) {
-            return false;
-        }
-
-        return this.ip.equals(((Host) object).ip) && this.mac.equals(((Host) object).mac);
-    }
-
 
 }

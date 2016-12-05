@@ -36,12 +36,13 @@ import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.utils.UserPreference;
 import com.squareup.leakcanary.LeakCanary;
 
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public final class MainActivity extends AppCompatActivity implements MainAsyncResponse {
 
@@ -58,8 +59,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private Handler mHandler = new Handler();
     private BroadcastReceiver receiver;
     private IntentFilter intentFilter = new IntentFilter();
-    private ArrayAdapter hostsAdapter;
-    private List<Map<String, String>> hosts = new ArrayList<>();
+    private ArrayAdapter<Host> hostsAdapter;
+    private List<Host> hosts = new ArrayList<>();
 
     /**
      * Activity created
@@ -105,16 +106,16 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     private void setupHostsAdapter() {
         this.setAnimations();
-        this.hostsAdapter = new ArrayAdapter<Map<String, String>>(this, R.layout.host_list_item, android.R.id.text1, this.hosts) {
+        this.hostsAdapter = new ArrayAdapter<Host>(this, R.layout.host_list_item, android.R.id.text1, this.hosts) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 TextView text1 = (TextView) view.findViewById(android.R.id.text1);
                 TextView text2 = (TextView) view.findViewById(android.R.id.text2);
                 text2.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.icsblue));
-
-                text1.setText(hosts.get(position).get("First Line"));
-                text2.setText(hosts.get(position).get("Second Line"));
+                Host host = hosts.get(position);
+                text1.setText(host.getHostname());
+                text2.setText(host.getIp() + " [" + host.getMac() + "]");
                 return view;
             }
         };
@@ -188,20 +189,14 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
              */
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                @SuppressWarnings("unchecked")
-                HashMap<String, String> map = (HashMap) hostList.getItemAtPosition(position);
-                if (map == null) {
+                Host host = (Host) hostList.getItemAtPosition(position);
+                if (host == null) {
                     return;
                 }
                 Intent intent = new Intent(MainActivity.this, LanHostActivity.class);
-                String firstLine = map.get("First Line");
-                String secondLine = map.get("Second Line");
-                String ip = secondLine.substring(0, secondLine.indexOf("[") - 1);
-                String macAddress = secondLine.substring(secondLine.indexOf("[") + 1, secondLine.indexOf("]"));
-
-                intent.putExtra("HOSTNAME", firstLine);
-                intent.putExtra("IP", ip);
-                intent.putExtra("MAC", macAddress);
+                intent.putExtra("HOSTNAME", host.getHostname());
+                intent.putExtra("IP", host.getIp());
+                intent.putExtra("MAC", host.getMac());
                 startActivity(intent);
             }
         });
@@ -403,10 +398,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         ListAdapter adapter = this.hostList.getAdapter();
         if (adapter != null) {
-            ArrayList<Map<String, String>> adapterData = new ArrayList<>();
+            ArrayList<Host> adapterData = new ArrayList<>();
             for (int i = 0; i < adapter.getCount(); i++) {
-                @SuppressWarnings("unchecked")
-                HashMap<String, String> item = (HashMap) adapter.getItem(i);
+                Host item = (Host) adapter.getItem(i);
                 adapterData.add(item);
             }
             savedState.putSerializable("hosts", adapterData);
@@ -423,7 +417,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public void onRestoreInstanceState(Bundle savedState) {
         super.onRestoreInstanceState(savedState);
 
-        this.hosts = (ArrayList<Map<String, String>>) savedState.getSerializable("hosts");
+        this.hosts = (ArrayList<Host>) savedState.getSerializable("hosts");
         if (this.hosts != null) {
             this.setupHostsAdapter();
         }
@@ -436,33 +430,33 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * @param output The list of hosts to bind to the list view
      */
     @Override
-    public void processFinish(final Map<String, String> output) {
+    public void processFinish(final Host output) {
         runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
-                synchronized (hosts) {
-                    if (!hosts.contains(output)) {
-                        hosts.add(output);
-                    } else {
-                        hosts.set(hosts.indexOf(output), output);
-                    }
+                if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
+                    scanProgressDialog.dismiss();
+                }
 
-                    Collections.sort(hosts, new Comparator<Map<String, String>>() {
+                synchronized (hosts) {
+                    hosts.add(output);
+
+                    Collections.sort(hosts, new Comparator<Host>() {
 
                         @Override
-                        public int compare(Map<String, String> lhs, Map<String, String> rhs) {
-                            int left = Integer.parseInt(lhs.get("Second Line").substring(lhs.get("Second Line").lastIndexOf(".") + 1, lhs.get("Second Line").indexOf("[") - 1));
-                            int right = Integer.parseInt(rhs.get("Second Line").substring(rhs.get("Second Line").lastIndexOf(".") + 1, rhs.get("Second Line").indexOf("[") - 1));
+                        public int compare(Host lhs, Host rhs) {
+                            try {
+                                int leftIp = new BigInteger(InetAddress.getByName(lhs.getIp()).getAddress()).intValue();
+                                int rightIp = new BigInteger(InetAddress.getByName(rhs.getIp()).getAddress()).intValue();
 
-                            return left - right;
+                                return leftIp - rightIp;
+                            } catch (UnknownHostException ignored) {
+                                return 0;
+                            }
                         }
                     });
                     hostsAdapter.notifyDataSetChanged();
-                }
-
-                if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
-                    scanProgressDialog.dismiss();
                 }
             }
         });

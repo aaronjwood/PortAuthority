@@ -2,6 +2,7 @@ package com.aaronjwood.portauthority.async;
 
 import android.os.AsyncTask;
 
+import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
 
@@ -11,8 +12,6 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -103,36 +102,15 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            Map<String, String> item = new HashMap<String, String>() {
-                                @Override
-                                public boolean equals(Object object) {
-                                    if (this == object) {
-                                        return true;
-                                    }
-                                    if (object == null) {
-                                        return false;
-                                    }
-                                    if (!(object instanceof HashMap)) {
-                                        return false;
-                                    }
-
-                                    @SuppressWarnings("unchecked")
-                                    Map<String, String> entry = (Map<String, String>) object;
-                                    return entry.get("Second Line").equals(this.get("Second Line"));
-                                }
-                            };
-
-                            String secondLine = ip + " [" + macAddress + "]";
-                            item.put("Second Line", secondLine);
-
+                            Host host = new Host(ip, macAddress);
                             try {
                                 InetAddress add = InetAddress.getByName(ip);
                                 String hostname = add.getCanonicalHostName();
-                                item.put("First Line", hostname);
+                                host.setHostname(hostname);
 
                                 MainAsyncResponse activity = delegate.get();
                                 if (activity != null) {
-                                    activity.processFinish(item);
+                                    activity.processFinish(host);
                                 }
                             } catch (UnknownHostException ignored) {
                                 return;
@@ -142,12 +120,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                                 NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
                                 for (NbtAddress addr : netbios) {
                                     if (addr.getNameType() == NETBIOS_FILE_SERVER) {
-                                        item.put("First Line", addr.getHostName());
-
-                                        MainAsyncResponse activity = delegate.get();
-                                        if (activity != null) {
-                                            activity.processFinish(item);
-                                        }
+                                        host.setHostname(addr.getHostName());
                                         return;
                                     }
                                 }
