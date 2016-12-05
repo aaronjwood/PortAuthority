@@ -13,6 +13,13 @@ public class Host {
     private String ip;
     private String mac;
 
+    /**
+     * Constructor to set necessary information
+     *
+     * @param hostname This host's hostname
+     * @param ip       This host's IP address
+     * @param mac      This host's MAC address
+     */
     public Host(String hostname, String ip, String mac) {
         this.hostname = hostname;
         this.ip = ip;
