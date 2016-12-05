@@ -93,4 +93,20 @@ public class Host {
         return vendor;
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object == null) {
+            return false;
+        }
+        if (!(object instanceof Host)) {
+            return false;
+        }
+
+        return this.ip.equals(((Host) object).ip) && this.mac.equals(((Host) object).mac);
+    }
+
+
 }
