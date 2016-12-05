@@ -21,6 +21,9 @@ import jcifs.netbios.NbtAddress;
 
 public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     private final WeakReference<MainAsyncResponse> delegate;
+    private static final String ARP_INCOMPLETE = "0x0";
+    private static final String ARP_INACTIVE = "00:00:00:00:00:00";
+    private static final int NETBIOS_FILE_SERVER = 0x20;
 
     /**
      * Constructor to set the delegate
@@ -96,7 +99,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                 String flag = arpLine[2];
                 final String macAddress = arpLine[3];
 
-                if (!"0x0".equals(flag) && !"00:00:00:00:00:00".equals(macAddress)) {
+                if (!ARP_INCOMPLETE.equals(flag) && !ARP_INACTIVE.equals(macAddress)) {
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -138,7 +141,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                             try {
                                 NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
                                 for (NbtAddress addr : netbios) {
-                                    if (addr.getNameType() == 0x20) {
+                                    if (addr.getNameType() == NETBIOS_FILE_SERVER) {
                                         item.put("First Line", addr.getHostName());
 
                                         MainAsyncResponse activity = delegate.get();
