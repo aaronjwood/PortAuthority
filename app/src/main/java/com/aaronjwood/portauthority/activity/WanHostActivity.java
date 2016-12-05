@@ -27,8 +27,8 @@ public final class WanHostActivity extends HostActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.layout = R.layout.activity_wanhost;
         super.onCreate(savedInstanceState);
+        this.layout = R.layout.activity_wanhost;
 
         this.wanHost = (EditText) findViewById(R.id.hostAddress);
         this.portList = (ListView) findViewById(R.id.portList);
