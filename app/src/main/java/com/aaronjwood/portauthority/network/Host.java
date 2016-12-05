@@ -9,6 +9,16 @@ import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 public class Host {
 
+    private String hostname;
+    private String ip;
+    private String mac;
+
+    public Host(String hostname, String ip, String mac) {
+        this.hostname = hostname;
+        this.ip = ip;
+        this.mac = mac;
+    }
+
     /**
      * Starts a port scan
      *
