@@ -95,7 +95,9 @@ public class Database {
      * Closes the database handle
      */
     public void close() {
-        this.db.close();
+        if (this.db != null) {
+            this.db.close();
+        }
     }
 
 }
