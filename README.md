@@ -45,6 +45,22 @@ If you're running any kind of port scan that includes port 25 (SMTP) this will m
 Even though no data is being sent to that port the security software will see an outbound connection to an SMTP service and throw up a warning.
 Obviously this is a very bad check but some security tools are better than others and may actually look for data flowing out to port 25 to see if there's really anything happening.
 
+## I'm not finding some of the hosts/devices on my LAN
+
+I've recently added in a setting to control the timeout for connections made to hosts on your LAN.
+If you're finding that some devices aren't responding in time you should increase the timeout, just be aware that it will cause host scans to take longer.
+In some cases it may be worth trading time for accuracy.
+
+## I'm not finding open ports that I know are truly open
+
+You can now adjust the timeout for connections made to ports when performing either LAN or WAN scans.
+If you're scanning something over WAN (mobile network if you're using a cell phone) please be aware that scanning is best effort.
+Mobile carriers may detect that a real port scan is occurring and apply traffic shaping dynamically, or they may just start terminating the connections entirely.
+Additionally, if you happen to have poor signal or to not have 4G the quality of the network connection may be so poor that you'll need to have a fairly high timeout in order to tolerate latency spikes.
+
+Note that increasing the connection timeout for either LAN or WAN scans will cause the port scan to take longer.
+Ideally you shouldn't need to increase the timeout for LAN scans but it might be needed for certain devices/environments.
+
 ## Donate
 
 Like the application and the work I put into it? Consider purchasing the donate version:
