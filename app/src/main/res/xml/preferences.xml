@@ -9,6 +9,20 @@
             android:key="portScanThreads"
             android:summary="Control how many threads are used to scan ports"
             android:title="Threads" />
+        <EditTextPreference
+            android:defaultValue="4000"
+            android:dialogTitle="LAN socket timeout (ms)"
+            android:inputType="number"
+            android:key="lanTimeout"
+            android:summary="Socket timeout for LAN port scans"
+            android:title="LAN socket timeout" />
+        <EditTextPreference
+            android:defaultValue="8000"
+            android:dialogTitle="WAN socket timeout (ms)"
+            android:inputType="number"
+            android:key="wanTimeout"
+            android:summary="Socket timeout for WAN port scans. For greater accuracy this should be considerably higher than the timeout for LAN port scans."
+            android:title="WAN socket timeout" />
     </PreferenceCategory>
     <PreferenceCategory android:title="Privacy">
         <CheckBoxPreference
