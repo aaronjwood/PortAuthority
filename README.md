@@ -35,6 +35,16 @@ Absolutely! Just lower the number of threads that are used for port scans in the
 
 The crash is most likely an out of memory exception that is occurring due to using too many threads. Lower your port scan thread count in the settings. The right value will be highly dependent on the device and its hardware.
 
+## I'm getting a warning that says this application is trying to send email
+
+A few users have reported that a warning pops up on their device, warning them that this application is trying to send mail.
+This is caused by various security software so you can be assured (or just look at the code yourself) that I'm not sending mail.
+
+Some security software looks at where traffic is coming and going from the device and takes certain actions for certain cases.
+If you're running any kind of port scan that includes port 25 (SMTP) this will most likely be flagged.
+Even though no data is being sent to that port the security software will see an outbound connection to an SMTP service and throw up a warning.
+Obviously this is a very bad check but some security tools are better than others and may actually look for data flowing out to port 25 to see if there's really anything happening.
+
 ## Donate
 
 Like the application and the work I put into it? Consider purchasing the donate version:
