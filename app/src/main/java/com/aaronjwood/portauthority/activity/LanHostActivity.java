@@ -16,7 +16,6 @@ import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 public final class LanHostActivity extends HostActivity {
-    private static final int TIMEOUT = 4000;
     private Wireless wifi;
     private String hostName;
     private String hostIp;
@@ -39,8 +38,6 @@ public final class LanHostActivity extends HostActivity {
         if (extras == null) {
             return;
         }
-
-        this.timeout = TIMEOUT;
 
         this.hostName = extras.getString("HOSTNAME");
         this.hostIp = extras.getString("IP");
@@ -110,7 +107,7 @@ public final class LanHostActivity extends HostActivity {
                 scanProgressDialog.setMax(1024);
                 scanProgressDialog.show();
 
-                Host.scanPorts(hostIp, 1, 1024, timeout, LanHostActivity.this);
+                Host.scanPorts(hostIp, 1, 1024, UserPreference.getLanSocketTimeout(getApplicationContext()), LanHostActivity.this);
             }
         });
     }
