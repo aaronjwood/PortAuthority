@@ -65,7 +65,7 @@ public class ScanPortsRunnable implements Runnable {
                         out.println("GET / HTTP/1.1\r\nHost: " + this.ip + "\r\n");
 
                         char[] buffer = new char[1024];
-                        in.read(buffer, 0, 1024);
+                        in.read(buffer, 0, buffer.length);
                         out.close();
                         in.close();
                         data = new String(buffer).toLowerCase();

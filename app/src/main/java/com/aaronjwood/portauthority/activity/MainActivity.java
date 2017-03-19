@@ -275,6 +275,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                         break;
                     case 1:
                         startActivity(new Intent(MainActivity.this, DnsActivity.class));
+                        break;
                 }
                 leftDrawer.closeDrawer(leftDrawerLayout);
             }
