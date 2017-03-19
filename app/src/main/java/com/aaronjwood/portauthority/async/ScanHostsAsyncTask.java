@@ -42,6 +42,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     protected Void doInBackground(Integer... params) {
         int ipv4 = params[0];
         int cidr = params[1];
+        int timeout = params[2];
 
         ExecutorService executor = Executors.newCachedThreadPool();
 
@@ -56,7 +57,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         int previousStop = firstAddr + (chunk - 2); // Ignore network + first addr
 
         for (int i = 0; i < SCAN_THREADS; i++) {
-            executor.execute(new ScanHostsRunnable(previousStart, previousStop, delegate));
+            executor.execute(new ScanHostsRunnable(previousStart, previousStop, timeout, delegate));
             previousStart = previousStop + 1;
             previousStop = previousStart + (chunk - 1);
         }

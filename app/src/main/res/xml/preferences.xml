@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Host Scans">
+        <EditTextPreference
+            android:defaultValue="150"
+            android:dialogTitle="Host socket timeout (ms)"
+            android:inputType="number"
+            android:key="hostTimeout"
+            android:summary="Socket timeout for host scans"
+            android:title="Socket timeout" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="Port Scans">
         <ListPreference
             android:defaultValue="500"

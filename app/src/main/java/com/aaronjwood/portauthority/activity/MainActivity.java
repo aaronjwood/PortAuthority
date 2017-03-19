@@ -173,7 +173,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
                 Integer ip = wifi.getInternalWifiIpAddress(Integer.class);
                 if (ip != null) {
-                    Discovery.scanHosts(ip, wifi.getInternalWifiSubnet(), MainActivity.this);
+                    Discovery.scanHosts(ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(getApplicationContext()), MainActivity.this);
                 }
             }
         });

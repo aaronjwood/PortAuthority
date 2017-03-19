@@ -21,6 +21,7 @@ public class UserPreference {
     private static final String EXTERNAL_IP = "externalIp";
     private static final String LAN_SOCKET_TIMEOUT = "lanTimeout";
     private static final String WAN_SOCKET_TIMEOUT = "wanTimeout";
+    private static final String HOST_SOCKET_TIMEOUT = "hostTimeout";
 
     /**
      * Saves the last used host address for later use.
@@ -172,5 +173,16 @@ public class UserPreference {
     public static int getWanSocketTimeout(@NonNull Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return Integer.parseInt(preferences.getString(WAN_SOCKET_TIMEOUT, "8000"));
+    }
+
+    /**
+     * Gets the socket timeout that's used when scanning for hosts on the LAN
+     *
+     * @param context
+     * @return Socket timeout
+     */
+    public static int getHostSocketTimeout(@NonNull Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return Integer.parseInt(preferences.getString(HOST_SOCKET_TIMEOUT, "150"));
     }
 }

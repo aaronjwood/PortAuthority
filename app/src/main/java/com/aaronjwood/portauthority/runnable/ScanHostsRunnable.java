@@ -12,6 +12,7 @@ import java.net.Socket;
 public class ScanHostsRunnable implements Runnable {
     private int start;
     private int stop;
+    private int timeout;
     private final WeakReference<MainAsyncResponse> delegate;
 
     /**
@@ -19,11 +20,13 @@ public class ScanHostsRunnable implements Runnable {
      *
      * @param start    Host to start scanning at
      * @param stop     Host to stop scanning at
+     * @param timeout  Socket timeout
      * @param delegate Called when host discovery has finished
      */
-    public ScanHostsRunnable(int start, int stop, WeakReference<MainAsyncResponse> delegate) {
+    public ScanHostsRunnable(int start, int stop, int timeout, WeakReference<MainAsyncResponse> delegate) {
         this.start = start;
         this.stop = stop;
+        this.timeout = timeout;
         this.delegate = delegate;
     }
 
@@ -37,7 +40,7 @@ public class ScanHostsRunnable implements Runnable {
             try {
                 socket.setTcpNoDelay(true);
                 byte[] bytes = BigInteger.valueOf(i).toByteArray();
-                socket.connect(new InetSocketAddress(InetAddress.getByAddress(bytes), 7), 150);
+                socket.connect(new InetSocketAddress(InetAddress.getByAddress(bytes), 7), this.timeout);
             } catch (IOException ignored) {
             } finally {
                 try {
