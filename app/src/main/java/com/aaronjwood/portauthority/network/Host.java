@@ -7,7 +7,75 @@ import com.aaronjwood.portauthority.async.ScanPortsAsyncTask;
 import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
-public class Host {
+import java.io.Serializable;
+
+public class Host implements Serializable {
+
+    private String hostname;
+    private String ip;
+    private String mac;
+
+    /**
+     * Constructor to set necessary information without a known hostname
+     *
+     * @param ip  This host's IP address
+     * @param mac This host's MAC address
+     */
+    public Host(String ip, String mac) {
+        this(null, ip, mac);
+    }
+
+    /**
+     * Constructor to set necessary information with a known hostname
+     *
+     * @param hostname This host's hostname
+     * @param ip       This host's IP address
+     * @param mac      This host's MAC address
+     */
+    public Host(String hostname, String ip, String mac) {
+        this.hostname = hostname;
+        this.ip = ip;
+        this.mac = mac;
+    }
+
+    /**
+     * Returns this host's hostname
+     *
+     * @return
+     */
+    public String getHostname() {
+        return this.hostname;
+    }
+
+    /**
+     * Sets this host's hostname to the given value
+     *
+     * @param hostname Hostname for this host
+     * @return
+     */
+    public Host setHostname(String hostname) {
+        this.hostname = hostname;
+
+        return this;
+    }
+
+    /**
+     * Returns this host's IP address
+     *
+     * @return
+     */
+    public String getIp() {
+        return this.ip;
+    }
+
+    /**
+     * Returns this host's MAC address
+     *
+     * @return
+     */
+    public String getMac() {
+        return this.mac;
+    }
 
     /**
      * Starts a port scan

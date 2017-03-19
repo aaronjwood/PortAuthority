@@ -2,6 +2,7 @@ package com.aaronjwood.portauthority.async;
 
 import android.os.AsyncTask;
 
+import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
 
@@ -11,8 +12,6 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +20,9 @@ import jcifs.netbios.NbtAddress;
 
 public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     private final WeakReference<MainAsyncResponse> delegate;
+    private static final String ARP_INCOMPLETE = "0x0";
+    private static final String ARP_INACTIVE = "00:00:00:00:00:00";
+    private static final int NETBIOS_FILE_SERVER = 0x20;
 
     /**
      * Constructor to set the delegate
@@ -40,6 +42,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     protected Void doInBackground(Integer... params) {
         int ipv4 = params[0];
         int cidr = params[1];
+        int timeout = params[2];
 
         ExecutorService executor = Executors.newCachedThreadPool();
 
@@ -54,7 +57,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         int previousStop = firstAddr + (chunk - 2); // Ignore network + first addr
 
         for (int i = 0; i < SCAN_THREADS; i++) {
-            executor.execute(new ScanHostsRunnable(previousStart, previousStop, delegate));
+            executor.execute(new ScanHostsRunnable(previousStart, previousStop, timeout, delegate));
             previousStart = previousStop + 1;
             previousStop = previousStart + (chunk - 1);
         }
@@ -93,43 +96,22 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                 String[] arpLine = line.split("\\s+");
 
                 final String ip = arpLine[0];
-                String flag = arpLine[2];
+                final String flag = arpLine[2];
                 final String macAddress = arpLine[3];
 
-                if (!"0x0".equals(flag) && !"00:00:00:00:00:00".equals(macAddress)) {
+                if (!ARP_INCOMPLETE.equals(flag) && !ARP_INACTIVE.equals(macAddress)) {
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            Map<String, String> item = new HashMap<String, String>() {
-                                @Override
-                                public boolean equals(Object object) {
-                                    if (this == object) {
-                                        return true;
-                                    }
-                                    if (object == null) {
-                                        return false;
-                                    }
-                                    if (!(object instanceof HashMap)) {
-                                        return false;
-                                    }
-
-                                    @SuppressWarnings("unchecked")
-                                    Map<String, String> entry = (Map<String, String>) object;
-                                    return entry.get("Second Line").equals(this.get("Second Line"));
-                                }
-                            };
-
-                            String secondLine = ip + " [" + macAddress + "]";
-                            item.put("Second Line", secondLine);
-
+                            Host host = new Host(ip, macAddress);
                             try {
                                 InetAddress add = InetAddress.getByName(ip);
                                 String hostname = add.getCanonicalHostName();
-                                item.put("First Line", hostname);
+                                host.setHostname(hostname);
 
                                 MainAsyncResponse activity = delegate.get();
                                 if (activity != null) {
-                                    activity.processFinish(item);
+                                    activity.processFinish(host);
                                 }
                             } catch (UnknownHostException ignored) {
                                 return;
@@ -138,13 +120,8 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                             try {
                                 NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
                                 for (NbtAddress addr : netbios) {
-                                    if (addr.getNameType() == 0x20) {
-                                        item.put("First Line", addr.getHostName());
-
-                                        MainAsyncResponse activity = delegate.get();
-                                        if (activity != null) {
-                                            activity.processFinish(item);
-                                        }
+                                    if (addr.getNameType() == NETBIOS_FILE_SERVER) {
+                                        host.setHostname(addr.getHostName());
                                         return;
                                     }
                                 }

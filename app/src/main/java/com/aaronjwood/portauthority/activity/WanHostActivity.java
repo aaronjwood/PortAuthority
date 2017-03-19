@@ -16,8 +16,6 @@ import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 public final class WanHostActivity extends HostActivity {
-
-    private static final int TIMEOUT = 8000;
     private EditText wanHost;
 
     /**
@@ -32,10 +30,8 @@ public final class WanHostActivity extends HostActivity {
 
         this.wanHost = (EditText) findViewById(R.id.hostAddress);
         this.portList = (ListView) findViewById(R.id.portList);
+
         this.wanHost.setText(UserPreference.getLastUsedHostAddress(this));
-
-        this.timeout = TIMEOUT;
-
         this.setupPortScan();
     }
 
@@ -71,7 +67,7 @@ public final class WanHostActivity extends HostActivity {
                 scanProgressDialog.setMax(1024);
                 scanProgressDialog.show();
 
-                Host.scanPorts(wanHost.getText().toString(), 1, 1024, timeout, WanHostActivity.this);
+                Host.scanPorts(wanHost.getText().toString(), 1, 1024, UserPreference.getWanSocketTimeout(getApplicationContext()), WanHostActivity.this);
                 portListClick(wanHost.getText().toString());
             }
         });
