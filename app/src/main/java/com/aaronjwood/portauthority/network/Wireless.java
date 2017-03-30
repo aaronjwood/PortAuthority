@@ -253,7 +253,7 @@ public class Wireless {
      */
     public boolean isConnectedWifi() {
         NetworkInfo info = this.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        return info != null && info.isConnected();
+        return info != null && info.isConnectedOrConnecting();
     }
 
     /**
