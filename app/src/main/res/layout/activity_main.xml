@@ -23,7 +23,7 @@
             android:paddingBottom="5dp"
             android:text="@string/app_name"
             android:textColor="@color/white"
-            android:textSize="30sp" />
+            android:textSize="28sp" />
 
         <TableLayout
             android:id="@+id/deviceInfo"
