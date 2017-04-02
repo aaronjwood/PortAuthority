@@ -61,7 +61,8 @@
             android:layout_toStartOf="@id/textView"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
-            android:textColor="@color/icsblue" />
+            android:textColor="@color/icsblue"
+            android:textIsSelectable="true" />
 
         <TextView
             android:id="@+id/internalIpAddressLabel"
@@ -87,7 +88,8 @@
             android:layout_below="@+id/programTitle"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
-            android:textColor="@color/icsblue" />
+            android:textColor="@color/icsblue"
+            android:textIsSelectable="true" />
 
         <View
             android:layout_width="match_parent"
@@ -119,7 +121,8 @@
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
             android:text="@string/fetching"
-            android:textColor="@color/icsblue" />
+            android:textColor="@color/icsblue"
+            android:textIsSelectable="true" />
 
         <TextView
             android:id="@+id/signalStrengthLabel"
@@ -144,7 +147,8 @@
             android:layout_below="@+id/internalIpAddressLabel"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
-            android:textColor="@color/icsblue" />
+            android:textColor="@color/icsblue"
+            android:textIsSelectable="true" />
 
         <View
             android:layout_width="match_parent"
@@ -175,7 +179,8 @@
             android:layout_toStartOf="@id/textView"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
-            android:textColor="@color/icsblue" />
+            android:textColor="@color/icsblue"
+            android:textIsSelectable="true" />
 
         <TextView
             android:id="@+id/bssidLabel"
@@ -200,7 +205,8 @@
             android:layout_below="@+id/signalStrengthLabel"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
-            android:textColor="@color/icsblue" />
+            android:textColor="@color/icsblue"
+            android:textIsSelectable="true" />
 
         <View
             android:layout_width="match_parent"
@@ -232,7 +238,8 @@
             android:gravity="end"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
-            android:textColor="@color/icsblue" />
+            android:textColor="@color/icsblue"
+            android:textIsSelectable="true" />
 
         <View
             android:layout_width="match_parent"

@@ -46,7 +46,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:textColor="@color/icsblue" />
+                    android:textColor="@color/icsblue"
+                    android:textIsSelectable="true" />
             </TableRow>
 
             <TableRow>
@@ -64,7 +65,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:textColor="@color/icsblue" />
+                    android:textColor="@color/icsblue"
+                    android:textIsSelectable="true" />
             </TableRow>
 
             <TableRow>
@@ -82,7 +84,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:textColor="@color/icsblue" />
+                    android:textColor="@color/icsblue"
+                    android:textIsSelectable="true" />
             </TableRow>
 
             <TableRow>
@@ -101,7 +104,8 @@
                     android:layout_weight="1"
                     android:gravity="end"
                     android:text="@string/fetching"
-                    android:textColor="@color/icsblue" />
+                    android:textColor="@color/icsblue"
+                    android:textIsSelectable="true" />
             </TableRow>
 
             <TableRow>
@@ -119,7 +123,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:textColor="@color/icsblue" />
+                    android:textColor="@color/icsblue"
+                    android:textIsSelectable="true" />
             </TableRow>
 
             <TableRow>
@@ -137,7 +142,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:textColor="@color/icsblue" />
+                    android:textColor="@color/icsblue"
+                    android:textIsSelectable="true" />
             </TableRow>
 
             <TableRow>
@@ -155,7 +161,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:textColor="@color/icsblue" />
+                    android:textColor="@color/icsblue"
+                    android:textIsSelectable="true" />
             </TableRow>
         </TableLayout>
 
