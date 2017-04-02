@@ -111,6 +111,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         this.hostAdapter = new HostAdapter(this, hosts);
 
         this.hostList.setAdapter(this.hostAdapter);
+        if (hosts.size() > 0) {
+            this.discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
+        }
     }
 
     /**
