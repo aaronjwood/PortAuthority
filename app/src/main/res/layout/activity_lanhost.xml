@@ -35,14 +35,14 @@
 
     <TextView
         android:id="@+id/hostMac"
-        android:textIsSelectable="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@id/hostIpLabel"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:textColor="@color/icsblue" />
+        android:textColor="@color/icsblue"
+        android:textIsSelectable="true" />
 
     <View
         android:id="@+id/macAddressSeparator"
@@ -65,7 +65,6 @@
 
     <TextView
         android:id="@+id/hostMacVendor"
-        android:textIsSelectable="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -73,7 +72,8 @@
         android:gravity="end"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:textColor="@color/icsblue" />
+        android:textColor="@color/icsblue"
+        android:textIsSelectable="true" />
 
     <View
         android:id="@+id/macVendorSeparator"
@@ -105,7 +105,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:cacheColorHint="@color/black" />
+            android:cacheColorHint="@color/black"
+            android:scrollbarThumbVertical="@drawable/scrollbar" />
 
         <LinearLayout
             style="?attr/buttonBarButtonStyle"

@@ -258,7 +258,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:cacheColorHint="@color/white" />
+                android:cacheColorHint="@color/white"
+                android:scrollbarThumbVertical="@drawable/scrollbar" />
 
             <Button
                 android:id="@+id/discoverHosts"
