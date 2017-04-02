@@ -35,6 +35,7 @@
 
     <TextView
         android:id="@+id/hostMac"
+        android:textIsSelectable="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -64,6 +65,7 @@
 
     <TextView
         android:id="@+id/hostMacVendor"
+        android:textIsSelectable="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
