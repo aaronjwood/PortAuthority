@@ -262,7 +262,7 @@ public class Wireless {
      * @return WifiManager
      */
     private WifiManager getWifiManager() {
-        return (WifiManager) this.context.getSystemService(Context.WIFI_SERVICE);
+        return (WifiManager) this.context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
     }
 
     /**

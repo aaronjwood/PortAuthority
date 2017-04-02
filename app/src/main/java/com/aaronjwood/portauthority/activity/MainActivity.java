@@ -9,16 +9,13 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -29,6 +26,7 @@ import android.widget.Toast;
 
 import com.aaronjwood.portauthority.BuildConfig;
 import com.aaronjwood.portauthority.R;
+import com.aaronjwood.portauthority.adapters.HostAdapter;
 import com.aaronjwood.portauthority.network.Discovery;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
@@ -55,11 +53,13 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private TextView signalStrength;
     private TextView ssid;
     private TextView bssid;
+    private Button discoverHostsBtn;
+    private String discoverHostsStr; // Cache this so it's not looked up every time a host is found.
     private ProgressDialog scanProgressDialog;
     private Handler mHandler = new Handler();
     private BroadcastReceiver receiver;
     private IntentFilter intentFilter = new IntentFilter();
-    private ArrayAdapter<Host> hostsAdapter;
+    private HostAdapter hostAdapter;
     private List<Host> hosts = new ArrayList<>();
 
     /**
@@ -83,6 +83,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         this.ssid = (TextView) findViewById(R.id.ssid);
         this.bssid = (TextView) findViewById(R.id.bssid);
         this.hostList = (ListView) findViewById(R.id.hostList);
+        this.discoverHostsBtn = (Button) findViewById(R.id.discoverHosts);
+        this.discoverHostsStr = getResources().getString(R.string.hostDiscovery);
 
         this.wifi = new Wireless(getApplicationContext());
 
@@ -106,20 +108,12 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     private void setupHostsAdapter() {
         this.setAnimations();
-        this.hostsAdapter = new ArrayAdapter<Host>(this, R.layout.host_list_item, android.R.id.text1, this.hosts) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
-                text2.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.icsblue));
-                Host host = hosts.get(position);
-                text1.setText(host.getHostname());
-                text2.setText(host.getIp() + " [" + host.getMac() + "]");
-                return view;
-            }
-        };
-        this.hostList.setAdapter(this.hostsAdapter);
+        this.hostAdapter = new HostAdapter(this, hosts);
+
+        this.hostList.setAdapter(this.hostAdapter);
+        if (hosts.size() > 0) {
+            this.discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
+        }
     }
 
     /**
@@ -142,9 +136,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * Sets up event handlers and functionality for host discovery
      */
     private void setupHostDiscovery() {
-        Button discoverHosts = (Button) findViewById(R.id.discoverHosts);
-
-        discoverHosts.setOnClickListener(new View.OnClickListener() {
+        discoverHostsBtn.setOnClickListener(new View.OnClickListener() {
 
             /**
              * Click handler to perform host discovery
@@ -160,7 +152,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 setAnimations();
 
                 hosts.clear();
-                hostsAdapter.notifyDataSetChanged();
+                discoverHostsBtn.setText(discoverHostsStr);
+                hostAdapter.notifyDataSetChanged();
 
                 scanProgressDialog = new ProgressDialog(MainActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
@@ -457,7 +450,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                             }
                         }
                     });
-                    hostsAdapter.notifyDataSetChanged();
+                    hostAdapter.notifyDataSetChanged();
+                    discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
                 }
             }
         });

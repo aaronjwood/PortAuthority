@@ -8,17 +8,31 @@
     android:padding="@dimen/activity_default_margin">
 
     <TextView
-        android:id="@android:id/text1"
+        android:id="@+id/hostname"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 
     <TextView
-        android:id="@android:id/text2"
+        android:id="@+id/hostIp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/icsblue"
         android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/hostMac"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/hostMacVendor"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/icsblue"
+        android:textSize="12sp" />
 
 </LinearLayout>

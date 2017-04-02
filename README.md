@@ -27,6 +27,11 @@ The internals are designed to take advantage of today's modern phones/tablets wi
 
 This application makes *heavy* use of threading. Because most of the operations performed are I/O bound a lot more threads can be used than the number of cores on a device. In fact, one of the most intensive parts of the application is updating the UI during scans. This has gone through many optimizations but still remains a bit of a hotspot.
 
+## How is my public IP discovered? I'm worried about my privacy
+
+I now use [my own service](https://github.com/aaronjwood/public-ip-api) that's 100% open source!
+I decided to create and switch to this due to some concerns about the original service that was being used.
+
 ## I have a lower end and/or older device, will this work?
 
 Absolutely! Just lower the number of threads that are used for port scans in the settings. I'm always working on improving the efficiency and memory footprint of the application, and things have been greatly improved since the original version!
