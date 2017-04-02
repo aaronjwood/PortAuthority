@@ -16,7 +16,9 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
-    private static final String EXTERNAL_IP_SERVICE = "https://ipinfo.io/ip";
+
+    // IP service is 100% open source https://github.com/aaronjwood/public-ip-api
+    private static final String EXTERNAL_IP_SERVICE = "https://public-ip-api.appspot.com/";
     private final WeakReference<MainAsyncResponse> delegate;
 
     /**
