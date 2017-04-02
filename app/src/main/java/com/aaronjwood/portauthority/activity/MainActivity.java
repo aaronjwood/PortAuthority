@@ -55,6 +55,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private TextView signalStrength;
     private TextView ssid;
     private TextView bssid;
+    private Button discoverHostsBtn;
+    private String discoverHostsStr; // Cache this so it's not looked up every time a host is found.
     private ProgressDialog scanProgressDialog;
     private Handler mHandler = new Handler();
     private BroadcastReceiver receiver;
@@ -83,6 +85,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         this.ssid = (TextView) findViewById(R.id.ssid);
         this.bssid = (TextView) findViewById(R.id.bssid);
         this.hostList = (ListView) findViewById(R.id.hostList);
+        this.discoverHostsBtn = (Button) findViewById(R.id.discoverHosts);
+        this.discoverHostsStr = getResources().getString(R.string.hostDiscovery);
 
         this.wifi = new Wireless(getApplicationContext());
 
@@ -142,9 +146,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * Sets up event handlers and functionality for host discovery
      */
     private void setupHostDiscovery() {
-        Button discoverHosts = (Button) findViewById(R.id.discoverHosts);
-
-        discoverHosts.setOnClickListener(new View.OnClickListener() {
+        discoverHostsBtn.setOnClickListener(new View.OnClickListener() {
 
             /**
              * Click handler to perform host discovery
@@ -160,6 +162,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 setAnimations();
 
                 hosts.clear();
+                discoverHostsBtn.setText(discoverHostsStr);
                 hostsAdapter.notifyDataSetChanged();
 
                 scanProgressDialog = new ProgressDialog(MainActivity.this, R.style.DialogTheme);
@@ -458,6 +461,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                         }
                     });
                     hostsAdapter.notifyDataSetChanged();
+                    discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
                 }
             }
         });
