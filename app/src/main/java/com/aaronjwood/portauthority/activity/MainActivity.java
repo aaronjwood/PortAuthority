@@ -50,6 +50,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private ListView hostList;
     private TextView internalIp;
     private TextView externalIp;
+    private String cachedWanIp;
     private TextView signalStrength;
     private TextView ssid;
     private TextView bssid;
@@ -337,7 +338,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             label.setVisibility(View.VISIBLE);
             ip.setVisibility(View.VISIBLE);
 
-            this.wifi.getExternalIpAddress(this);
+            if(cachedWanIp == null) {
+                this.wifi.getExternalIpAddress(this);
+            }
         } else {
             label.setVisibility(View.GONE);
             ip.setVisibility(View.GONE);
@@ -398,6 +401,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 adapterData.add(item);
             }
             savedState.putSerializable("hosts", adapterData);
+            savedState.putString("wanIp", cachedWanIp);
         }
     }
 
@@ -411,6 +415,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public void onRestoreInstanceState(Bundle savedState) {
         super.onRestoreInstanceState(savedState);
 
+        cachedWanIp = savedState.getString("wanIp");
+        externalIp.setText(cachedWanIp);
         this.hosts = (ArrayList<Host>) savedState.getSerializable("hosts");
         if (this.hosts != null) {
             this.setupHostsAdapter();
@@ -476,6 +482,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     @Override
     public void processFinish(String output) {
+        this.cachedWanIp = output;
         this.externalIp.setText(output);
     }
 }

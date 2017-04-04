@@ -4,8 +4,8 @@ import android.os.AsyncTask;
 
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -38,17 +38,21 @@ public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
      */
     @Override
     protected String doInBackground(Void... params) {
+        String error = "Couldn't get your external IP";
         HttpClient httpclient = new DefaultHttpClient();
         HttpGet httpget = new HttpGet(EXTERNAL_IP_SERVICE);
 
         try {
             HttpResponse response = httpclient.execute(httpget);
-            HttpEntity entity = response.getEntity();
-            return EntityUtils.toString(entity).trim();
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                return error;
+            }
+
+            return EntityUtils.toString(response.getEntity()).trim();
         } catch (ClientProtocolException e) {
-            return "Couldn't get your external IP";
+            return error;
         } catch (IOException e) {
-            return "Couldn't get your external IP";
+            return error;
         }
     }
 
