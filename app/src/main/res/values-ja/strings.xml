@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Port Authority</string>
+    <string name="action_settings">設定</string>
+    <string name="macAddress">MAC</string>
+    <string name="macVendor">ベンダー</string>
+    <string name="internalIpLabel">LAN IP</string>
+    <string name="externalIpLabel">WAN IP</string>
+    <string name="fetching">取得中…</string>
+    <string name="signalLabel">シグナル/速度</string>
+    <string name="hostDiscovery">ホストの探索</string>
+    <string name="ssid">SSID</string>
+    <string name="bssid">BSSID</string>
+    <string name="scanWellKnownPorts">よく知られたポートをスキャン</string>
+    <string name="scanPortRange">ポートの範囲をスキャン</string>
+    <string name="resetPortRange">ポートの範囲をリセット</string>
+    <string name="openPorts">ポートを開く</string>
+    <string name="portRangeStart">開始ポート</string>
+    <string name="portRangeStop">終了ポート</string>
+    <string name="noWifi">WiFi 接続がありません</string>
+    <string name="wanHostHint">URL/IP</string>
+    <string name="scanningWarning">警告</string>
+    <string name="domainName">ドメイン名</string>
+    <string name="dnsLookup">DNS 検索</string>
+    <string name="scanningDisclaimer">
+        公開サーバーに対するポートスキャンの実行は、通常、悪意があるとみなされることにご注意ください。
+        さらに、自身の WiFi 接続ではなく、キャリアのネットワーク上でこれらの種類のスキャンを実行すると、遅くなったり、トラフィックシェーピングのために結果が不正確になることがあります。
+        また、このスキャンで生成されたトラフィックをキャリアが悪質なものとみなすことがあります。
+    </string>
+
+</resources>
