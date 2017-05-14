@@ -56,7 +56,7 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
 
             int chunk = (int) Math.ceil((double) (stopPort - startPort) / NUM_THREADS);
             int previousStart = startPort;
-            int previousStop = (startPort - 1) + chunk;
+            int previousStop = startPort + chunk;
 
             for (int i = 0; i < NUM_THREADS; i++) {
                 if (previousStop >= stopPort) {
