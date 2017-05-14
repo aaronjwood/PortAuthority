@@ -1,6 +1,6 @@
 package com.aaronjwood.portauthority.network;
 
-import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 
 import com.aaronjwood.portauthority.async.ScanPortsAsyncTask;
@@ -93,11 +93,11 @@ public class Host implements Serializable {
     /**
      * Fetches the MAC vendor from the database
      *
-     * @param mac      MAC address
-     * @param activity The calling activity
+     * @param mac     MAC address
+     * @param context Application context
      */
-    public static String getMacVendor(String mac, Activity activity) {
-        Database db = new Database(activity);
+    public static String getMacVendor(String mac, Context context) {
+        Database db = new Database(context);
         Cursor cursor = db.queryDatabase("SELECT vendor FROM ouis WHERE mac LIKE ?", new String[]{mac});
         String vendor;
 

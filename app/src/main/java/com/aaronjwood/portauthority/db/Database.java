@@ -1,6 +1,6 @@
 package com.aaronjwood.portauthority.db;
 
-import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -12,11 +12,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class Database {
-    private Activity activity;
+    private Context context;
     private SQLiteDatabase db;
 
-    public Database(Activity activity) {
-        this.activity = activity;
+    public Database(Context context) {
+        this.context = context;
         openDatabase("network.db"); //Hardcode this for now since we only have one DB
     }
 
@@ -27,7 +27,7 @@ public class Database {
      * @return True if the database exists, false if not
      */
     private boolean checkDatabase(String dbName) {
-        File dbFile = new File(this.activity.getApplicationInfo().dataDir + "/" + dbName);
+        File dbFile = new File(this.context.getApplicationInfo().dataDir + "/" + dbName);
         return dbFile.exists();
     }
 
@@ -40,8 +40,8 @@ public class Database {
         InputStream input = null;
         OutputStream output = null;
         try {
-            input = this.activity.getAssets().open(dbName);
-            output = new FileOutputStream(this.activity.getApplicationInfo().dataDir + "/" + dbName);
+            input = this.context.getAssets().open(dbName);
+            output = new FileOutputStream(this.context.getApplicationInfo().dataDir + "/" + dbName);
             byte[] buffer = new byte[1024];
             int length;
             while ((length = input.read(buffer)) > 0) {
@@ -70,7 +70,7 @@ public class Database {
             this.copyDatabase(dbName);
         }
         try {
-            this.db = SQLiteDatabase.openDatabase(this.activity.getApplicationInfo().dataDir + "/" + dbName, null, SQLiteDatabase.OPEN_READONLY);
+            this.db = SQLiteDatabase.openDatabase(this.context.getApplicationInfo().dataDir + "/" + dbName, null, SQLiteDatabase.OPEN_READONLY);
         } catch (SQLiteException e) {
             this.db = null;
         }
