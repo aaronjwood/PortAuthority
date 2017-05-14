@@ -38,7 +38,6 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     protected ArrayList<String> ports = new ArrayList<>();
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
-    protected int timeout;
     private Database db;
 
     /**
@@ -146,10 +145,13 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     /**
      * Event handler for when the port range scan is finally initiated
      *
-     * @param start Starting port picker
-     * @param stop  Stopping port picker
+     * @param start    Starting port picker
+     * @param stop     Stopping port picker
+     * @param timeout  Socket timeout
+     * @param activity Calling activity
+     * @param ip       IP address
      */
-    protected void startPortRangeScanClick(final NumberPicker start, final NumberPicker stop, final HostActivity activity, final String ip) {
+    protected void startPortRangeScanClick(final NumberPicker start, final NumberPicker stop, final int timeout, final HostActivity activity, final String ip) {
         Button startPortRangeScan = (Button) portRangeDialog.findViewById(R.id.startPortRangeScan);
         startPortRangeScan.setOnClickListener(new View.OnClickListener() {
 

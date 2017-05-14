@@ -147,7 +147,7 @@ public final class LanHostActivity extends HostActivity {
                 portRangePickerStop.setValue(UserPreference.getPortRangeHigh(LanHostActivity.this));
                 portRangePickerStop.setWrapSelectorWheel(false);
 
-                startPortRangeScanClick(portRangePickerStart, portRangePickerStop, LanHostActivity.this, hostIp);
+                startPortRangeScanClick(portRangePickerStart, portRangePickerStop, UserPreference.getLanSocketTimeout(getApplicationContext()), LanHostActivity.this, hostIp);
                 resetPortRangeScanClick(portRangePickerStart, portRangePickerStop);
             }
         });
