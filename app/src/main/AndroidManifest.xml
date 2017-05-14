@@ -46,7 +46,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
         </activity>
-        <activity android:name=".activity.DnsActivity"></activity>
+        <activity android:name=".activity.DnsActivity" />
     </application>
 
 </manifest>
