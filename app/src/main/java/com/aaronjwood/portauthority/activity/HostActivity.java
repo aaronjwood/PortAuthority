@@ -166,7 +166,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
 
                 int startPort = start.getValue();
                 int stopPort = stop.getValue();
-                if ((startPort - stopPort >= 0)) {
+                if ((startPort - stopPort > 0)) {
                     Toast.makeText(getApplicationContext(), "Please pick a valid port range", Toast.LENGTH_SHORT).show();
                     return;
                 }
