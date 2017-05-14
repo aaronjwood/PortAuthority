@@ -288,17 +288,17 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * @return If all associated data is found a port along with its description, underlying service, and visualization is constructed
      */
     private String formatOpenPort(SparseArray<String> entry, int scannedPort, String portName, String item) {
-        item = item + " - " + portName;
+        String data = item + " - " + portName;
         if (entry.get(scannedPort) != null) {
-            item += " (" + entry.get(scannedPort) + ")";
+            data += " (" + entry.get(scannedPort) + ")";
         }
 
         //If the port is in any way related to HTTP then present a nice globe icon next to it via unicode
         if (scannedPort == 80 || scannedPort == 443 || scannedPort == 8080) {
-            item += " \uD83C\uDF0E";
+            data += " \uD83C\uDF0E";
         }
 
-        return item;
+        return data;
     }
 
     /**
