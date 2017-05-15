@@ -29,15 +29,17 @@ import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public abstract class HostActivity extends AppCompatActivity implements HostAsyncResponse {
 
     protected int layout;
     protected ArrayAdapter<String> adapter;
     protected ListView portList;
-    protected ArrayList<String> ports = new ArrayList<>();
+    protected final List<String> ports = Collections.synchronizedList(new ArrayList<String>());
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
     protected Handler handler;
@@ -114,7 +116,8 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
-        savedState.putStringArrayList("ports", ports);
+        String[] savedList = ports.toArray(new String[ports.size()]);
+        savedState.putStringArray("ports", savedList);
     }
 
     /**
@@ -125,7 +128,10 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        ports = savedInstanceState.getStringArrayList("ports");
+        String[] savedList = savedInstanceState.getStringArray("ports");
+        if (savedList != null) {
+            ports.addAll(Arrays.asList(savedList));
+        }
 
         this.setupPortsAdapter();
     }
@@ -317,22 +323,19 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
 
             @Override
             public void run() {
-                synchronized (ports) {
-                    ports.add(port);
+                ports.add(port);
+                Collections.sort(ports, new Comparator<String>() {
 
-                    Collections.sort(ports, new Comparator<String>() {
+                    @Override
+                    public int compare(String lhs, String rhs) {
+                        int left = Integer.parseInt(lhs.substring(0, lhs.indexOf('-') - 1));
+                        int right = Integer.parseInt(rhs.substring(0, rhs.indexOf('-') - 1));
 
-                        @Override
-                        public int compare(String lhs, String rhs) {
-                            int left = Integer.parseInt(lhs.substring(0, lhs.indexOf('-') - 1));
-                            int right = Integer.parseInt(rhs.substring(0, rhs.indexOf('-') - 1));
+                        return left - right;
+                    }
+                });
 
-                            return left - right;
-                        }
-                    });
-
-                    adapter.notifyDataSetChanged();
-                }
+                adapter.notifyDataSetChanged();
             }
         });
     }

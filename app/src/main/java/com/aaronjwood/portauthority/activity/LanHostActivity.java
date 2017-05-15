@@ -154,6 +154,9 @@ public final class LanHostActivity extends HostActivity {
         });
     }
 
+    /**
+     * Event handler for waking up a host via WoL
+     */
     private void setupWol() {
         Button wakeUpButton = (Button) findViewById(R.id.wakeOnLan);
         wakeUpButton.setOnClickListener(new View.OnClickListener() {

@@ -123,18 +123,6 @@ public final class WanHostActivity extends HostActivity {
     }
 
     /**
-     * Save the state of the activity
-     *
-     * @param savedState Data to save
-     */
-    @Override
-    public void onSaveInstanceState(Bundle savedState) {
-        super.onSaveInstanceState(savedState);
-
-        savedState.putStringArrayList("ports", ports);
-    }
-
-    /**
      * Delegate to determine if the progress dialog should be dismissed or not
      *
      * @param output True if the dialog should be dismissed
