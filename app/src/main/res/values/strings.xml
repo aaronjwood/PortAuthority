@@ -12,7 +12,7 @@
     <string name="hostDiscovery">Discover Hosts</string>
     <string name="ssid">SSID</string>
     <string name="bssid">BSSID</string>
-    <string name="scanWellKnownPorts">Scan Well Known Ports</string>
+    <string name="scanWellKnownPorts">Scan Well-Known Ports</string>
     <string name="scanPortRange">Scan Port Range</string>
     <string name="resetPortRange">Reset Port Range</string>
     <string name="openPorts">Open Ports</string>

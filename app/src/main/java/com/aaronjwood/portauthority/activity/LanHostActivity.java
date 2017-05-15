@@ -92,21 +92,23 @@ public final class LanHostActivity extends HostActivity {
             @Override
             public void onClick(View v) {
                 if (!wifi.isConnectedWifi()) {
-                    Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedLan), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 ports.clear();
 
+                int startPort = 1;
+                int stopPort = 1024;
                 scanProgressDialog = new ProgressDialog(LanHostActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
-                scanProgressDialog.setTitle("Scanning Well Known Ports");
+                scanProgressDialog.setTitle("Scanning Port " + startPort + " to " + stopPort);
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 scanProgressDialog.setProgress(0);
                 scanProgressDialog.setMax(1024);
                 scanProgressDialog.show();
 
-                Host.scanPorts(host.getIp(), 1, 1024, UserPreference.getLanSocketTimeout(getApplicationContext()), LanHostActivity.this);
+                Host.scanPorts(host.getIp(), startPort, stopPort, UserPreference.getLanSocketTimeout(getApplicationContext()), LanHostActivity.this);
             }
         });
     }
