@@ -188,9 +188,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     return;
                 }
                 Intent intent = new Intent(MainActivity.this, LanHostActivity.class);
-                intent.putExtra("HOSTNAME", host.getHostname());
-                intent.putExtra("IP", host.getIp());
-                intent.putExtra("MAC", host.getMac());
+                intent.putExtra("HOST", host);
                 startActivity(intent);
             }
         });
@@ -338,7 +336,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             label.setVisibility(View.VISIBLE);
             ip.setVisibility(View.VISIBLE);
 
-            if(cachedWanIp == null) {
+            if (cachedWanIp == null) {
                 this.wifi.getExternalIpAddress(this);
             }
         } else {

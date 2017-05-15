@@ -133,11 +133,25 @@
                 style="?attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginRight="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/button"
                 android:minHeight="1dp"
                 android:minWidth="1dp"
                 android:text="@string/scanPortRange"
+                android:textColor="@drawable/button_text"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/wakeOnLan"
+                style="?attr/buttonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button"
+                android:minHeight="1dp"
+                android:minWidth="1dp"
+                android:text="@string/wakeOnLan"
                 android:textColor="@drawable/button_text"
                 android:textSize="12sp" />
         </LinearLayout>
