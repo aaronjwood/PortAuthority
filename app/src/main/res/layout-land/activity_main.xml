@@ -24,8 +24,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:background="@color/icsblue"
-            android:singleLine="false" />
+            android:background="@color/icsblue" />
 
         <TextView
             android:id="@+id/programTitle"

@@ -12,7 +12,7 @@
     <string name="hostDiscovery">Discover Hosts</string>
     <string name="ssid">SSID</string>
     <string name="bssid">BSSID</string>
-    <string name="scanWellKnownPorts">Scan Well Known Ports</string>
+    <string name="scanWellKnownPorts">Scan Well-Known Ports</string>
     <string name="scanPortRange">Scan Port Range</string>
     <string name="resetPortRange">Reset Port Range</string>
     <string name="openPorts">Open Ports</string>
@@ -23,6 +23,10 @@
     <string name="scanningWarning">WARNING</string>
     <string name="domainName">Domain Name</string>
     <string name="dnsLookup">DNS Lookup</string>
+    <string name="wakeOnLan">Wake Up</string>
+    <string name="waking">Waking up %1$s…</string>
+    <string name="ipAddress">IP Address</string>
+    <string name="notConnectedLan">You\'re not connected to the local network</string>
     <string name="scanningDisclaimer">
         Please be aware that running port scans against public servers is normally considered malicious.
         Additionally, running these kinds of scans over your carrier\'s network instead of your own WiFi connection will be slower and will sometimes produce inaccurate results due to traffic shaping.

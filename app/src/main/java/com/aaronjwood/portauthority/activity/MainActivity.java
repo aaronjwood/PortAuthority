@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -57,11 +58,12 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private Button discoverHostsBtn;
     private String discoverHostsStr; // Cache this so it's not looked up every time a host is found.
     private ProgressDialog scanProgressDialog;
-    private Handler mHandler = new Handler();
+    private Handler signalHandler = new Handler();
+    private Handler scanHandler;
     private BroadcastReceiver receiver;
     private IntentFilter intentFilter = new IntentFilter();
     private HostAdapter hostAdapter;
-    private List<Host> hosts = new ArrayList<>();
+    private List<Host> hosts = Collections.synchronizedList(new ArrayList<Host>());
 
     /**
      * Activity created
@@ -88,6 +90,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         this.discoverHostsStr = getResources().getString(R.string.hostDiscovery);
 
         this.wifi = new Wireless(getApplicationContext());
+        this.scanHandler = new Handler(Looper.getMainLooper());
 
         this.setupHostsAdapter();
         this.setupDrawer();
@@ -112,7 +115,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         this.hostAdapter = new HostAdapter(this, hosts);
 
         this.hostList.setAdapter(this.hostAdapter);
-        if (hosts.size() > 0) {
+        if (!hosts.isEmpty()) {
             this.discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
         }
     }
@@ -188,9 +191,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     return;
                 }
                 Intent intent = new Intent(MainActivity.this, LanHostActivity.class);
-                intent.putExtra("HOSTNAME", host.getHostname());
-                intent.putExtra("IP", host.getIp());
-                intent.putExtra("MAC", host.getMac());
+                intent.putExtra("HOST", host);
                 startActivity(intent);
             }
         });
@@ -214,7 +215,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     if (info.isConnected()) {
                         getNetworkInfo();
                     } else {
-                        mHandler.removeCallbacksAndMessages(null);
+                        signalHandler.removeCallbacksAndMessages(null);
                         internalIp.setText(Wireless.getInternalMobileIpAddress());
                         getExternalIp();
                         signalStrength.setText(R.string.noWifi);
@@ -301,11 +302,11 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     private void getNetworkInfo() {
         final int linkSpeed = wifi.getLinkSpeed();
-        this.mHandler.postDelayed(new Runnable() {
+        this.signalHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm/" + linkSpeed + "Mbps");
-                mHandler.postDelayed(this, TIMER_INTERVAL);
+                signalHandler.postDelayed(this, TIMER_INTERVAL);
             }
         }, 0);
         this.getInternalIp();
@@ -338,7 +339,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             label.setVisibility(View.VISIBLE);
             ip.setVisibility(View.VISIBLE);
 
-            if(cachedWanIp == null) {
+            if (cachedWanIp == null) {
                 this.wifi.getExternalIpAddress(this);
             }
         } else {
@@ -367,7 +368,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public void onDestroy() {
         super.onDestroy();
 
-        mHandler.removeCallbacksAndMessages(null);
+        signalHandler.removeCallbacksAndMessages(null);
 
         if (this.receiver != null) {
             unregisterReceiver(this.receiver);
@@ -431,7 +432,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     @Override
     public void processFinish(final Host output) {
-        runOnUiThread(new Runnable() {
+        scanHandler.post(new Runnable() {
 
             @Override
             public void run() {
@@ -439,26 +440,24 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     scanProgressDialog.dismiss();
                 }
 
-                synchronized (hosts) {
-                    hosts.add(output);
+                hosts.add(output);
 
-                    Collections.sort(hosts, new Comparator<Host>() {
+                Collections.sort(hosts, new Comparator<Host>() {
 
-                        @Override
-                        public int compare(Host lhs, Host rhs) {
-                            try {
-                                int leftIp = new BigInteger(InetAddress.getByName(lhs.getIp()).getAddress()).intValue();
-                                int rightIp = new BigInteger(InetAddress.getByName(rhs.getIp()).getAddress()).intValue();
+                    @Override
+                    public int compare(Host lhs, Host rhs) {
+                        try {
+                            int leftIp = new BigInteger(InetAddress.getByName(lhs.getIp()).getAddress()).intValue();
+                            int rightIp = new BigInteger(InetAddress.getByName(rhs.getIp()).getAddress()).intValue();
 
-                                return leftIp - rightIp;
-                            } catch (UnknownHostException ignored) {
-                                return 0;
-                            }
+                            return leftIp - rightIp;
+                        } catch (UnknownHostException ignored) {
+                            return 0;
                         }
-                    });
-                    hostAdapter.notifyDataSetChanged();
-                    discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
-                }
+                    }
+                });
+                hostAdapter.notifyDataSetChanged();
+                discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
             }
         });
     }

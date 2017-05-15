@@ -59,15 +59,17 @@ public final class WanHostActivity extends HostActivity {
             public void onClick(View v) {
                 ports.clear();
 
+                int startPort = 1;
+                int stopPort = 1024;
                 scanProgressDialog = new ProgressDialog(WanHostActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
-                scanProgressDialog.setTitle("Scanning Well Known Ports");
+                scanProgressDialog.setTitle("Scanning Port " + startPort + " to " + stopPort);
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 scanProgressDialog.setProgress(0);
                 scanProgressDialog.setMax(1024);
                 scanProgressDialog.show();
 
-                Host.scanPorts(wanHost.getText().toString(), 1, 1024, UserPreference.getWanSocketTimeout(getApplicationContext()), WanHostActivity.this);
+                Host.scanPorts(wanHost.getText().toString(), startPort, stopPort, UserPreference.getWanSocketTimeout(getApplicationContext()), WanHostActivity.this);
                 portListClick(wanHost.getText().toString());
             }
         });
@@ -86,6 +88,7 @@ public final class WanHostActivity extends HostActivity {
              */
             @Override
             public void onClick(View v) {
+
                 portRangeDialog = new Dialog(WanHostActivity.this, R.style.DialogTheme);
                 portRangeDialog.setTitle("Select Port Range");
                 portRangeDialog.setContentView(R.layout.port_range);
@@ -103,7 +106,7 @@ public final class WanHostActivity extends HostActivity {
                 portRangePickerStop.setValue(UserPreference.getPortRangeHigh(WanHostActivity.this));
                 portRangePickerStop.setWrapSelectorWheel(false);
 
-                startPortRangeScanClick(portRangePickerStart, portRangePickerStop, WanHostActivity.this, wanHost.getText().toString());
+                startPortRangeScanClick(portRangePickerStart, portRangePickerStop, UserPreference.getWanSocketTimeout(getApplicationContext()), WanHostActivity.this, wanHost.getText().toString());
                 resetPortRangeScanClick(portRangePickerStart, portRangePickerStop);
                 portListClick(wanHost.getText().toString());
             }
@@ -120,18 +123,6 @@ public final class WanHostActivity extends HostActivity {
     }
 
     /**
-     * Save the state of the activity
-     *
-     * @param savedState Data to save
-     */
-    @Override
-    public void onSaveInstanceState(Bundle savedState) {
-        super.onSaveInstanceState(savedState);
-
-        savedState.putStringArrayList("ports", ports);
-    }
-
-    /**
      * Delegate to determine if the progress dialog should be dismissed or not
      *
      * @param output True if the dialog should be dismissed
@@ -141,15 +132,14 @@ public final class WanHostActivity extends HostActivity {
         if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.dismiss();
         }
+
         if (this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
             this.portRangeDialog.dismiss();
         }
-        if (!output) {
-            runOnUiThread(new Runnable() {
 
-                /**
-                 * Indicate to the user that they've entered in something wrong
-                 */
+        if (!output) {
+            handler.post(new Runnable() {
+
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), "Please enter a valid URL or IP address", Toast.LENGTH_SHORT).show();

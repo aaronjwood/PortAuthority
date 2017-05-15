@@ -17,11 +17,22 @@ Host discovery is typically performed in less than **5 seconds**.
 If the device you're scanning drops packets, it takes about 10 seconds to scan 1000 ports.
 If the device you're scanning rejects packets, it takes less than **30 seconds to scan all 65,535 ports!**
 
-Now includes a DNS lookup tool supporting almost every kind of DNS record!
-
 Port Authority has no ads and will *never* have ads.
 It requires extremely limited permissions since it only needs to interact with your network.
 The internals are designed to take advantage of today's modern phones/tablets with multiple cores to ensure you can scan your network as fast as possible. This means that lower end devices may struggle a bit with port scans.
+
+## Features
+
+* Heavily threaded, no more waiting for results one at a time
+* LAN host discovery
+* Public IP discovery
+* MAC address vendor detection
+* LAN/WAN host TCP port scanning
+* Custom port range scans
+* Open discovered HTTP(S) services to browser
+* Lightweight service fingerprinting (SSH/HTTP(S) server type and version)
+* DNS lookups supporting almost every type of record
+* Wake-on-LAN for LAN hosts
 
 ## How are scans so fast?
 

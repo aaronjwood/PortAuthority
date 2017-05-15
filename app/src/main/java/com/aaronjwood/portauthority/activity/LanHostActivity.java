@@ -15,11 +15,11 @@ import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
+import java.io.IOException;
+
 public final class LanHostActivity extends HostActivity {
     private Wireless wifi;
-    private String hostName;
-    private String hostIp;
-    private String hostMac;
+    private Host host;
 
     /**
      * Activity created
@@ -31,25 +31,28 @@ public final class LanHostActivity extends HostActivity {
         this.layout = R.layout.activity_lanhost;
         super.onCreate(savedInstanceState);
 
-        TextView hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
+        TextView hostName = (TextView) findViewById(R.id.hostName);
         TextView hostMacVendor = (TextView) findViewById(R.id.hostMacVendor);
-        TextView hostMacLabel = (TextView) findViewById(R.id.hostMac);
+        TextView hostMac = (TextView) findViewById(R.id.hostMac);
+        TextView ipAddress = (TextView) findViewById(R.id.ipAddress);
         Bundle extras = getIntent().getExtras();
         if (extras == null) {
             return;
         }
 
-        this.hostName = extras.getString("HOSTNAME");
-        this.hostIp = extras.getString("IP");
-        this.hostMac = extras.getString("MAC");
         this.wifi = new Wireless(getApplicationContext());
+        this.host = (Host) extras.get("HOST");
+        if (this.host == null) {
+            return;
+        }
 
-        hostMacVendor.setText(Host.getMacVendor(hostMac.replace(":", "").substring(0, 6), this));
-
-        hostIpLabel.setText(this.hostName);
-        hostMacLabel.setText(this.hostMac);
+        hostMacVendor.setText(Host.getMacVendor(this.host.getMac().replace(":", "").substring(0, 6), this));
+        hostName.setText(this.host.getHostname());
+        hostMac.setText(this.host.getMac());
+        ipAddress.setText(this.host.getIp());
 
         this.setupPortScan();
+        this.setupWol();
     }
 
     /**
@@ -61,9 +64,7 @@ public final class LanHostActivity extends HostActivity {
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
-        savedState.putString("hostName", this.hostName);
-        savedState.putString("hostIp", this.hostIp);
-        savedState.putString("hostMac", this.hostMac);
+        savedState.putSerializable("host", this.host);
     }
 
     /**
@@ -74,9 +75,7 @@ public final class LanHostActivity extends HostActivity {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        this.hostName = savedInstanceState.getString("hostName");
-        this.hostIp = savedInstanceState.getString("hostIp");
-        this.hostMac = savedInstanceState.getString("hostMac");
+        this.host = (Host) savedInstanceState.get("host");
     }
 
     /**
@@ -93,21 +92,23 @@ public final class LanHostActivity extends HostActivity {
             @Override
             public void onClick(View v) {
                 if (!wifi.isConnectedWifi()) {
-                    Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedLan), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 ports.clear();
 
+                int startPort = 1;
+                int stopPort = 1024;
                 scanProgressDialog = new ProgressDialog(LanHostActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
-                scanProgressDialog.setTitle("Scanning Well Known Ports");
+                scanProgressDialog.setTitle("Scanning Port " + startPort + " to " + stopPort);
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 scanProgressDialog.setProgress(0);
                 scanProgressDialog.setMax(1024);
                 scanProgressDialog.show();
 
-                Host.scanPorts(hostIp, 1, 1024, UserPreference.getLanSocketTimeout(getApplicationContext()), LanHostActivity.this);
+                Host.scanPorts(host.getIp(), startPort, stopPort, UserPreference.getLanSocketTimeout(getApplicationContext()), LanHostActivity.this);
             }
         });
     }
@@ -126,7 +127,7 @@ public final class LanHostActivity extends HostActivity {
             @Override
             public void onClick(View v) {
                 if (!wifi.isConnectedWifi()) {
-                    Toast.makeText(getApplicationContext(), "You're not connected to a network!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedLan), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -147,8 +148,34 @@ public final class LanHostActivity extends HostActivity {
                 portRangePickerStop.setValue(UserPreference.getPortRangeHigh(LanHostActivity.this));
                 portRangePickerStop.setWrapSelectorWheel(false);
 
-                startPortRangeScanClick(portRangePickerStart, portRangePickerStop, LanHostActivity.this, hostIp);
+                startPortRangeScanClick(portRangePickerStart, portRangePickerStop, UserPreference.getLanSocketTimeout(getApplicationContext()), LanHostActivity.this, host.getIp());
                 resetPortRangeScanClick(portRangePickerStart, portRangePickerStop);
+            }
+        });
+    }
+
+    /**
+     * Event handler for waking up a host via WoL
+     */
+    private void setupWol() {
+        Button wakeUpButton = (Button) findViewById(R.id.wakeOnLan);
+        wakeUpButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (!wifi.isConnectedWifi()) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedLan), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                try {
+                    host.wakeOnLan();
+                } catch (IOException e) {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), host.getHostname()), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -159,7 +186,7 @@ public final class LanHostActivity extends HostActivity {
     private void setupPortScan() {
         this.scanWellKnownPortsClick();
         this.scanPortRangeClick();
-        this.portListClick(hostIp);
+        this.portListClick(this.host.getIp());
     }
 
 

@@ -1,15 +1,29 @@
 apply plugin: 'com.android.application'
+apply plugin: "org.sonarqube"
+
+sonarqube {
+    properties {
+        property "sonar.projectName", "Port Authority"
+        property "sonar.projectKey", "portauthority"
+        property "sonar.projectVersion", "1.0"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.sources", "."
+        property "sonar.exclusions", "build/**,**/*.png,**/*.psd"
+        property "sonar.import_unknown_files", true
+        property "sonar.android.lint.report", "./build/outputs/lint-results.xml"
+    }
+}
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '25.0.3'
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 25
-        versionCode 47
-        versionName "1.9.9"
+        versionCode 48
+        versionName "2.0.0"
     }
 
     compileOptions {

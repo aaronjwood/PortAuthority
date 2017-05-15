@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.View;
@@ -27,18 +29,20 @@ import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public abstract class HostActivity extends AppCompatActivity implements HostAsyncResponse {
 
     protected int layout;
     protected ArrayAdapter<String> adapter;
     protected ListView portList;
-    protected ArrayList<String> ports = new ArrayList<>();
+    protected final List<String> ports = Collections.synchronizedList(new ArrayList<String>());
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
-    protected int timeout;
+    protected Handler handler;
     private Database db;
 
     /**
@@ -52,6 +56,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         setContentView(this.layout);
 
         db = new Database(this);
+        handler = new Handler(Looper.getMainLooper());
         setupPortsAdapter();
     }
 
@@ -111,7 +116,8 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
-        savedState.putStringArrayList("ports", ports);
+        String[] savedList = ports.toArray(new String[ports.size()]);
+        savedState.putStringArray("ports", savedList);
     }
 
     /**
@@ -122,7 +128,10 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        ports = savedInstanceState.getStringArrayList("ports");
+        String[] savedList = savedInstanceState.getStringArray("ports");
+        if (savedList != null) {
+            ports.addAll(Arrays.asList(savedList));
+        }
 
         this.setupPortsAdapter();
     }
@@ -146,10 +155,13 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     /**
      * Event handler for when the port range scan is finally initiated
      *
-     * @param start Starting port picker
-     * @param stop  Stopping port picker
+     * @param start    Starting port picker
+     * @param stop     Stopping port picker
+     * @param timeout  Socket timeout
+     * @param activity Calling activity
+     * @param ip       IP address
      */
-    protected void startPortRangeScanClick(final NumberPicker start, final NumberPicker stop, final HostActivity activity, final String ip) {
+    protected void startPortRangeScanClick(final NumberPicker start, final NumberPicker stop, final int timeout, final HostActivity activity, final String ip) {
         Button startPortRangeScan = (Button) portRangeDialog.findViewById(R.id.startPortRangeScan);
         startPortRangeScan.setOnClickListener(new View.OnClickListener() {
 
@@ -164,7 +176,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
 
                 int startPort = start.getValue();
                 int stopPort = stop.getValue();
-                if ((startPort - stopPort >= 0)) {
+                if ((startPort - stopPort > 0)) {
                     Toast.makeText(getApplicationContext(), "Please pick a valid port range", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -240,7 +252,8 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      */
     @Override
     public void processFinish(final int output) {
-        runOnUiThread(new Runnable() {
+        handler.post(new Runnable() {
+
             @Override
             public void run() {
                 if (scanProgressDialog != null) {
@@ -286,17 +299,17 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * @return If all associated data is found a port along with its description, underlying service, and visualization is constructed
      */
     private String formatOpenPort(SparseArray<String> entry, int scannedPort, String portName, String item) {
-        item = item + " - " + portName;
+        String data = item + " - " + portName;
         if (entry.get(scannedPort) != null) {
-            item += " (" + entry.get(scannedPort) + ")";
+            data += " (" + entry.get(scannedPort) + ")";
         }
 
         //If the port is in any way related to HTTP then present a nice globe icon next to it via unicode
         if (scannedPort == 80 || scannedPort == 443 || scannedPort == 8080) {
-            item += " \uD83C\uDF0E";
+            data += " \uD83C\uDF0E";
         }
 
-        return item;
+        return data;
     }
 
     /**
@@ -306,26 +319,23 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      */
     private void addOpenPort(final String port) {
         setAnimations();
-        runOnUiThread(new Runnable() {
+        handler.post(new Runnable() {
 
             @Override
             public void run() {
-                synchronized (ports) {
-                    ports.add(port);
+                ports.add(port);
+                Collections.sort(ports, new Comparator<String>() {
 
-                    Collections.sort(ports, new Comparator<String>() {
+                    @Override
+                    public int compare(String lhs, String rhs) {
+                        int left = Integer.parseInt(lhs.substring(0, lhs.indexOf('-') - 1));
+                        int right = Integer.parseInt(rhs.substring(0, rhs.indexOf('-') - 1));
 
-                        @Override
-                        public int compare(String lhs, String rhs) {
-                            int left = Integer.parseInt(lhs.substring(0, lhs.indexOf("-") - 1));
-                            int right = Integer.parseInt(rhs.substring(0, rhs.indexOf("-") - 1));
+                        return left - right;
+                    }
+                });
 
-                            return left - right;
-                        }
-                    });
-
-                    adapter.notifyDataSetChanged();
-                }
+                adapter.notifyDataSetChanged();
             }
         });
     }
