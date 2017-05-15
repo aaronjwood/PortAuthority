@@ -63,7 +63,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private BroadcastReceiver receiver;
     private IntentFilter intentFilter = new IntentFilter();
     private HostAdapter hostAdapter;
-    private List<Host> hosts = new ArrayList<>();
+    private List<Host> hosts = Collections.synchronizedList(new ArrayList<Host>());
 
     /**
      * Activity created
@@ -440,26 +440,24 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     scanProgressDialog.dismiss();
                 }
 
-                synchronized (hosts) {
-                    hosts.add(output);
+                hosts.add(output);
 
-                    Collections.sort(hosts, new Comparator<Host>() {
+                Collections.sort(hosts, new Comparator<Host>() {
 
-                        @Override
-                        public int compare(Host lhs, Host rhs) {
-                            try {
-                                int leftIp = new BigInteger(InetAddress.getByName(lhs.getIp()).getAddress()).intValue();
-                                int rightIp = new BigInteger(InetAddress.getByName(rhs.getIp()).getAddress()).intValue();
+                    @Override
+                    public int compare(Host lhs, Host rhs) {
+                        try {
+                            int leftIp = new BigInteger(InetAddress.getByName(lhs.getIp()).getAddress()).intValue();
+                            int rightIp = new BigInteger(InetAddress.getByName(rhs.getIp()).getAddress()).intValue();
 
-                                return leftIp - rightIp;
-                            } catch (UnknownHostException ignored) {
-                                return 0;
-                            }
+                            return leftIp - rightIp;
+                        } catch (UnknownHostException ignored) {
+                            return 0;
                         }
-                    });
-                    hostAdapter.notifyDataSetChanged();
-                    discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
-                }
+                    }
+                });
+                hostAdapter.notifyDataSetChanged();
+                discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
             }
         });
     }
