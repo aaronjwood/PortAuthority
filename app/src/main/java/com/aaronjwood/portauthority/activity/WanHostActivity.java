@@ -59,15 +59,17 @@ public final class WanHostActivity extends HostActivity {
             public void onClick(View v) {
                 ports.clear();
 
+                int startPort = 1;
+                int stopPort = 1024;
                 scanProgressDialog = new ProgressDialog(WanHostActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
-                scanProgressDialog.setTitle("Scanning Well Known Ports");
+                scanProgressDialog.setTitle("Scanning Port " + startPort + " to " + stopPort);
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 scanProgressDialog.setProgress(0);
                 scanProgressDialog.setMax(1024);
                 scanProgressDialog.show();
 
-                Host.scanPorts(wanHost.getText().toString(), 1, 1024, UserPreference.getWanSocketTimeout(getApplicationContext()), WanHostActivity.this);
+                Host.scanPorts(wanHost.getText().toString(), startPort, stopPort, UserPreference.getWanSocketTimeout(getApplicationContext()), WanHostActivity.this);
                 portListClick(wanHost.getText().toString());
             }
         });
