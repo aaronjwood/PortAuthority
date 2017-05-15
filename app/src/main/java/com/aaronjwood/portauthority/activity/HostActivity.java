@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.View;
@@ -38,6 +40,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     protected ArrayList<String> ports = new ArrayList<>();
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
+    protected Handler handler;
     private Database db;
 
     /**
@@ -51,6 +54,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         setContentView(this.layout);
 
         db = new Database(this);
+        handler = new Handler(Looper.getMainLooper());
         setupPortsAdapter();
     }
 
@@ -242,7 +246,8 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      */
     @Override
     public void processFinish(final int output) {
-        runOnUiThread(new Runnable() {
+        handler.post(new Runnable() {
+
             @Override
             public void run() {
                 if (scanProgressDialog != null) {
@@ -308,7 +313,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      */
     private void addOpenPort(final String port) {
         setAnimations();
-        runOnUiThread(new Runnable() {
+        handler.post(new Runnable() {
 
             @Override
             public void run() {

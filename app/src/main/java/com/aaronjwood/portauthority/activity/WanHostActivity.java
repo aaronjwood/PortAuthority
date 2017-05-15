@@ -142,15 +142,14 @@ public final class WanHostActivity extends HostActivity {
         if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
             this.scanProgressDialog.dismiss();
         }
+
         if (this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
             this.portRangeDialog.dismiss();
         }
-        if (!output) {
-            runOnUiThread(new Runnable() {
 
-                /**
-                 * Indicate to the user that they've entered in something wrong
-                 */
+        if (!output) {
+            handler.post(new Runnable() {
+
                 @Override
                 public void run() {
                     Toast.makeText(getApplicationContext(), "Please enter a valid URL or IP address", Toast.LENGTH_SHORT).show();

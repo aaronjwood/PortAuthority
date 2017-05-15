@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -57,7 +58,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private Button discoverHostsBtn;
     private String discoverHostsStr; // Cache this so it's not looked up every time a host is found.
     private ProgressDialog scanProgressDialog;
-    private Handler mHandler = new Handler();
+    private Handler signalHandler = new Handler();
+    private Handler scanHandler;
     private BroadcastReceiver receiver;
     private IntentFilter intentFilter = new IntentFilter();
     private HostAdapter hostAdapter;
@@ -88,6 +90,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         this.discoverHostsStr = getResources().getString(R.string.hostDiscovery);
 
         this.wifi = new Wireless(getApplicationContext());
+        this.scanHandler = new Handler(Looper.getMainLooper());
 
         this.setupHostsAdapter();
         this.setupDrawer();
@@ -212,7 +215,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     if (info.isConnected()) {
                         getNetworkInfo();
                     } else {
-                        mHandler.removeCallbacksAndMessages(null);
+                        signalHandler.removeCallbacksAndMessages(null);
                         internalIp.setText(Wireless.getInternalMobileIpAddress());
                         getExternalIp();
                         signalStrength.setText(R.string.noWifi);
@@ -299,11 +302,11 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     private void getNetworkInfo() {
         final int linkSpeed = wifi.getLinkSpeed();
-        this.mHandler.postDelayed(new Runnable() {
+        this.signalHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm/" + linkSpeed + "Mbps");
-                mHandler.postDelayed(this, TIMER_INTERVAL);
+                signalHandler.postDelayed(this, TIMER_INTERVAL);
             }
         }, 0);
         this.getInternalIp();
@@ -365,7 +368,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public void onDestroy() {
         super.onDestroy();
 
-        mHandler.removeCallbacksAndMessages(null);
+        signalHandler.removeCallbacksAndMessages(null);
 
         if (this.receiver != null) {
             unregisterReceiver(this.receiver);
@@ -429,7 +432,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     @Override
     public void processFinish(final Host output) {
-        runOnUiThread(new Runnable() {
+        scanHandler.post(new Runnable() {
 
             @Override
             public void run() {

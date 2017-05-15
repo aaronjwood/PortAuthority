@@ -2,6 +2,8 @@ package com.aaronjwood.portauthority.activity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +22,7 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
     private TextView dnsAnswer;
     private Spinner dnsRecord;
     private ProgressDialog lookupProgressDialog;
+    private Handler handler;
 
     /**
      * Activity created
@@ -36,6 +39,7 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
         this.dnsRecord = (Spinner) findViewById(R.id.recordSpinner);
         this.domainName.setText(UserPreference.getLastUsedDomainName(this));
         this.dnsRecord.setSelection(UserPreference.getLastUsedDnsRecord(this));
+        this.handler = new Handler(Looper.getMainLooper());
 
         this.dnsLookupClick();
     }
@@ -92,7 +96,8 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
     public void processFinish(String output) {
         this.dnsAnswer.setText(output);
 
-        runOnUiThread(new Runnable() {
+        handler.post(new Runnable() {
+
             @Override
             public void run() {
                 if (lookupProgressDialog != null && lookupProgressDialog.isShowing()) {
