@@ -30,7 +30,7 @@ public final class HostAdapter extends ArrayAdapter<Host> {
 
         if (rowView == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
-            rowView = inflater.inflate(R.layout.host_list_item, null);
+            rowView = inflater.inflate(R.layout.host_list_item, parent, false);
 
             view = new ViewHolder();
             view.hostname = (TextView) rowView.findViewById(R.id.hostname);
