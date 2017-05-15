@@ -25,6 +25,7 @@
     <string name="dnsLookup">DNS Lookup</string>
     <string name="wakeOnLan">Wake Up</string>
     <string name="waking">Waking up %1$s…</string>
+    <string name="ipAddress">IP Address</string>
     <string name="notConnectedLan">You\'re not connected to the local network</string>
     <string name="scanningDisclaimer">
         Please be aware that running port scans against public servers is normally considered malicious.

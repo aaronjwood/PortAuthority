@@ -31,9 +31,10 @@ public final class LanHostActivity extends HostActivity {
         this.layout = R.layout.activity_lanhost;
         super.onCreate(savedInstanceState);
 
-        TextView hostIpLabel = (TextView) findViewById(R.id.hostIpLabel);
+        TextView hostName = (TextView) findViewById(R.id.hostName);
         TextView hostMacVendor = (TextView) findViewById(R.id.hostMacVendor);
-        TextView hostMacLabel = (TextView) findViewById(R.id.hostMac);
+        TextView hostMac = (TextView) findViewById(R.id.hostMac);
+        TextView ipAddress = (TextView) findViewById(R.id.ipAddress);
         Bundle extras = getIntent().getExtras();
         if (extras == null) {
             return;
@@ -46,9 +47,9 @@ public final class LanHostActivity extends HostActivity {
         }
 
         hostMacVendor.setText(Host.getMacVendor(this.host.getMac().replace(":", "").substring(0, 6), this));
-
-        hostIpLabel.setText(this.host.getHostname());
-        hostMacLabel.setText(this.host.getMac());
+        hostName.setText(this.host.getHostname());
+        hostMac.setText(this.host.getMac());
+        ipAddress.setText(this.host.getIp());
 
         this.setupPortScan();
         this.setupWol();
