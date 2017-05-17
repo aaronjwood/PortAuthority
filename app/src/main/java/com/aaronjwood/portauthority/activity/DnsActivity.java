@@ -39,6 +39,22 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
         this.dnsLookupClick();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle savedState) {
+        super.onSaveInstanceState(savedState);
+
+        String recordData = dnsAnswer.getText().toString();
+        savedState.putString("records", recordData);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        String recordData = savedInstanceState.getString("records");
+        dnsAnswer.setText(recordData);
+    }
+
     /**
      * Clean up
      */
