@@ -4,14 +4,12 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.aaronjwood.portauthority.async.ScanPortsAsyncTask;
+import com.aaronjwood.portauthority.async.WolAsyncTask;
 import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 
 public class Host implements Serializable {
 
@@ -81,37 +79,8 @@ public class Host implements Serializable {
         return this.mac;
     }
 
-    public void wakeOnLan() throws IOException {
-        byte[] macBytes = new byte[6];
-        String[] macHex = this.mac.split("(:|-)");
-        for (int i = 0; i < 6; i++) {
-            macBytes[i] = (byte) Integer.parseInt(macHex[i], 16);
-        }
-
-        byte[] bytes = new byte[6 + 16 * macBytes.length];
-        for (int i = 0; i < 6; i++) {
-            bytes[i] = (byte) 0xff;
-        }
-
-        for (int i = 6; i < bytes.length; i += macBytes.length) {
-            System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
-        }
-
-        InetAddress address;
-        DatagramSocket socket = null;
-        try {
-            address = InetAddress.getByName(this.ip);
-            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, 9);
-            socket = new DatagramSocket();
-            socket.send(packet);
-
-        } catch (IOException e) {
-            throw e;
-        } finally {
-            if (socket != null) {
-                socket.close();
-            }
-        }
+    public void wakeOnLan() {
+        new WolAsyncTask().execute(mac, ip);
     }
 
     /**

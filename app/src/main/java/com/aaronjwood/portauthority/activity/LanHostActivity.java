@@ -168,13 +168,7 @@ public final class LanHostActivity extends HostActivity {
                     return;
                 }
 
-                try {
-                    host.wakeOnLan();
-                } catch (IOException e) {
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
+                host.wakeOnLan();
                 Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), host.getHostname()), Toast.LENGTH_LONG).show();
             }
         });
