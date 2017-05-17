@@ -61,6 +61,7 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
         UserPreference.saveLastUsedDomainName(this, this.domainName.getText().toString());
         UserPreference.saveLastUsedDnsRecord(this, this.dnsRecord.getSelectedItemPosition());
     }
@@ -97,13 +98,12 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
     }
 
     /**
-     * Displays the DNS answers to the user
+     * Displays the DNS answer(s) to the user
      *
-     * @param output
+     * @param output DNS record data
      */
     @Override
     public void processFinish(String output) {
         this.dnsAnswer.setText(output);
-
     }
 }
