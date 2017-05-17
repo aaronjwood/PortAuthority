@@ -7,7 +7,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
-import com.aaronjwood.portauthority.async.GetExternalIpAsyncTask;
+import com.aaronjwood.portauthority.async.WanIpAsyncTask;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
 import java.math.BigInteger;
@@ -234,7 +234,7 @@ public class Wireless {
      * @param delegate Called when the external IP address has been fetched
      */
     public void getExternalIpAddress(MainAsyncResponse delegate) {
-        new GetExternalIpAsyncTask(delegate).execute();
+        new WanIpAsyncTask(delegate).execute();
     }
 
     /**

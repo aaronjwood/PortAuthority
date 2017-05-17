@@ -15,7 +15,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
-public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
+public class WanIpAsyncTask extends AsyncTask<Void, Void, String> {
 
     // IP service is 100% open source https://github.com/aaronjwood/public-ip-api
     private static final String EXTERNAL_IP_SERVICE = "https://public-ip-api.appspot.com/";
@@ -26,7 +26,7 @@ public class GetExternalIpAsyncTask extends AsyncTask<Void, Void, String> {
      *
      * @param delegate Called when the external IP has been fetched
      */
-    public GetExternalIpAsyncTask(MainAsyncResponse delegate) {
+    public WanIpAsyncTask(MainAsyncResponse delegate) {
         this.delegate = new WeakReference<>(delegate);
     }
 
