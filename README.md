@@ -19,7 +19,7 @@ If the device you're scanning rejects packets, it takes less than **30 seconds t
 
 Port Authority has no ads and will *never* have ads.
 It requires extremely limited permissions since it only needs to interact with your network.
-The internals are designed to take advantage of today's modern phones/tablets with multiple cores to ensure you can scan your network as fast as possible. This means that lower end devices may struggle a bit with port scans.
+The internals are designed to take advantage of today's modern phones/tablets with multiple cores to ensure you can scan your network as fast as possible.
 
 ## Features
 
