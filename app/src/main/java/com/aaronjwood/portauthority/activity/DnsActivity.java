@@ -1,15 +1,13 @@
 package com.aaronjwood.portauthority.activity;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Dns;
@@ -21,8 +19,6 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
     private EditText domainName;
     private TextView dnsAnswer;
     private Spinner dnsRecord;
-    private ProgressDialog lookupProgressDialog;
-    private Handler handler;
 
     /**
      * Activity created
@@ -39,7 +35,6 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
         this.dnsRecord = (Spinner) findViewById(R.id.recordSpinner);
         this.domainName.setText(UserPreference.getLastUsedDomainName(this));
         this.dnsRecord.setSelection(UserPreference.getLastUsedDnsRecord(this));
-        this.handler = new Handler(Looper.getMainLooper());
 
         this.dnsLookupClick();
     }
@@ -71,16 +66,14 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
             public void onClick(View view) {
                 String domain = domainElement.getText().toString();
                 if (domain.isEmpty() || recordElement.getSelectedItemPosition() == 0) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.dnsInputError), Toast.LENGTH_LONG).show();
                     return;
                 }
-
-                lookupProgressDialog = new ProgressDialog(DnsActivity.this, R.style.DialogTheme);
-                lookupProgressDialog.setMessage("Querying Name Server");
-                lookupProgressDialog.show();
 
                 Object recordType = recordElement.getSelectedItem();
                 if (recordType != null) {
                     String recordName = recordType.toString();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.startingDnsLookup), Toast.LENGTH_SHORT).show();
                     Dns.lookup(domain, recordName, DnsActivity.this);
                 }
             }
@@ -96,14 +89,5 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
     public void processFinish(String output) {
         this.dnsAnswer.setText(output);
 
-        handler.post(new Runnable() {
-
-            @Override
-            public void run() {
-                if (lookupProgressDialog != null && lookupProgressDialog.isShowing()) {
-                    lookupProgressDialog.dismiss();
-                }
-            }
-        });
     }
 }

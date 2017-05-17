@@ -45,7 +45,7 @@ public class DnsLookupAsyncTask extends AsyncTask<String, Void, String> {
 
             for (Record record : records) {
                 String rClass = this.parseRecordClass(record.getDClass());
-                answer += String.format("%s\t\t\t%s\t\t\t%s\t\t\t%s%n%n", record.getName(), record.getTTL(), rClass, record.rdataToString());
+                answer += String.format("%s\t\t\t\t%s\t\t\t\t%s\t\t\t\t%s%n%n", record.getName(), record.getTTL(), rClass, record.rdataToString());
             }
 
             return answer;

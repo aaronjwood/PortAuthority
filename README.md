@@ -31,7 +31,7 @@ The internals are designed to take advantage of today's modern phones/tablets wi
 * Custom port range scans
 * Open discovered HTTP(S) services to browser
 * Lightweight service fingerprinting (SSH/HTTP(S) server type and version)
-* DNS lookups supporting almost every type of record
+* DNS record lookups supporting almost every record type
 * Wake-on-LAN for LAN hosts
 
 ## How are scans so fast?
