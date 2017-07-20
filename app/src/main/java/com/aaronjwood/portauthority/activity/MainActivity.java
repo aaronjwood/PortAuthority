@@ -80,23 +80,23 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         setContentView(R.layout.activity_main);
 
-        this.internalIp = (TextView) findViewById(R.id.internalIpAddress);
-        this.externalIp = (TextView) findViewById(R.id.externalIpAddress);
-        this.signalStrength = (TextView) findViewById(R.id.signalStrength);
-        this.ssid = (TextView) findViewById(R.id.ssid);
-        this.bssid = (TextView) findViewById(R.id.bssid);
-        this.hostList = (ListView) findViewById(R.id.hostList);
-        this.discoverHostsBtn = (Button) findViewById(R.id.discoverHosts);
-        this.discoverHostsStr = getResources().getString(R.string.hostDiscovery);
+        internalIp = (TextView) findViewById(R.id.internalIpAddress);
+        externalIp = (TextView) findViewById(R.id.externalIpAddress);
+        signalStrength = (TextView) findViewById(R.id.signalStrength);
+        ssid = (TextView) findViewById(R.id.ssid);
+        bssid = (TextView) findViewById(R.id.bssid);
+        hostList = (ListView) findViewById(R.id.hostList);
+        discoverHostsBtn = (Button) findViewById(R.id.discoverHosts);
+        discoverHostsStr = getResources().getString(R.string.hostDiscovery);
 
-        this.wifi = new Wireless(getApplicationContext());
-        this.scanHandler = new Handler(Looper.getMainLooper());
+        wifi = new Wireless(getApplicationContext());
+        scanHandler = new Handler(Looper.getMainLooper());
 
-        this.setupHostsAdapter();
-        this.setupDrawer();
-        this.setupReceivers();
-        this.setupMac();
-        this.setupHostDiscovery();
+        setupHostsAdapter();
+        setupDrawer();
+        setupReceivers();
+        setupMac();
+        setupHostDiscovery();
     }
 
     /**
@@ -111,12 +111,12 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * Sets up the adapter to handle discovered hosts
      */
     private void setupHostsAdapter() {
-        this.setAnimations();
-        this.hostAdapter = new HostAdapter(this, hosts);
+        setAnimations();
+        hostAdapter = new HostAdapter(this, hosts);
 
-        this.hostList.setAdapter(this.hostAdapter);
+        hostList.setAdapter(hostAdapter);
         if (!hosts.isEmpty()) {
-            this.discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
+            discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
         }
     }
 
@@ -126,7 +126,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private void setupMac() {
         //Set MAC address
         TextView macAddress = (TextView) findViewById(R.id.deviceMacAddress);
-        String mac = this.wifi.getMacAddress();
+        String mac = wifi.getMacAddress();
         macAddress.setText(mac);
 
         //Set the device's vendor
@@ -175,7 +175,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             }
         });
 
-        this.hostList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        hostList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             /**
              * Click handler to open the host activity for a specific host found on the network
@@ -201,7 +201,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * Sets up and registers receivers
      */
     private void setupReceivers() {
-        this.receiver = new BroadcastReceiver() {
+        receiver = new BroadcastReceiver() {
 
             /**
              * Detect if a network connection has been lost or established
@@ -226,8 +226,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             }
         };
 
-        this.intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        registerReceiver(receiver, this.intentFilter);
+        intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        registerReceiver(receiver, intentFilter);
     }
 
     /**
@@ -302,17 +302,17 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     private void getNetworkInfo() {
         final int linkSpeed = wifi.getLinkSpeed();
-        this.signalHandler.postDelayed(new Runnable() {
+        signalHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 signalStrength.setText(String.format(getResources().getString(R.string.signalLink), wifi.getSignalStrength(), linkSpeed));
                 signalHandler.postDelayed(this, TIMER_INTERVAL);
             }
         }, 0);
-        this.getInternalIp();
-        this.getExternalIp();
-        this.ssid.setText(this.wifi.getSSID());
-        this.bssid.setText(this.wifi.getBSSID());
+        getInternalIp();
+        getExternalIp();
+        ssid.setText(wifi.getSSID());
+        bssid.setText(wifi.getBSSID());
     }
 
     /**
@@ -321,9 +321,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * then prints it along side the IP.
      */
     private void getInternalIp() {
-        int netmask = this.wifi.getInternalWifiSubnet();
-        String InternalIpWithSubnet = this.wifi.getInternalWifiIpAddress(String.class) + "/" + Integer.toString(netmask);
-        this.internalIp.setText(InternalIpWithSubnet);
+        int netmask = wifi.getInternalWifiSubnet();
+        String InternalIpWithSubnet = wifi.getInternalWifiIpAddress(String.class) + "/" + Integer.toString(netmask);
+        internalIp.setText(InternalIpWithSubnet);
     }
 
     /**
@@ -340,7 +340,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             ip.setVisibility(View.VISIBLE);
 
             if (cachedWanIp == null) {
-                this.wifi.getExternalIpAddress(this);
+                wifi.getExternalIpAddress(this);
             }
         } else {
             label.setVisibility(View.GONE);
@@ -355,10 +355,10 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public void onPause() {
         super.onPause();
 
-        if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
-            this.scanProgressDialog.dismiss();
+        if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
+            scanProgressDialog.dismiss();
         }
-        this.scanProgressDialog = null;
+        scanProgressDialog = null;
     }
 
     /**
@@ -370,8 +370,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         signalHandler.removeCallbacksAndMessages(null);
 
-        if (this.receiver != null) {
-            unregisterReceiver(this.receiver);
+        if (receiver != null) {
+            unregisterReceiver(receiver);
         }
     }
 
@@ -382,7 +382,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public void onRestart() {
         super.onRestart();
 
-        registerReceiver(this.receiver, this.intentFilter);
+        registerReceiver(receiver, intentFilter);
     }
 
     /**
@@ -394,7 +394,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
-        ListAdapter adapter = this.hostList.getAdapter();
+        ListAdapter adapter = hostList.getAdapter();
         if (adapter != null) {
             ArrayList<Host> adapterData = new ArrayList<>();
             for (int i = 0; i < adapter.getCount(); i++) {
@@ -418,9 +418,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         cachedWanIp = savedState.getString("wanIp");
         externalIp.setText(cachedWanIp);
-        this.hosts = (ArrayList<Host>) savedState.getSerializable("hosts");
-        if (this.hosts != null) {
-            this.setupHostsAdapter();
+        hosts = (ArrayList<Host>) savedState.getSerializable("hosts");
+        if (hosts != null) {
+            setupHostsAdapter();
         }
     }
 
@@ -469,8 +469,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     @Override
     public void processFinish(int output) {
-        if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
-            this.scanProgressDialog.incrementProgressBy(output);
+        if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
+            scanProgressDialog.incrementProgressBy(output);
         }
     }
 
@@ -481,7 +481,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     @Override
     public void processFinish(String output) {
-        this.cachedWanIp = output;
-        this.externalIp.setText(output);
+        cachedWanIp = output;
+        externalIp.setText(output);
     }
 }
