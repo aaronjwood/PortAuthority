@@ -13,6 +13,9 @@ import android.os.Looper;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
@@ -64,6 +67,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private IntentFilter intentFilter = new IntentFilter();
     private HostAdapter hostAdapter;
     private List<Host> hosts = Collections.synchronizedList(new ArrayList<Host>());
+    private boolean sortAscending;
 
     /**
      * Activity created
@@ -195,6 +199,45 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 startActivity(intent);
             }
         });
+
+        registerForContextMenu(hostList);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        if (v.getId() == R.id.hostList) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.host_menu, menu);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.sortHostname:
+                if (sortAscending) {
+                    hostAdapter.sort(new Comparator<Host>() {
+                        @Override
+                        public int compare(Host lhs, Host rhs) {
+                            return rhs.getHostname().toLowerCase().compareTo(lhs.getHostname().toLowerCase());
+                        }
+                    });
+                } else {
+                    hostAdapter.sort(new Comparator<Host>() {
+                        @Override
+                        public int compare(Host lhs, Host rhs) {
+                            return lhs.getHostname().toLowerCase().compareTo(rhs.getHostname().toLowerCase());
+                        }
+                    });
+                }
+
+                sortAscending = !sortAscending;
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     /**
@@ -441,8 +484,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 }
 
                 hosts.add(output);
-
-                Collections.sort(hosts, new Comparator<Host>() {
+                hostAdapter.sort(new Comparator<Host>() {
 
                     @Override
                     public int compare(Host lhs, Host rhs) {
@@ -456,7 +498,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                         }
                     }
                 });
-                hostAdapter.notifyDataSetChanged();
                 discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
             }
         });
