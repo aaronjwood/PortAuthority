@@ -35,6 +35,8 @@
     <string name="subnetHosts">%1$d hosts in your subnet</string>
     <string name="sortHostname">Sort by hostname</string>
     <string name="copyHostname">Copy hostname</string>
+    <string name="copyIp">Copy IP</string>
+    <string name="copyMac">Copy MAC</string>
     <string name="scanningDisclaimer">
         Please be aware that running port scans against public servers is normally considered malicious.
         Additionally, running these kinds of scans over your carrier\'s network instead of your own WiFi connection will be slower and will sometimes produce inaccurate results due to traffic shaping.

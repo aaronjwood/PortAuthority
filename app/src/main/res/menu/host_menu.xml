@@ -4,5 +4,14 @@
     <item
         android:id="@+id/sortHostname"
         android:title="@string/sortHostname" />
+    <item
+        android:id="@+id/copyHostname"
+        android:title="@string/copyHostname" />
+    <item
+        android:id="@+id/copyIp"
+        android:title="@string/copyIp" />
+    <item
+        android:id="@+id/copyMac"
+        android:title="@string/copyMac" />
 
 </menu>

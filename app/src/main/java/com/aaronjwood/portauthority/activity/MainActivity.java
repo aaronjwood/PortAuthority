@@ -2,6 +2,8 @@ package com.aaronjwood.portauthority.activity;
 
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -203,6 +205,13 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         registerForContextMenu(hostList);
     }
 
+    /**
+     * Inflate our context menu to be used on the host list
+     *
+     * @param menu
+     * @param v
+     * @param menuInfo
+     */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -213,8 +222,15 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         }
     }
 
+    /**
+     * Handles actions selected from the context menu for a host
+     *
+     * @param item
+     * @return
+     */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case R.id.sortHostname:
                 if (sortAscending) {
@@ -235,9 +251,33 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
                 sortAscending = !sortAscending;
                 return true;
+            case R.id.copyHostname:
+                setClip("hostname", hosts.get(info.position).getHostname());
+
+                return true;
+            case R.id.copyIp:
+                setClip("ip", hosts.get(info.position).getIp());
+
+                return true;
+            case R.id.copyMac:
+                setClip("mac", hosts.get(info.position).getMac());
+
+                return true;
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    /**
+     * Sets some text to the system's clipboard
+     *
+     * @param label Label for the text being set
+     * @param text  The text to save to the system's clipboard
+     */
+    private void setClip(CharSequence label, String text) {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(label, text);
+        clipboard.setPrimaryClip(clip);
     }
 
     /**
