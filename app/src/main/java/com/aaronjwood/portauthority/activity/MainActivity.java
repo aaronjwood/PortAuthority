@@ -149,7 +149,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             @Override
             public void onClick(View v) {
                 if (!wifi.isConnectedWifi()) {
-                    Toast.makeText(getApplicationContext(), "You're not connected to a WiFi network!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedWifi), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -161,8 +161,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
                 scanProgressDialog = new ProgressDialog(MainActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
-                scanProgressDialog.setTitle("Scanning For Hosts");
-                scanProgressDialog.setMessage(wifi.getNumberOfHostsInWifiSubnet() + " hosts in your subnet");
+                scanProgressDialog.setTitle(getResources().getString(R.string.hostScan));
+                scanProgressDialog.setMessage(String.format(getResources().getString(R.string.subnetHosts), wifi.getNumberOfHostsInWifiSubnet()));
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 scanProgressDialog.setProgress(0);
                 scanProgressDialog.setMax(wifi.getNumberOfHostsInWifiSubnet());
@@ -305,7 +305,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         this.signalHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                signalStrength.setText(String.valueOf(wifi.getSignalStrength()) + " dBm/" + linkSpeed + "Mbps");
+                signalStrength.setText(String.format(getResources().getString(R.string.signalLink), wifi.getSignalStrength(), linkSpeed));
                 signalHandler.postDelayed(this, TIMER_INTERVAL);
             }
         }, 0);
