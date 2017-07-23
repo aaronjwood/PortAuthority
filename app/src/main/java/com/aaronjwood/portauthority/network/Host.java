@@ -47,7 +47,7 @@ public class Host implements Serializable {
      * @return
      */
     public String getHostname() {
-        return this.hostname;
+        return hostname;
     }
 
     /**
@@ -68,7 +68,7 @@ public class Host implements Serializable {
      * @return
      */
     public String getIp() {
-        return this.ip;
+        return ip;
     }
 
     /**
@@ -77,7 +77,7 @@ public class Host implements Serializable {
      * @return
      */
     public String getMac() {
-        return this.mac;
+        return mac;
     }
 
     public void wakeOnLan() {

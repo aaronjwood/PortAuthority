@@ -29,7 +29,7 @@ public final class LanHostActivity extends HostActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.layout = R.layout.activity_lanhost;
+        layout = R.layout.activity_lanhost;
         super.onCreate(savedInstanceState);
 
         TextView hostName = (TextView) findViewById(R.id.hostName);
@@ -41,25 +41,25 @@ public final class LanHostActivity extends HostActivity {
             return;
         }
 
-        this.wifi = new Wireless(getApplicationContext());
-        this.host = (Host) extras.get("HOST");
-        if (this.host == null) {
+        wifi = new Wireless(getApplicationContext());
+        host = (Host) extras.get("HOST");
+        if (host == null) {
             return;
         }
 
         try {
-            String vendor = Host.getMacVendor(this.host.getMac().replace(":", "").substring(0, 6), this);
+            String vendor = Host.getMacVendor(host.getMac().replace(":", "").substring(0, 6), this);
             hostMacVendor.setText(vendor);
         } catch (IOException | SQLiteException e) {
             hostMacVendor.setText(getResources().getString(R.string.getMacVendorFailed));
         }
 
-        hostName.setText(this.host.getHostname());
-        hostMac.setText(this.host.getMac());
-        ipAddress.setText(this.host.getIp());
+        hostName.setText(host.getHostname());
+        hostMac.setText(host.getMac());
+        ipAddress.setText(host.getIp());
 
-        this.setupPortScan();
-        this.setupWol();
+        setupPortScan();
+        setupWol();
     }
 
     /**
@@ -71,7 +71,7 @@ public final class LanHostActivity extends HostActivity {
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
-        savedState.putSerializable("host", this.host);
+        savedState.putSerializable("host", host);
     }
 
     /**
@@ -82,7 +82,7 @@ public final class LanHostActivity extends HostActivity {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        this.host = (Host) savedInstanceState.get("host");
+        host = (Host) savedInstanceState.get("host");
     }
 
     /**
@@ -185,9 +185,9 @@ public final class LanHostActivity extends HostActivity {
      * Sets up event handlers and functionality for various port scanning features
      */
     private void setupPortScan() {
-        this.scanWellKnownPortsClick();
-        this.scanPortRangeClick();
-        this.portListClick(this.host.getIp());
+        scanWellKnownPortsClick();
+        scanPortRangeClick();
+        portListClick(host.getIp());
     }
 
 
@@ -198,11 +198,11 @@ public final class LanHostActivity extends HostActivity {
      */
     @Override
     public void processFinish(boolean output) {
-        if (output && this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
-            this.scanProgressDialog.dismiss();
+        if (output && scanProgressDialog != null && scanProgressDialog.isShowing()) {
+            scanProgressDialog.dismiss();
         }
-        if (output && this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
-            this.portRangeDialog.dismiss();
+        if (output && portRangeDialog != null && portRangeDialog.isShowing()) {
+            portRangeDialog.dismiss();
         }
     }
 }

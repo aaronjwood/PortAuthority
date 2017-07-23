@@ -55,7 +55,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(this.layout);
+        setContentView(layout);
 
         db = new Database(this);
 
@@ -81,10 +81,10 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * Sets up the adapter to handle discovered ports
      */
     private void setupPortsAdapter() {
-        this.portList = (ListView) findViewById(R.id.portList);
-        this.adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.port_list_item, ports);
-        this.portList.setAdapter(this.adapter);
-        this.setAnimations();
+        portList = (ListView) findViewById(R.id.portList);
+        adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.port_list_item, ports);
+        portList.setAdapter(adapter);
+        setAnimations();
     }
 
     /**
@@ -94,14 +94,14 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     public void onPause() {
         super.onPause();
 
-        if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
-            this.scanProgressDialog.dismiss();
+        if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
+            scanProgressDialog.dismiss();
         }
-        if (this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
-            this.portRangeDialog.dismiss();
+        if (portRangeDialog != null && portRangeDialog.isShowing()) {
+            portRangeDialog.dismiss();
         }
-        this.scanProgressDialog = null;
-        this.portRangeDialog = null;
+        scanProgressDialog = null;
+        portRangeDialog = null;
     }
 
     /**
@@ -140,7 +140,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
             ports.addAll(Arrays.asList(savedList));
         }
 
-        this.setupPortsAdapter();
+        setupPortsAdapter();
     }
 
     /**
@@ -210,7 +210,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * Event handler for when an item on the port list is clicked
      */
     protected void portListClick(final String ip) {
-        this.portList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        portList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             /**
              * Click handler to open certain ports to the browser
@@ -285,8 +285,8 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         if (cursor.moveToFirst()) {
             String name = cursor.getString(cursor.getColumnIndex("name"));
             name = (name.isEmpty()) ? "unknown" : name;
-            item = this.formatOpenPort(output, scannedPort, name, item);
-            this.addOpenPort(item);
+            item = formatOpenPort(output, scannedPort, name, item);
+            addOpenPort(item);
         }
 
         cursor.close();

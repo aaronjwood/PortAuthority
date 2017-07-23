@@ -41,9 +41,9 @@ public class ScanPortsRunnable implements Runnable {
      */
     @Override
     public void run() {
-        HostAsyncResponse activity = this.delegate.get();
+        HostAsyncResponse activity = delegate.get();
         if (activity != null) {
-            for (int i = this.startPort; i <= this.stopPort; i++) {
+            for (int i = startPort; i <= stopPort; i++) {
                 SparseArray<String> portData = new SparseArray<>();
                 BufferedReader in;
                 String data = null;
@@ -52,7 +52,7 @@ public class ScanPortsRunnable implements Runnable {
                 try {
                     socket.setReuseAddress(true);
                     socket.setTcpNoDelay(true);
-                    socket.connect(new InetSocketAddress(this.ip, i), this.timeout);
+                    socket.connect(new InetSocketAddress(ip, i), timeout);
 
                     //TODO: this is a bit messy, refactor and break it up
                     if (i == 22) {
@@ -62,7 +62,7 @@ public class ScanPortsRunnable implements Runnable {
                     } else if (i == 80 || i == 443 || i == 8080) {
                         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                        out.println("GET / HTTP/1.1\r\nHost: " + this.ip + "\r\n");
+                        out.println("GET / HTTP/1.1\r\nHost: " + ip + "\r\n");
 
                         char[] buffer = new char[1024];
                         in.read(buffer, 0, buffer.length);

@@ -35,12 +35,12 @@ public class ScanHostsRunnable implements Runnable {
      */
     @Override
     public void run() {
-        for (int i = this.start; i <= this.stop; i++) {
+        for (int i = start; i <= stop; i++) {
             Socket socket = new Socket();
             try {
                 socket.setTcpNoDelay(true);
                 byte[] bytes = BigInteger.valueOf(i).toByteArray();
-                socket.connect(new InetSocketAddress(InetAddress.getByAddress(bytes), 7), this.timeout);
+                socket.connect(new InetSocketAddress(InetAddress.getByAddress(bytes), 7), timeout);
             } catch (IOException ignored) {
             } finally {
                 try {
