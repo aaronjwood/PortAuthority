@@ -46,7 +46,13 @@ public final class LanHostActivity extends HostActivity {
             return;
         }
 
-        hostMacVendor.setText(Host.getMacVendor(this.host.getMac().replace(":", "").substring(0, 6), this));
+        try {
+            String vendor = Host.getMacVendor(this.host.getMac().replace(":", "").substring(0, 6), this);
+            hostMacVendor.setText(vendor);
+        } catch (IOException e) {
+            hostMacVendor.setText(getResources().getString(R.string.getMacVendorFailed));
+        }
+
         hostName.setText(this.host.getHostname());
         hostMac.setText(this.host.getMac());
         ipAddress.setText(this.host.getIp());

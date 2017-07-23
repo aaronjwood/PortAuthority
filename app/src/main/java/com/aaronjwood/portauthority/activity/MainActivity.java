@@ -40,6 +40,7 @@ import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.utils.UserPreference;
 import com.squareup.leakcanary.LeakCanary;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.SocketException;
@@ -141,11 +142,14 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         try {
             String mac = wifi.getMacAddress();
+            String vendor = Host.getMacVendor(mac.replace(":", "").substring(0, 6), this);
             macAddress.setText(mac);
-            macVendor.setText(Host.getMacVendor(mac.replace(":", "").substring(0, 6), this));
+            macVendor.setText(vendor);
         } catch (UnknownHostException | SocketException e) {
             macAddress.setText(R.string.noWifiConnection);
             macVendor.setText(R.string.noWifiConnection);
+        } catch (IOException e) {
+            macVendor.setText(R.string.getMacVendorFailed);
         }
     }
 
@@ -212,6 +216,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 if (host == null) {
                     return;
                 }
+
                 Intent intent = new Intent(MainActivity.this, LanHostActivity.class);
                 intent.putExtra("HOST", host);
                 startActivity(intent);

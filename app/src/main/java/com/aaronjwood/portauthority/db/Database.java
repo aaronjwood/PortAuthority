@@ -17,7 +17,6 @@ public class Database {
 
     public Database(Context context) {
         this.context = context;
-        openDatabase("network.db"); //Hardcode this for now since we only have one DB
     }
 
     /**
@@ -27,7 +26,8 @@ public class Database {
      * @return True if the database exists, false if not
      */
     private boolean checkDatabase(String dbName) {
-        File dbFile = new File(this.context.getApplicationInfo().dataDir + "/" + dbName);
+        File dbFile = new File(context.getApplicationInfo().dataDir + "/" + dbName);
+
         return dbFile.exists();
     }
 
@@ -36,28 +36,18 @@ public class Database {
      *
      * @param dbName Name of the database to be copied
      */
-    private void copyDatabase(String dbName) {
-        InputStream input = null;
-        OutputStream output = null;
-        try {
-            input = this.context.getAssets().open(dbName);
-            output = new FileOutputStream(this.context.getApplicationInfo().dataDir + "/" + dbName);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = input.read(buffer)) > 0) {
-                output.write(buffer, 0, length);
-            }
+    private void copyDatabase(String dbName) throws IOException {
+        InputStream input = context.getAssets().open(dbName);
+        OutputStream output = new FileOutputStream(context.getApplicationInfo().dataDir + "/" + dbName);
 
-        } catch (IOException ignored) {
-        } finally {
-            try {
-                if (output != null && input != null) {
-                    output.close();
-                    input.close();
-                }
-            } catch (IOException ignored) {
-            }
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = input.read(buffer)) > 0) {
+            output.write(buffer, 0, length);
         }
+
+        output.close();
+        input.close();
     }
 
     /**
@@ -65,15 +55,12 @@ public class Database {
      *
      * @param dbName The database to open a connection to
      */
-    private void openDatabase(String dbName) {
-        if (!this.checkDatabase(dbName)) {
-            this.copyDatabase(dbName);
+    public void openDatabase(String dbName) throws IOException, SQLiteException {
+        if (!checkDatabase(dbName)) {
+            copyDatabase(dbName);
         }
-        try {
-            this.db = SQLiteDatabase.openDatabase(this.context.getApplicationInfo().dataDir + "/" + dbName, null, SQLiteDatabase.OPEN_READONLY);
-        } catch (SQLiteException e) {
-            this.db = null;
-        }
+
+        db = SQLiteDatabase.openDatabase(context.getApplicationInfo().dataDir + "/" + dbName, null, SQLiteDatabase.OPEN_READONLY);
     }
 
     /**
@@ -84,20 +71,14 @@ public class Database {
      * @return Cursor for iterating over results
      */
     public Cursor queryDatabase(String query, String[] args) {
-        if (this.db != null && this.db.isOpen()) {
-            return db.rawQuery(query, args);
-        } else {
-            return null;
-        }
+        return db.rawQuery(query, args);
     }
 
     /**
      * Closes the database handle
      */
     public void close() {
-        if (this.db != null) {
-            this.db.close();
-        }
+        db.close();
     }
 
 }

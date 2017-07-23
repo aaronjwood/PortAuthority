@@ -102,23 +102,20 @@ public class Host implements Serializable {
      * @param mac     MAC address
      * @param context Application context
      */
-    public static String getMacVendor(String mac, Context context) {
+    public static String getMacVendor(String mac, Context context) throws IOException {
         Database db = new Database(context);
+        db.openDatabase("network.db");
         Cursor cursor = db.queryDatabase("SELECT vendor FROM ouis WHERE mac LIKE ?", new String[]{mac});
         String vendor;
 
-        try {
-            if (cursor != null && cursor.moveToFirst()) {
-                vendor = cursor.getString(cursor.getColumnIndex("vendor"));
-            } else {
-                vendor = "Vendor not in database";
-            }
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-                db.close();
-            }
+        if (cursor.moveToFirst()) {
+            vendor = cursor.getString(cursor.getColumnIndex("vendor"));
+        } else {
+            vendor = "Vendor not in database";
         }
+
+        cursor.close();
+        db.close();
 
         return vendor;
     }

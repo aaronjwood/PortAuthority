@@ -28,6 +28,7 @@ import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,6 +57,13 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         setContentView(this.layout);
 
         db = new Database(this);
+
+        try {
+            db.openDatabase("network.db");
+        } catch (IOException e) {
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.failedOpenDb), Toast.LENGTH_SHORT).show();
+        }
+
         handler = new Handler(Looper.getMainLooper());
         setupPortsAdapter();
     }
@@ -102,9 +110,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     protected void onDestroy() {
         super.onDestroy();
 
-        if (db != null) {
-            db.close();
-        }
+        db.close();
     }
 
     /**
@@ -275,18 +281,14 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
 
         Cursor cursor = db.queryDatabase("SELECT name, port FROM ports WHERE port = ?", new String[]{Integer.toString(scannedPort)});
 
-        if (cursor != null) {
-            try {
-                if (cursor.moveToFirst()) {
-                    String name = cursor.getString(cursor.getColumnIndex("name"));
-                    name = (name.isEmpty()) ? "unknown" : name;
-                    item = this.formatOpenPort(output, scannedPort, name, item);
-                    this.addOpenPort(item);
-                }
-            } finally {
-                cursor.close();
-            }
+        if (cursor.moveToFirst()) {
+            String name = cursor.getString(cursor.getColumnIndex("name"));
+            name = (name.isEmpty()) ? "unknown" : name;
+            item = this.formatOpenPort(output, scannedPort, name, item);
+            this.addOpenPort(item);
         }
+
+        cursor.close();
     }
 
     /**

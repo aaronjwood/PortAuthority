@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Host;
 
+import java.io.IOException;
 import java.util.List;
 
 public final class HostAdapter extends ArrayAdapter<Host> {
@@ -48,7 +49,11 @@ public final class HostAdapter extends ArrayAdapter<Host> {
         view.hostname.setText(item.getHostname());
         view.hostIp.setText(item.getIp());
         view.hostMac.setText(item.getMac());
-        view.hostMacVendor.setText(Host.getMacVendor(mac, context));
+        try {
+            view.hostMacVendor.setText(Host.getMacVendor(mac, context));
+        } catch (IOException e) {
+            view.hostMacVendor.setText(context.getResources().getString(R.string.getMacVendorFailed));
+        }
 
         return rowView;
     }
