@@ -2,6 +2,7 @@ package com.aaronjwood.portauthority.activity;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -49,7 +50,7 @@ public final class LanHostActivity extends HostActivity {
         try {
             String vendor = Host.getMacVendor(this.host.getMac().replace(":", "").substring(0, 6), this);
             hostMacVendor.setText(vendor);
-        } catch (IOException e) {
+        } catch (IOException | SQLiteException e) {
             hostMacVendor.setText(getResources().getString(R.string.getMacVendorFailed));
         }
 

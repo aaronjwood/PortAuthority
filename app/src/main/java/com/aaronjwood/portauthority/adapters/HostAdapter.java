@@ -1,6 +1,7 @@
 package com.aaronjwood.portauthority.adapters;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteException;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,7 +52,7 @@ public final class HostAdapter extends ArrayAdapter<Host> {
         view.hostMac.setText(item.getMac());
         try {
             view.hostMacVendor.setText(Host.getMacVendor(mac, context));
-        } catch (IOException e) {
+        } catch (IOException | SQLiteException e) {
             view.hostMacVendor.setText(context.getResources().getString(R.string.getMacVendorFailed));
         }
 

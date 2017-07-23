@@ -7,6 +7,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.sqlite.SQLiteException;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -148,7 +149,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         } catch (UnknownHostException | SocketException e) {
             macAddress.setText(R.string.noWifiConnection);
             macVendor.setText(R.string.noWifiConnection);
-        } catch (IOException e) {
+        } catch (IOException | SQLiteException e) {
             macVendor.setText(R.string.getMacVendorFailed);
         }
     }

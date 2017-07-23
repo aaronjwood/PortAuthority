@@ -2,6 +2,7 @@ package com.aaronjwood.portauthority.network;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 
 import com.aaronjwood.portauthority.async.ScanPortsAsyncTask;
 import com.aaronjwood.portauthority.async.WolAsyncTask;
@@ -102,7 +103,7 @@ public class Host implements Serializable {
      * @param mac     MAC address
      * @param context Application context
      */
-    public static String getMacVendor(String mac, Context context) throws IOException {
+    public static String getMacVendor(String mac, Context context) throws IOException, SQLiteException {
         Database db = new Database(context);
         db.openDatabase("network.db");
         Cursor cursor = db.queryDatabase("SELECT vendor FROM ouis WHERE mac LIKE ?", new String[]{mac});

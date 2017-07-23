@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -60,7 +61,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
 
         try {
             db.openDatabase("network.db");
-        } catch (IOException e) {
+        } catch (IOException | SQLiteException e) {
             Toast.makeText(getApplicationContext(), getResources().getString(R.string.failedOpenDb), Toast.LENGTH_SHORT).show();
         }
 
