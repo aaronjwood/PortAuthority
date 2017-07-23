@@ -18,7 +18,7 @@
     <string name="portRangeStart">Почетни</string>
     <string name="portRangeStop">Крајњи</string>
     <string name="macVendor">продавац</string>
-    <string name="noWifi">Не Ви-Фи повезивање</string>
+    <string name="wifiDisabled">Не Ви-Фи повезивање</string>
     <string name="wanHostHint">УРЛ адреса/ИП-</string>
     <string name="scanningWarning">УПОЗОРЕЊЕ</string>
     <string name="scanningDisclaimer">

@@ -42,6 +42,7 @@ import com.squareup.leakcanary.LeakCanary;
 
 import java.math.BigInteger;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -101,7 +102,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         setupHostsAdapter();
         setupDrawer();
         setupReceivers();
-        setupMac();
         setupHostDiscovery();
     }
 
@@ -130,15 +130,22 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * Sets up the device's MAC address and vendor
      */
     private void setupMac() {
-        //Set MAC address
         TextView macAddress = (TextView) findViewById(R.id.deviceMacAddress);
-        String mac = wifi.getMacAddress();
-        macAddress.setText(mac);
+        TextView macVendor = (TextView) findViewById(R.id.deviceMacVendor);
+        if (!wifi.isEnabled()) {
+            macAddress.setText(R.string.wifiDisabled);
+            macVendor.setText(R.string.wifiDisabled);
 
-        //Set the device's vendor
-        if (mac != null) {
-            TextView macVendor = (TextView) findViewById(R.id.deviceMacVendor);
+            return;
+        }
+
+        try {
+            String mac = wifi.getMacAddress();
+            macAddress.setText(mac);
             macVendor.setText(Host.getMacVendor(mac.replace(":", "").substring(0, 6), this));
+        } catch (UnknownHostException | SocketException e) {
+            macAddress.setText(R.string.noWifiConnection);
+            macVendor.setText(R.string.noWifiConnection);
         }
     }
 
@@ -154,8 +161,15 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
              */
             @Override
             public void onClick(View v) {
+                if (!wifi.isEnabled()) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.wifiDisabled), Toast.LENGTH_SHORT).show();
+
+                    return;
+                }
+
                 if (!wifi.isConnectedWifi()) {
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedWifi), Toast.LENGTH_SHORT).show();
+
                     return;
                 }
 
@@ -174,9 +188,11 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 scanProgressDialog.setMax(wifi.getNumberOfHostsInWifiSubnet());
                 scanProgressDialog.show();
 
-                Integer ip = wifi.getInternalWifiIpAddress(Integer.class);
-                if (ip != null) {
+                try {
+                    Integer ip = wifi.getInternalWifiIpAddress(Integer.class);
                     Discovery.scanHosts(ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(getApplicationContext()), MainActivity.this);
+                } catch (UnknownHostException e) {
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedWifi), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -294,23 +310,60 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             @Override
             public void onReceive(Context context, Intent intent) {
                 NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                if (info != null) {
-                    if (info.isConnected()) {
-                        getNetworkInfo();
-                    } else {
-                        signalHandler.removeCallbacksAndMessages(null);
-                        internalIp.setText(Wireless.getInternalMobileIpAddress());
-                        getExternalIp();
-                        signalStrength.setText(R.string.noWifi);
-                        ssid.setText(R.string.noWifi);
-                        bssid.setText(R.string.noWifi);
-                    }
+                if (info == null) {
+                    return;
                 }
+
+                getNetworkInfo(info);
             }
+
         };
 
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         registerReceiver(receiver, intentFilter);
+    }
+
+    /**
+     * Gets network information about the device and updates various UI elements
+     */
+    private void getNetworkInfo(NetworkInfo info) {
+        setupMac();
+        getExternalIp();
+
+        if (!info.isConnected() || !wifi.isEnabled()) {
+            signalHandler.removeCallbacksAndMessages(null);
+            internalIp.setText(Wireless.getInternalMobileIpAddress());
+        }
+
+        if (!wifi.isEnabled()) {
+            signalStrength.setText(R.string.wifiDisabled);
+            ssid.setText(R.string.wifiDisabled);
+            bssid.setText(R.string.wifiDisabled);
+
+            return;
+        }
+
+        if (!info.isConnected()) {
+            signalStrength.setText(R.string.noWifiConnection);
+            ssid.setText(R.string.noWifiConnection);
+            bssid.setText(R.string.noWifiConnection);
+
+            return;
+        }
+
+        signalHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                signalStrength.setText(String.format(getResources().getString(R.string.signalLink), wifi.getSignalStrength(), wifi.getLinkSpeed()));
+                signalHandler.postDelayed(this, TIMER_INTERVAL);
+            }
+        }, 0);
+
+        getInternalIp();
+        getExternalIp();
+
+        ssid.setText(wifi.getSSID());
+        bssid.setText(wifi.getBSSID());
     }
 
     /**
@@ -381,32 +434,19 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     }
 
     /**
-     * Gets network information about the device and updates various UI elements
-     */
-    private void getNetworkInfo() {
-        final int linkSpeed = wifi.getLinkSpeed();
-        signalHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                signalStrength.setText(String.format(getResources().getString(R.string.signalLink), wifi.getSignalStrength(), linkSpeed));
-                signalHandler.postDelayed(this, TIMER_INTERVAL);
-            }
-        }, 0);
-        getInternalIp();
-        getExternalIp();
-        ssid.setText(wifi.getSSID());
-        bssid.setText(wifi.getBSSID());
-    }
-
-    /**
      * Wrapper method for getting the internal wireless IP address.
      * This gets the netmask, counts the bits set (subnet size),
      * then prints it along side the IP.
      */
     private void getInternalIp() {
         int netmask = wifi.getInternalWifiSubnet();
-        String InternalIpWithSubnet = wifi.getInternalWifiIpAddress(String.class) + "/" + Integer.toString(netmask);
-        internalIp.setText(InternalIpWithSubnet);
+        try {
+            String internalIpWithSubnet = wifi.getInternalWifiIpAddress(String.class) + "/" + Integer.toString(netmask);
+            internalIp.setText(internalIpWithSubnet);
+        } catch (UnknownHostException e) {
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedLan), Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     /**

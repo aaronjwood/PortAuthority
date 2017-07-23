@@ -18,7 +18,8 @@
     <string name="openPorts">Open Ports</string>
     <string name="portRangeStart">Start Port</string>
     <string name="portRangeStop">Stop Port</string>
-    <string name="noWifi">No WiFi connection</string>
+    <string name="wifiDisabled">WiFi not enabled</string>
+    <string name="noWifiConnection">No WiFi connection</string>
     <string name="wanHostHint">URL/IP</string>
     <string name="scanningWarning">WARNING</string>
     <string name="domainName">Domain Name</string>
