@@ -14,12 +14,9 @@ public final class Dns {
      * @param recordType The type of DNS record to look up
      * @param delegate   Delegate to be called when the lookup has finished
      */
-    public static void lookup(String domain, String recordType, DnsAsyncResponse delegate) {
-        try {
-            String type = Integer.toString(Type.class.getField(recordType).getInt(null));
-            new DnsLookupAsyncTask(delegate).execute(domain, type);
-        } catch (Exception ignored) {
-        }
+    public static void lookup(String domain, String recordType, DnsAsyncResponse delegate) throws NoSuchFieldException, IllegalAccessException {
+        String type = Integer.toString(Type.class.getField(recordType).getInt(null));
+        new DnsLookupAsyncTask(delegate).execute(domain, type);
     }
 
 }
