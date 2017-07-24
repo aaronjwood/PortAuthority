@@ -14,6 +14,7 @@ import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.utils.Constants;
+import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.io.IOException;
@@ -51,7 +52,7 @@ public final class LanHostActivity extends HostActivity {
             String vendor = Host.getMacVendor(host.getMac().replace(":", "").substring(0, 6), this);
             hostMacVendor.setText(vendor);
         } catch (IOException | SQLiteException e) {
-            hostMacVendor.setText(getResources().getString(R.string.getMacVendorFailed));
+            Errors.showError(getApplicationContext(), getResources().getString(R.string.getMacVendorFailed));
         }
 
         hostName.setText(host.getHostname());

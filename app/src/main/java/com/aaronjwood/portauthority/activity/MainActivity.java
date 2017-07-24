@@ -38,6 +38,7 @@ import com.aaronjwood.portauthority.network.Discovery;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
+import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
 import com.squareup.leakcanary.LeakCanary;
 
@@ -197,7 +198,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     Integer ip = wifi.getInternalWifiIpAddress(Integer.class);
                     Discovery.scanHosts(ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(getApplicationContext()), MainActivity.this);
                 } catch (UnknownHostException e) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedWifi), Toast.LENGTH_SHORT).show();
+                    Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedWifi));
                 }
             }
         });
@@ -450,7 +451,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             String internalIpWithSubnet = wifi.getInternalWifiIpAddress(String.class) + "/" + Integer.toString(netmask);
             internalIp.setText(internalIpWithSubnet);
         } catch (UnknownHostException e) {
-            Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedLan), Toast.LENGTH_SHORT).show();
+            Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
         }
 
     }

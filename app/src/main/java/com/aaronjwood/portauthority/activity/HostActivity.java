@@ -27,6 +27,7 @@ import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.utils.Constants;
+import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.io.IOException;
@@ -62,7 +63,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         try {
             db.openDatabase("network.db");
         } catch (IOException | SQLiteException e) {
-            Toast.makeText(getApplicationContext(), getResources().getString(R.string.failedOpenDb), Toast.LENGTH_SHORT).show();
+            Errors.showError(getApplicationContext(), getResources().getString(R.string.failedOpenDb));
         }
 
         handler = new Handler(Looper.getMainLooper());

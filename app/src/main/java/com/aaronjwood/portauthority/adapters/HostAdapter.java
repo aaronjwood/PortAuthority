@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Host;
+import com.aaronjwood.portauthority.utils.Errors;
 
 import java.io.IOException;
 import java.util.List;
@@ -53,7 +54,7 @@ public final class HostAdapter extends ArrayAdapter<Host> {
         try {
             view.hostMacVendor.setText(Host.getMacVendor(mac, context));
         } catch (IOException | SQLiteException e) {
-            view.hostMacVendor.setText(context.getResources().getString(R.string.getMacVendorFailed));
+            Errors.showError(context.getApplicationContext(), context.getResources().getString(R.string.getMacVendorFailed));
         }
 
         return rowView;
