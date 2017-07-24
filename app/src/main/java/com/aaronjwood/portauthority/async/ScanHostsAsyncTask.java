@@ -7,6 +7,8 @@ import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -20,6 +22,7 @@ import jcifs.netbios.NbtAddress;
 
 public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     private final WeakReference<MainAsyncResponse> delegate;
+    private static final String ARP_TABLE = "/proc/net/arp";
     private static final String ARP_INCOMPLETE = "0x0";
     private static final String ARP_INACTIVE = "00:00:00:00:00:00";
     private static final int NETBIOS_FILE_SERVER = 0x20;
@@ -44,6 +47,15 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         int cidr = params[1];
         int timeout = params[2];
 
+        MainAsyncResponse activity = delegate.get();
+        File file = new File(ARP_TABLE);
+        if (!file.exists() || !file.canRead()) {
+            activity.processFinish(new FileNotFoundException("Unable to access device ARP table"));
+            activity.processFinish(true);
+
+            return null;
+        }
+
         ExecutorService executor = Executors.newCachedThreadPool();
 
         double hostBits = 32.0d - cidr; // How many bits do we have for the hosts.
@@ -63,11 +75,12 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         }
 
         executor.shutdown();
-
         try {
             executor.awaitTermination(5, TimeUnit.MINUTES);
             executor.shutdownNow();
-        } catch (InterruptedException ignored) {
+        } catch (InterruptedException e) {
+            activity.processFinish(e);
+            return null;
         }
 
         publishProgress();
@@ -84,12 +97,14 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
      * @param params
      */
     @Override
-    protected final void onProgressUpdate(final Void... params) {
+    protected final void onProgressUpdate(Void... params) {
         BufferedReader reader = null;
+        MainAsyncResponse activity = delegate.get();
+        ExecutorService executor = Executors.newCachedThreadPool();
+
         try {
-            ExecutorService executor = Executors.newCachedThreadPool();
-            reader = new BufferedReader(new FileReader("/proc/net/arp"));
-            reader.readLine();
+            reader = new BufferedReader(new FileReader(ARP_TABLE));
+            reader.readLine(); // Skip header.
             String line;
 
             while ((line = reader.readLine()) != null) {
@@ -101,19 +116,21 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
 
                 if (!ARP_INCOMPLETE.equals(flag) && !ARP_INACTIVE.equals(macAddress)) {
                     executor.execute(new Runnable() {
+
                         @Override
                         public void run() {
                             Host host = new Host(ip, macAddress);
+                            MainAsyncResponse activity = delegate.get();
                             try {
                                 InetAddress add = InetAddress.getByName(ip);
                                 String hostname = add.getCanonicalHostName();
                                 host.setHostname(hostname);
 
-                                MainAsyncResponse activity = delegate.get();
                                 if (activity != null) {
                                     activity.processFinish(host);
                                 }
-                            } catch (UnknownHostException ignored) {
+                            } catch (UnknownHostException e) {
+                                activity.processFinish(e);
                                 return;
                             }
 
@@ -125,20 +142,30 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                                         return;
                                     }
                                 }
-                            } catch (UnknownHostException ignored) {
+                            } catch (UnknownHostException e) {
+                                // It's common that many discovered hosts won't have a NetBIOS entry.
                             }
                         }
                     });
                 }
             }
-            executor.shutdown();
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            if (activity != null) {
+                activity.processFinish(e);
+            }
+
         } finally {
+            executor.shutdown();
+            if (activity != null) {
+                activity.processFinish(true);
+            }
+
             try {
                 if (reader != null) {
                     reader.close();
                 }
             } catch (IOException ignored) {
+                // Something's really wrong if we can't close the stream...
             }
         }
     }

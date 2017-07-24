@@ -11,6 +11,9 @@ import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.nio.channels.IllegalBlockingModeException;
 
 public class ScanPortsRunnable implements Runnable {
     private String ip;
@@ -42,53 +45,63 @@ public class ScanPortsRunnable implements Runnable {
     @Override
     public void run() {
         HostAsyncResponse activity = delegate.get();
-        if (activity != null) {
-            for (int i = startPort; i <= stopPort; i++) {
-                SparseArray<String> portData = new SparseArray<>();
-                BufferedReader in;
-                String data = null;
-                Socket socket = new Socket();
+        for (int i = startPort; i <= stopPort; i++) {
+            if (activity == null) {
+                return;
+            }
 
+            SparseArray<String> portData = new SparseArray<>();
+            BufferedReader in;
+            String data = null;
+            Socket socket = new Socket();
+
+            try {
+                socket.setReuseAddress(true);
+                socket.setTcpNoDelay(true);
+                socket.connect(new InetSocketAddress(ip, i), timeout);
+            } catch (SocketTimeoutException | IllegalBlockingModeException | IllegalArgumentException e) {
+                activity.processFinish(e);
+            } catch (IOException e) {
+                activity.processFinish(1);
+                continue; // Connection failures mean that the port isn't open.
+            }
+
+            //TODO: this is a bit messy, refactor and break it up
+            try {
+                if (i == 22) {
+                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    data = in.readLine();
+                    in.close();
+                } else if (i == 80 || i == 443 || i == 8080) {
+                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                    out.println("GET / HTTP/1.1\r\nHost: " + ip + "\r\n");
+
+                    char[] buffer = new char[256];
+                    in.read(buffer, 0, buffer.length);
+                    out.close();
+                    in.close();
+                    data = new String(buffer).toLowerCase();
+                    if (data.contains("apache") || data.contains("httpd")) {
+                        data = "Apache";
+                    } else if (data.contains("iis") || data.contains("microsoft")) {
+                        data = "IIS";
+                    } else if (data.contains("nginx")) {
+                        data = "NGINX";
+                    } else {
+                        data = null;
+                    }
+                }
+            } catch (IOException e) {
+                activity.processFinish(e);
+            } finally {
+                portData.put(i, data);
+                activity.processFinish(portData);
+                activity.processFinish(1);
                 try {
-                    socket.setReuseAddress(true);
-                    socket.setTcpNoDelay(true);
-                    socket.connect(new InetSocketAddress(ip, i), timeout);
-
-                    //TODO: this is a bit messy, refactor and break it up
-                    if (i == 22) {
-                        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                        data = in.readLine();
-                        in.close();
-                    } else if (i == 80 || i == 443 || i == 8080) {
-                        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                        out.println("GET / HTTP/1.1\r\nHost: " + ip + "\r\n");
-
-                        char[] buffer = new char[1024];
-                        in.read(buffer, 0, buffer.length);
-                        out.close();
-                        in.close();
-                        data = new String(buffer).toLowerCase();
-                        if (data.contains("apache") || data.contains("httpd")) {
-                            data = "Apache";
-                        } else if (data.contains("iis") || data.contains("microsoft")) {
-                            data = "IIS";
-                        } else if (data.contains("nginx")) {
-                            data = "NGINX";
-                        } else {
-                            data = null;
-                        }
-                    }
-
-                    portData.put(i, data);
-                    activity.processFinish(portData);
+                    socket.close();
                 } catch (IOException ignored) {
-                } finally {
-                    activity.processFinish(1);
-                    try {
-                        socket.close();
-                    } catch (IOException ignored) {
-                    }
+                    // Something's really wrong if we can't close the socket...
                 }
             }
         }

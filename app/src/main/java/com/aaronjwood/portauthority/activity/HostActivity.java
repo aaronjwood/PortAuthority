@@ -343,4 +343,19 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
             }
         });
     }
+
+    /**
+     * Delegate to handle bubbled up errors
+     *
+     * @param output The exception we want to handle
+     * @param <T>    Exception
+     */
+    public <T extends Throwable> void processFinish(final T output) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Errors.showError(getApplicationContext(), output.getLocalizedMessage());
+            }
+        });
+    }
 }

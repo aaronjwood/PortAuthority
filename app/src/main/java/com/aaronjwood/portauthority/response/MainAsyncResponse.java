@@ -2,7 +2,7 @@ package com.aaronjwood.portauthority.response;
 
 import com.aaronjwood.portauthority.network.Host;
 
-public interface MainAsyncResponse {
+public interface MainAsyncResponse extends ErrorAsyncResponse {
 
     /**
      * Delegate to handle Host outputs
@@ -24,4 +24,11 @@ public interface MainAsyncResponse {
      * @param output
      */
     void processFinish(String output);
+
+    /**
+     * Delegate to handle boolean outputs
+     *
+     * @param output
+     */
+    void processFinish(boolean output);
 }

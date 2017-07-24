@@ -566,10 +566,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
             @Override
             public void run() {
-                if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
-                    scanProgressDialog.dismiss();
-                }
-
                 hosts.add(output);
                 hostAdapter.sort(new Comparator<Host>() {
 
@@ -611,5 +607,40 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public void processFinish(String output) {
         cachedWanIp = output;
         externalIp.setText(output);
+    }
+
+    /**
+     * Delegate to dismiss the progress dialog
+     *
+     * @param output
+     */
+    @Override
+    public void processFinish(final boolean output) {
+        scanHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+                if (output && scanProgressDialog != null && scanProgressDialog.isShowing()) {
+                    scanProgressDialog.dismiss();
+                }
+            }
+        });
+    }
+
+    /**
+     * Delegate to handle bubbled up errors
+     *
+     * @param output The exception we want to handle
+     * @param <T>    Exception
+     */
+    @Override
+    public <T extends Throwable> void processFinish(final T output) {
+        scanHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+                Errors.showError(getApplicationContext(), output.getLocalizedMessage());
+            }
+        });
     }
 }
