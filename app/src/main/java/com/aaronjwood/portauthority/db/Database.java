@@ -42,12 +42,14 @@ public class Database {
 
         byte[] buffer = new byte[1024];
         int length;
-        while ((length = input.read(buffer)) > 0) {
-            output.write(buffer, 0, length);
+        try {
+            while ((length = input.read(buffer)) > 0) {
+                output.write(buffer, 0, length);
+            }
+        } finally {
+            output.close();
+            input.close();
         }
-
-        output.close();
-        input.close();
     }
 
     /**
