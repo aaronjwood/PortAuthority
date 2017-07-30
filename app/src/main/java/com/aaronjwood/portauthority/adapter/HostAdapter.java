@@ -61,9 +61,9 @@ public final class HostAdapter extends ArrayAdapter<Host> {
     }
 
     private static class ViewHolder {
-        TextView hostname;
-        TextView hostIp;
-        TextView hostMac;
-        TextView hostMacVendor;
+        private TextView hostname;
+        private TextView hostIp;
+        private TextView hostMac;
+        private TextView hostMacVendor;
     }
 }
