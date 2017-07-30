@@ -11,7 +11,6 @@ import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.channels.IllegalBlockingModeException;
 
@@ -50,11 +49,7 @@ public class ScanPortsRunnable implements Runnable {
                 return;
             }
 
-            SparseArray<String> portData = new SparseArray<>();
-            BufferedReader in;
-            String data = null;
             Socket socket = new Socket();
-
             try {
                 socket.setReuseAddress(true);
                 socket.setTcpNoDelay(true);
@@ -66,31 +61,15 @@ public class ScanPortsRunnable implements Runnable {
                 continue; // Connection failures mean that the port isn't open.
             }
 
-            //TODO: this is a bit messy, refactor and break it up
+            SparseArray<String> portData = new SparseArray<>();
+            String data = null;
             try {
                 if (i == 22) {
-                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    data = in.readLine();
-                    in.close();
+                    data = parseSSH(new BufferedReader(new InputStreamReader(socket.getInputStream())));
                 } else if (i == 80 || i == 443 || i == 8080) {
-                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                    out.println("GET / HTTP/1.1\r\nHost: " + ip + "\r\n");
-
-                    char[] buffer = new char[256];
-                    in.read(buffer, 0, buffer.length);
-                    out.close();
-                    in.close();
-                    data = new String(buffer).toLowerCase();
-                    if (data.contains("apache") || data.contains("httpd")) {
-                        data = "Apache";
-                    } else if (data.contains("iis") || data.contains("microsoft")) {
-                        data = "IIS";
-                    } else if (data.contains("nginx")) {
-                        data = "NGINX";
-                    } else {
-                        data = null;
-                    }
+                    data = parseHTTP(in, out);
                 }
             } catch (IOException e) {
                 activity.processFinish(e);
@@ -105,5 +84,51 @@ public class ScanPortsRunnable implements Runnable {
                 }
             }
         }
+    }
+
+    /**
+     * Tries to determine the SSH version used.
+     *
+     * @param reader Reads SSH version from the connected socket
+     * @return SSH banner
+     * @throws IOException
+     */
+    private String parseSSH(BufferedReader reader) throws IOException {
+        try {
+            return reader.readLine();
+        } finally {
+            reader.close();
+        }
+    }
+
+    /**
+     * Tries to determine what web server is used
+     *
+     * @param reader Reads headers to determine server type
+     * @param writer Sends HTTP request to get a response to parse
+     * @return HTTP banner
+     * @throws IOException
+     */
+    private String parseHTTP(BufferedReader reader, PrintWriter writer) throws IOException {
+        writer.println("GET / HTTP/1.1\r\nHost: " + ip + "\r\n");
+        char[] buffer = new char[256];
+        reader.read(buffer, 0, buffer.length);
+        writer.close();
+        reader.close();
+        String data = new String(buffer).toLowerCase();
+
+        if (data.contains("apache") || data.contains("httpd")) {
+            return "Apache";
+        }
+
+        if (data.contains("iis") || data.contains("microsoft")) {
+            return "IIS";
+        }
+
+        if (data.contains("nginx")) {
+            return "NGINX";
+        }
+
+        return null;
     }
 }
