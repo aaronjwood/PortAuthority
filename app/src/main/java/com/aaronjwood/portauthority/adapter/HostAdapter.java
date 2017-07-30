@@ -1,4 +1,4 @@
-package com.aaronjwood.portauthority.adapters;
+package com.aaronjwood.portauthority.adapter;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteException;

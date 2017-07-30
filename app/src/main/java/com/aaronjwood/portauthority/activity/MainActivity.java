@@ -33,7 +33,7 @@ import android.widget.Toast;
 
 import com.aaronjwood.portauthority.BuildConfig;
 import com.aaronjwood.portauthority.R;
-import com.aaronjwood.portauthority.adapters.HostAdapter;
+import com.aaronjwood.portauthority.adapter.HostAdapter;
 import com.aaronjwood.portauthority.network.Discovery;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
