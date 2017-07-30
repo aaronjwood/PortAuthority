@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
+import com.aaronjwood.portauthority.listener.ScanPortsListener;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.utils.Constants;
@@ -91,7 +92,7 @@ public final class LanHostActivity extends HostActivity {
      */
     private void scanWellKnownPortsClick() {
         Button scanWellKnownPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
-        scanWellKnownPortsButton.setOnClickListener(new View.OnClickListener() {
+        scanWellKnownPortsButton.setOnClickListener(new ScanPortsListener(ports, adapter) {
 
             /**
              * Click handler for scanning well known ports
@@ -99,13 +100,12 @@ public final class LanHostActivity extends HostActivity {
              */
             @Override
             public void onClick(View v) {
+                super.onClick(v);
+
                 if (!wifi.isConnectedWifi()) {
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedLan), Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                ports.clear();
-                adapter.notifyDataSetChanged();
 
                 int startPort = 1;
                 int stopPort = 1024;

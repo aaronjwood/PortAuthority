@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.db.Database;
+import com.aaronjwood.portauthority.listener.ScanPortsListener;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.utils.Constants;
@@ -171,7 +172,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      */
     protected void startPortRangeScanClick(final NumberPicker start, final NumberPicker stop, final int timeout, final HostActivity activity, final String ip) {
         Button startPortRangeScan = (Button) portRangeDialog.findViewById(R.id.startPortRangeScan);
-        startPortRangeScan.setOnClickListener(new View.OnClickListener() {
+        startPortRangeScan.setOnClickListener(new ScanPortsListener(ports, adapter) {
 
             /**
              * Click handler for starting a port range scan
@@ -179,6 +180,8 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
              */
             @Override
             public void onClick(View v) {
+                super.onClick(v);
+
                 start.clearFocus();
                 stop.clearFocus();
 
@@ -191,9 +194,6 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
 
                 UserPreference.savePortRangeStart(activity, startPort);
                 UserPreference.savePortRangeHigh(activity, stopPort);
-
-                ports.clear();
-                adapter.notifyDataSetChanged();
 
                 scanProgressDialog = new ProgressDialog(activity, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
