@@ -105,6 +105,7 @@ public final class LanHostActivity extends HostActivity {
                 }
 
                 ports.clear();
+                adapter.notifyDataSetChanged();
 
                 int startPort = 1;
                 int stopPort = 1024;

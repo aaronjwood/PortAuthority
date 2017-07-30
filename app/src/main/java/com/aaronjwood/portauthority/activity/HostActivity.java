@@ -193,6 +193,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                 UserPreference.savePortRangeHigh(activity, stopPort);
 
                 ports.clear();
+                adapter.notifyDataSetChanged();
 
                 scanProgressDialog = new ProgressDialog(activity, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);

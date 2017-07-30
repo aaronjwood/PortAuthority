@@ -58,6 +58,7 @@ public final class WanHostActivity extends HostActivity {
             @Override
             public void onClick(View v) {
                 ports.clear();
+                adapter.notifyDataSetChanged();
 
                 int startPort = 1;
                 int stopPort = 1024;
