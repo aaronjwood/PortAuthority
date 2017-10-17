@@ -83,7 +83,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * Sets up the adapter to handle discovered ports
      */
     private void setupPortsAdapter() {
-        portList = (ListView) findViewById(R.id.portList);
+        portList = findViewById(R.id.portList);
         adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.port_list_item, ports);
         portList.setAdapter(adapter);
         setAnimations();
@@ -171,7 +171,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * @param ip       IP address
      */
     protected void startPortRangeScanClick(final NumberPicker start, final NumberPicker stop, final int timeout, final HostActivity activity, final String ip) {
-        Button startPortRangeScan = (Button) portRangeDialog.findViewById(R.id.startPortRangeScan);
+        Button startPortRangeScan = portRangeDialog.findViewById(R.id.startPortRangeScan);
         startPortRangeScan.setOnClickListener(new ScanPortsListener(ports, adapter) {
 
             /**

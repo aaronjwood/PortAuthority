@@ -90,13 +90,13 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         setContentView(R.layout.activity_main);
 
-        internalIp = (TextView) findViewById(R.id.internalIpAddress);
-        externalIp = (TextView) findViewById(R.id.externalIpAddress);
-        signalStrength = (TextView) findViewById(R.id.signalStrength);
-        ssid = (TextView) findViewById(R.id.ssid);
-        bssid = (TextView) findViewById(R.id.bssid);
-        hostList = (ListView) findViewById(R.id.hostList);
-        discoverHostsBtn = (Button) findViewById(R.id.discoverHosts);
+        internalIp = findViewById(R.id.internalIpAddress);
+        externalIp = findViewById(R.id.externalIpAddress);
+        signalStrength = findViewById(R.id.signalStrength);
+        ssid = findViewById(R.id.ssid);
+        bssid = findViewById(R.id.bssid);
+        hostList = findViewById(R.id.hostList);
+        discoverHostsBtn = findViewById(R.id.discoverHosts);
         discoverHostsStr = getResources().getString(R.string.hostDiscovery);
 
         wifi = new Wireless(getApplicationContext());
@@ -133,8 +133,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * Sets up the device's MAC address and vendor
      */
     private void setupMac() {
-        TextView macAddress = (TextView) findViewById(R.id.deviceMacAddress);
-        TextView macVendor = (TextView) findViewById(R.id.deviceMacVendor);
+        TextView macAddress = findViewById(R.id.deviceMacAddress);
+        TextView macVendor = findViewById(R.id.deviceMacVendor);
         if (!wifi.isEnabled()) {
             macAddress.setText(R.string.wifiDisabled);
             macVendor.setText(R.string.wifiDisabled);
@@ -377,10 +377,10 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * Sets up event handlers and items for the left drawer
      */
     private void setupDrawer() {
-        final DrawerLayout leftDrawer = (DrawerLayout) findViewById(R.id.leftDrawer);
-        final RelativeLayout leftDrawerLayout = (RelativeLayout) findViewById(R.id.leftDrawerLayout);
+        final DrawerLayout leftDrawer = findViewById(R.id.leftDrawer);
+        final RelativeLayout leftDrawerLayout = findViewById(R.id.leftDrawerLayout);
 
-        ImageView drawerIcon = (ImageView) findViewById(R.id.leftDrawerIcon);
+        ImageView drawerIcon = findViewById(R.id.leftDrawerIcon);
         drawerIcon.setOnClickListener(new View.OnClickListener() {
 
             /**
@@ -393,8 +393,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             }
         });
 
-        ListView upperList = (ListView) findViewById(R.id.upperLeftDrawerList);
-        ListView lowerList = (ListView) findViewById(R.id.lowerLeftDrawerList);
+        ListView upperList = findViewById(R.id.upperLeftDrawerList);
+        ListView lowerList = findViewById(R.id.lowerLeftDrawerList);
 
         upperList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -462,8 +462,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * If the user doesn't want this then hide the appropriate views
      */
     private void getExternalIp() {
-        TextView label = (TextView) findViewById(R.id.externalIpAddressLabel);
-        TextView ip = (TextView) findViewById(R.id.externalIpAddress);
+        TextView label = findViewById(R.id.externalIpAddressLabel);
+        TextView ip = findViewById(R.id.externalIpAddress);
 
         if (UserPreference.getFetchExternalIp(this)) {
             label.setVisibility(View.VISIBLE);

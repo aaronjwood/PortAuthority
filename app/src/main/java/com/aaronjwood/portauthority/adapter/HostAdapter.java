@@ -36,10 +36,10 @@ public final class HostAdapter extends ArrayAdapter<Host> {
             rowView = inflater.inflate(R.layout.host_list_item, parent, false);
 
             view = new ViewHolder();
-            view.hostname = (TextView) rowView.findViewById(R.id.hostname);
-            view.hostIp = (TextView) rowView.findViewById(R.id.hostIp);
-            view.hostMac = (TextView) rowView.findViewById(R.id.hostMac);
-            view.hostMacVendor = (TextView) rowView.findViewById(R.id.hostMacVendor);
+            view.hostname = rowView.findViewById(R.id.hostname);
+            view.hostIp = rowView.findViewById(R.id.hostIp);
+            view.hostMac = rowView.findViewById(R.id.hostMac);
+            view.hostMacVendor = rowView.findViewById(R.id.hostMacVendor);
 
             rowView.setTag(view);
         } else {

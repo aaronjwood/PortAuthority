@@ -34,10 +34,10 @@ public final class LanHostActivity extends HostActivity {
         layout = R.layout.activity_lanhost;
         super.onCreate(savedInstanceState);
 
-        TextView hostName = (TextView) findViewById(R.id.hostName);
-        TextView hostMacVendor = (TextView) findViewById(R.id.hostMacVendor);
-        TextView hostMac = (TextView) findViewById(R.id.hostMac);
-        TextView ipAddress = (TextView) findViewById(R.id.ipAddress);
+        TextView hostName = findViewById(R.id.hostName);
+        TextView hostMacVendor = findViewById(R.id.hostMacVendor);
+        TextView hostMac = findViewById(R.id.hostMac);
+        TextView ipAddress = findViewById(R.id.ipAddress);
         Bundle extras = getIntent().getExtras();
         if (extras == null) {
             return;
@@ -91,7 +91,7 @@ public final class LanHostActivity extends HostActivity {
      * Event handler for when the well known port scan is initiated
      */
     private void scanWellKnownPortsClick() {
-        Button scanWellKnownPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
+        Button scanWellKnownPortsButton = findViewById(R.id.scanWellKnownPorts);
         scanWellKnownPortsButton.setOnClickListener(new ScanPortsListener(ports, adapter) {
 
             /**
@@ -126,7 +126,7 @@ public final class LanHostActivity extends HostActivity {
      * Event handler for when a port range scan is requested
      */
     private void scanPortRangeClick() {
-        Button scanPortRangeButton = (Button) findViewById(R.id.scanPortRange);
+        Button scanPortRangeButton = findViewById(R.id.scanPortRange);
         scanPortRangeButton.setOnClickListener(new View.OnClickListener() {
 
             /**
@@ -145,8 +145,8 @@ public final class LanHostActivity extends HostActivity {
                 portRangeDialog.setContentView(R.layout.port_range);
                 portRangeDialog.show();
 
-                NumberPicker portRangePickerStart = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStart);
-                NumberPicker portRangePickerStop = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStop);
+                NumberPicker portRangePickerStart = portRangeDialog.findViewById(R.id.portRangePickerStart);
+                NumberPicker portRangePickerStop = portRangeDialog.findViewById(R.id.portRangePickerStop);
 
                 portRangePickerStart.setMinValue(Constants.MIN_PORT_VALUE);
                 portRangePickerStart.setMaxValue(Constants.MAX_PORT_VALUE);
@@ -167,7 +167,7 @@ public final class LanHostActivity extends HostActivity {
      * Event handler for waking up a host via WoL
      */
     private void setupWol() {
-        Button wakeUpButton = (Button) findViewById(R.id.wakeOnLan);
+        Button wakeUpButton = findViewById(R.id.wakeOnLan);
         wakeUpButton.setOnClickListener(new View.OnClickListener() {
 
             @Override

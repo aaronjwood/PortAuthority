@@ -31,9 +31,9 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dns);
 
-        this.domainName = (EditText) findViewById(R.id.domainName);
-        this.dnsAnswer = (TextView) findViewById(R.id.dnsAnswer);
-        this.dnsRecord = (Spinner) findViewById(R.id.recordSpinner);
+        this.domainName = findViewById(R.id.domainName);
+        this.dnsAnswer = findViewById(R.id.dnsAnswer);
+        this.dnsRecord = findViewById(R.id.recordSpinner);
         this.domainName.setText(UserPreference.getLastUsedDomainName(this));
         this.dnsRecord.setSelection(UserPreference.getLastUsedDnsRecord(this));
 
@@ -71,9 +71,9 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
      * Event handler for when a DNS lookup is requested
      */
     private void dnsLookupClick() {
-        final EditText domainElement = (EditText) findViewById(R.id.domainName);
-        final Spinner recordElement = (Spinner) findViewById(R.id.recordSpinner);
-        Button dnsLookupButton = (Button) findViewById(R.id.dnsLookup);
+        final EditText domainElement = findViewById(R.id.domainName);
+        final Spinner recordElement = findViewById(R.id.recordSpinner);
+        Button dnsLookupButton = findViewById(R.id.dnsLookup);
         dnsLookupButton.setOnClickListener(new View.OnClickListener() {
 
             /**
