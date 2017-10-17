@@ -54,8 +54,9 @@ public class ScanPortsRunnable implements Runnable {
                 socket.setReuseAddress(true);
                 socket.setTcpNoDelay(true);
                 socket.connect(new InetSocketAddress(ip, i), timeout);
-            } catch (SocketTimeoutException | IllegalBlockingModeException | IllegalArgumentException e) {
+            } catch (IllegalBlockingModeException | IllegalArgumentException e) {
                 activity.processFinish(e);
+                continue;
             } catch (IOException e) {
                 activity.processFinish(1);
                 continue; // Connection failures mean that the port isn't open.
