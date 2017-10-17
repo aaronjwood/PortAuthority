@@ -17,6 +17,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import jcifs.netbios.NbtAddress;
 
@@ -101,11 +102,13 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         BufferedReader reader = null;
         MainAsyncResponse activity = delegate.get();
         ExecutorService executor = Executors.newCachedThreadPool();
+        final AtomicInteger numHosts = new AtomicInteger(0);
 
         try {
             reader = new BufferedReader(new FileReader(ARP_TABLE));
             reader.readLine(); // Skip header.
             String line;
+
 
             while ((line = reader.readLine()) != null) {
                 String[] arpLine = line.split("\\s+");
@@ -115,6 +118,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                 final String macAddress = arpLine[3];
 
                 if (!ARP_INCOMPLETE.equals(flag) && !ARP_INACTIVE.equals(macAddress)) {
+                    numHosts.incrementAndGet();
                     executor.execute(new Runnable() {
 
                         @Override
@@ -127,9 +131,10 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                                 host.setHostname(hostname);
 
                                 if (activity != null) {
-                                    activity.processFinish(host);
+                                    activity.processFinish(host, numHosts);
                                 }
                             } catch (UnknownHostException e) {
+                                numHosts.decrementAndGet();
                                 activity.processFinish(e);
                                 return;
                             }
