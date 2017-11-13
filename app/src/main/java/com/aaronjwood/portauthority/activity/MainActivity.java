@@ -198,6 +198,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 try {
                     Integer ip = wifi.getInternalWifiIpAddress(Integer.class);
                     Discovery.scanHosts(ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(getApplicationContext()), MainActivity.this);
+                    discoverHostsBtn.setAlpha(.3f);
                     discoverHostsBtn.setEnabled(false);
                 } catch (UnknownHostException e) {
                     Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedWifi));
@@ -587,6 +588,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
                 discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
                 if (i.decrementAndGet() == 0) {
+                    discoverHostsBtn.setAlpha(1);
                     discoverHostsBtn.setEnabled(true);
                 }
             }
