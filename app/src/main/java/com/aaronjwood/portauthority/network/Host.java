@@ -17,26 +17,28 @@ public class Host implements Serializable {
     private String hostname;
     private String ip;
     private String mac;
+    private String vendor;
 
     /**
-     * Constructor to set necessary information without a known hostname
+     * Constructs a host with a known IP and MAC, and additionally looks up the MAC vendor.
      *
-     * @param ip  This host's IP address
-     * @param mac This host's MAC address
+     * @param ip
+     * @param mac
+     * @param context
+     * @throws IOException
      */
-    public Host(String ip, String mac) {
-        this(null, ip, mac);
+    public Host(String ip, String mac, Context context) throws IOException {
+        this(ip, mac);
+        setVendor(context);
     }
 
     /**
-     * Constructor to set necessary information with a known hostname
+     * Constructs a host with a known IP and MAC.
      *
-     * @param hostname This host's hostname
-     * @param ip       This host's IP address
-     * @param mac      This host's MAC address
+     * @param ip
+     * @param mac
      */
-    public Host(String hostname, String ip, String mac) {
-        this.hostname = hostname;
+    public Host(String ip, String mac) {
         this.ip = ip;
         this.mac = mac;
     }
@@ -60,6 +62,29 @@ public class Host implements Serializable {
         this.hostname = hostname;
 
         return this;
+    }
+
+    /**
+     * Sets this host's MAC vendor.
+     *
+     * @param context
+     * @return
+     * @throws IOException
+     */
+    private Host setVendor(Context context) throws IOException {
+        String prefix = mac.replace(":", "").substring(0, 6);
+        vendor = findMacVendor(prefix, context);
+
+        return this;
+    }
+
+    /**
+     * Gets this host's MAC vendor.
+     *
+     * @return
+     */
+    public String getVendor() {
+        return vendor;
     }
 
     /**
@@ -103,7 +128,7 @@ public class Host implements Serializable {
      * @param mac     MAC address
      * @param context Application context
      */
-    public static String getMacVendor(String mac, Context context) throws IOException, SQLiteException {
+    public static String findMacVendor(String mac, Context context) throws IOException, SQLiteException {
         Database db = new Database(context);
         db.openDatabase("network.db");
         Cursor cursor = db.queryDatabase("SELECT vendor FROM ouis WHERE mac LIKE ?", new String[]{mac});

@@ -145,7 +145,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         try {
             String mac = wifi.getMacAddress();
-            String vendor = Host.getMacVendor(mac.replace(":", "").substring(0, 6), this);
+            String vendor = Host.findMacVendor(mac.replace(":", "").substring(0, 6), this);
             macAddress.setText(mac);
             macVendor.setText(vendor);
         } catch (UnknownHostException | SocketException e) {
@@ -271,6 +271,25 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                         @Override
                         public int compare(Host lhs, Host rhs) {
                             return lhs.getHostname().toLowerCase().compareTo(rhs.getHostname().toLowerCase());
+                        }
+                    });
+                }
+
+                sortAscending = !sortAscending;
+                return true;
+            case R.id.sortVendor:
+                if (sortAscending) {
+                    hostAdapter.sort(new Comparator<Host>() {
+                        @Override
+                        public int compare(Host lhs, Host rhs) {
+                            return rhs.getVendor().toLowerCase().compareTo(lhs.getVendor().toLowerCase());
+                        }
+                    });
+                } else {
+                    hostAdapter.sort(new Comparator<Host>() {
+                        @Override
+                        public int compare(Host lhs, Host rhs) {
+                            return lhs.getVendor().toLowerCase().compareTo(rhs.getVendor().toLowerCase());
                         }
                     });
                 }

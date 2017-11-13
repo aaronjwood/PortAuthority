@@ -34,7 +34,9 @@
     <string name="signalLink">%1$ddBm/%2$dMbps</string>
     <string name="hostScan">Scanning For Hosts</string>
     <string name="subnetHosts">%1$d hosts in your subnet</string>
-    <string name="sortHostname">Sort by hostname</string>
+    <string name="sort">Sort</string>
+    <string name="sortHostname">By hostname</string>
+    <string name="sortVendor">By vendor</string>
     <string name="copyHostname">Copy hostname</string>
     <string name="copyIp">Copy IP</string>
     <string name="copyMac">Copy MAC</string>

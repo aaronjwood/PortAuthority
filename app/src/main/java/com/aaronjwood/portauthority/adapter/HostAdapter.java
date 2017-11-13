@@ -1,7 +1,6 @@
 package com.aaronjwood.portauthority.adapter;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteException;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +10,7 @@ import android.widget.TextView;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.network.Host;
-import com.aaronjwood.portauthority.utils.Errors;
 
-import java.io.IOException;
 import java.util.List;
 
 public final class HostAdapter extends ArrayAdapter<Host> {
@@ -47,15 +44,10 @@ public final class HostAdapter extends ArrayAdapter<Host> {
         }
 
         Host item = data.get(position);
-        String mac = item.getMac().replace(":", "").substring(0, 6);
         view.hostname.setText(item.getHostname());
         view.hostIp.setText(item.getIp());
         view.hostMac.setText(item.getMac());
-        try {
-            view.hostMacVendor.setText(Host.getMacVendor(mac, context));
-        } catch (IOException | SQLiteException e) {
-            Errors.showError(context.getApplicationContext(), context.getResources().getString(R.string.getMacVendorFailed));
-        }
+        view.hostMacVendor.setText(item.getVendor());
 
         return rowView;
     }

@@ -1,5 +1,6 @@
 package com.aaronjwood.portauthority.async;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.aaronjwood.portauthority.network.Host;
@@ -100,7 +101,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     @Override
     protected final void onProgressUpdate(Void... params) {
         BufferedReader reader = null;
-        MainAsyncResponse activity = delegate.get();
+        final MainAsyncResponse activity = delegate.get();
         ExecutorService executor = Executors.newCachedThreadPool();
         final AtomicInteger numHosts = new AtomicInteger(0);
 
@@ -123,7 +124,13 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
 
                         @Override
                         public void run() {
-                            Host host = new Host(ip, macAddress);
+                            Host host;
+                            try {
+                                host = new Host(ip, macAddress, (Context) activity);
+                            } catch (IOException e) {
+                                host = new Host(ip, macAddress);
+                            }
+
                             MainAsyncResponse activity = delegate.get();
                             try {
                                 InetAddress add = InetAddress.getByName(ip);

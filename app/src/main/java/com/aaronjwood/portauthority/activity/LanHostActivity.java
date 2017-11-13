@@ -2,7 +2,6 @@ package com.aaronjwood.portauthority.activity;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,10 +14,7 @@ import com.aaronjwood.portauthority.listener.ScanPortsListener;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.utils.Constants;
-import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
-
-import java.io.IOException;
 
 public final class LanHostActivity extends HostActivity {
     private Wireless wifi;
@@ -49,13 +45,7 @@ public final class LanHostActivity extends HostActivity {
             return;
         }
 
-        try {
-            String vendor = Host.getMacVendor(host.getMac().replace(":", "").substring(0, 6), this);
-            hostMacVendor.setText(vendor);
-        } catch (IOException | SQLiteException e) {
-            Errors.showError(getApplicationContext(), getResources().getString(R.string.getMacVendorFailed));
-        }
-
+        hostMacVendor.setText(host.getVendor());
         hostName.setText(host.getHostname());
         hostMac.setText(host.getMac());
         ipAddress.setText(host.getIp());

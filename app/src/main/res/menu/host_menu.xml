@@ -2,8 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/sortHostname"
-        android:title="@string/sortHostname" />
+        android:id="@+id/sorting"
+        android:title="@string/sort">
+        <menu>
+            <item
+                android:id="@+id/sortHostname"
+                android:title="@string/sortHostname" />
+            <item
+                android:id="@+id/sortVendor"
+                android:title="@string/sortVendor" />
+        </menu>
+    </item>
+
     <item
         android:id="@+id/copyHostname"
         android:title="@string/copyHostname" />
