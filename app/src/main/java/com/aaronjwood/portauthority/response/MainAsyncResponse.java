@@ -2,14 +2,17 @@ package com.aaronjwood.portauthority.response;
 
 import com.aaronjwood.portauthority.network.Host;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public interface MainAsyncResponse extends ErrorAsyncResponse {
 
     /**
-     * Delegate to handle Host outputs
+     * Delegate to handle Host + AtomicInteger outputs
      *
-     * @param output
+     * @param h
+     * @param i
      */
-    void processFinish(Host output);
+    void processFinish(Host h, AtomicInteger i);
 
     /**
      * Delegate to handle integer outputs

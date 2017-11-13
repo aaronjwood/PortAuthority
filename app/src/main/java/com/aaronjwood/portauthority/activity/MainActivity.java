@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class MainActivity extends AppCompatActivity implements MainAsyncResponse {
 
@@ -197,6 +198,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 try {
                     Integer ip = wifi.getInternalWifiIpAddress(Integer.class);
                     Discovery.scanHosts(ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(getApplicationContext()), MainActivity.this);
+                    discoverHostsBtn.setAlpha(.3f);
+                    discoverHostsBtn.setEnabled(false);
                 } catch (UnknownHostException e) {
                     Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedWifi));
                 }
@@ -558,15 +561,16 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * Delegate to update the host list and dismiss the progress dialog
      * Gets called when host discovery has finished
      *
-     * @param output The list of hosts to bind to the list view
+     * @param h The host to add to the list of discovered hosts
+     * @param i Number of hosts
      */
     @Override
-    public void processFinish(final Host output) {
+    public void processFinish(final Host h, final AtomicInteger i) {
         scanHandler.post(new Runnable() {
 
             @Override
             public void run() {
-                hosts.add(output);
+                hosts.add(h);
                 hostAdapter.sort(new Comparator<Host>() {
 
                     @Override
@@ -581,7 +585,12 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                         }
                     }
                 });
+
                 discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
+                if (i.decrementAndGet() == 0) {
+                    discoverHostsBtn.setAlpha(1);
+                    discoverHostsBtn.setEnabled(true);
+                }
             }
         });
     }
