@@ -7,9 +7,9 @@
         </shape>
     </item>
     <item
-        android:bottom="2dp"
+        android:bottom="1dp"
         android:drawable="@color/black"
-        android:left="2dp"
-        android:right="2dp"
-        android:top="2dp" />
+        android:left="1dp"
+        android:right="1dp"
+        android:top="1dp" />
 </layer-list>
