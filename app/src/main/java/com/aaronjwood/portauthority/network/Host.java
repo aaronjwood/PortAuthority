@@ -1,7 +1,6 @@
 package com.aaronjwood.portauthority.network;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 
 import com.aaronjwood.portauthority.async.ScanPortsAsyncTask;
@@ -130,20 +129,8 @@ public class Host implements Serializable {
      */
     public static String findMacVendor(String mac, Context context) throws IOException, SQLiteException {
         Database db = new Database(context);
-        db.openDatabase("network.db");
-        Cursor cursor = db.queryDatabase("SELECT vendor FROM ouis WHERE mac LIKE ?", new String[]{mac});
-        String vendor;
 
-        if (cursor.moveToFirst()) {
-            vendor = cursor.getString(cursor.getColumnIndex("vendor"));
-        } else {
-            vendor = "Vendor not in database";
-        }
-
-        cursor.close();
-        db.close();
-
-        return vendor;
+        return db.selectVendor(mac);
     }
 
 }

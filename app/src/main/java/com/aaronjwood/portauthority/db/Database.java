@@ -1,86 +1,60 @@
 package com.aaronjwood.portauthority.db;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 public class Database {
-    private Context context;
+
+    private static final String OUI_TABLE = "ouis";
+    private static final String PORT_TABLE = "ports";
+
+    private static final String MAC_FIELD = "mac";
+    private static final String VENDOR_FIELD = "vendor";
+    private static final String PORT_NAME_FIELD = "name";
+    private static final String PORT_FIELD = "port";
+    private static final String PROTOCOL_FIELD = "protocol";
+    private static final String DESCRIPTION_FIELD = "description";
+
     private SQLiteDatabase db;
 
     public Database(Context context) {
-        this.context = context;
+        db = new DatabaseHelper(context).getWritableDatabase();
     }
 
-    /**
-     * Checks if the database exists at the application's data directory
-     *
-     * @param dbName Name of the database to check the existence of
-     * @return True if the database exists, false if not
-     */
-    private boolean checkDatabase(String dbName) {
-        File dbFile = new File(context.getApplicationInfo().dataDir + "/" + dbName);
+    public long insertOui(String mac, String vendor) {
+        ContentValues values = new ContentValues();
+        values.put(MAC_FIELD, mac);
+        values.put(VENDOR_FIELD, vendor);
 
-        return dbFile.exists();
+        return db.insert(OUI_TABLE, null, values);
     }
 
-    /**
-     * Copies the database from assets to the application's data directory
-     *
-     * @param dbName Name of the database to be copied
-     */
-    private void copyDatabase(String dbName) throws IOException {
-        InputStream input = context.getAssets().open(dbName);
-        OutputStream output = new FileOutputStream(context.getApplicationInfo().dataDir + "/" + dbName);
-
-        byte[] buffer = new byte[1024];
-        int length;
-        try {
-            while ((length = input.read(buffer)) > 0) {
-                output.write(buffer, 0, length);
-            }
-        } finally {
-            output.close();
-            input.close();
-        }
-    }
-
-    /**
-     * Opens a connection to a SQLite database
-     *
-     * @param dbName The database to open a connection to
-     */
-    public void openDatabase(String dbName) throws IOException, SQLiteException {
-        if (!checkDatabase(dbName)) {
-            copyDatabase(dbName);
+    public String selectVendor(String mac) {
+        Cursor cursor = db.rawQuery("SELECT " + VENDOR_FIELD + " FROM " + OUI_TABLE + " WHERE " + MAC_FIELD + " LIKE ?", new String[]{mac});
+        String vendor;
+        if (cursor.moveToFirst()) {
+            vendor = cursor.getString(cursor.getColumnIndex("vendor"));
+        } else {
+            vendor = "Vendor not in database";
         }
 
-        db = SQLiteDatabase.openDatabase(context.getApplicationInfo().dataDir + "/" + dbName, null, SQLiteDatabase.OPEN_READONLY);
+        cursor.close();
+
+        return vendor;
     }
 
-    /**
-     * Performs a query against the database
-     *
-     * @param query The query itself
-     * @param args  Arguments for any bound parameters
-     * @return Cursor for iterating over results
-     */
-    public Cursor queryDatabase(String query, String[] args) {
-        return db.rawQuery(query, args);
-    }
+    public String selectPortName(int port) {
+        Cursor cursor = db.rawQuery("SELECT name FROM ports WHERE port = ?", new String[]{Integer.toString(port)});
+        String name = "";
+        if (cursor.moveToFirst()) {
+            name = cursor.getString(cursor.getColumnIndex("name"));
+        }
 
-    /**
-     * Closes the database handle
-     */
-    public void close() {
-        db.close();
+        cursor.close();
+
+        return name;
     }
 
 }
