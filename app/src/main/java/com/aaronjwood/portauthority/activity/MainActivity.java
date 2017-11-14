@@ -133,7 +133,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     /**
      * Sets up the device's MAC address and vendor
      */
-    private void setupMac() {
+    public void setupMac() {
         TextView macAddress = findViewById(R.id.deviceMacAddress);
         TextView macVendor = findViewById(R.id.deviceMacVendor);
         if (!wifi.isEnabled()) {

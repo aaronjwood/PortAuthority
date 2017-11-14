@@ -128,9 +128,7 @@ public class Host implements Serializable {
      * @param context Application context
      */
     public static String findMacVendor(String mac, Context context) throws IOException, SQLiteException {
-        Database db = new Database(context);
-
-        return db.selectVendor(mac);
+        return new Database(context).selectVendor(mac);
     }
 
 }
