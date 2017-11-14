@@ -52,6 +52,7 @@ public class DownloadOuisAsyncTask extends AsyncTask<Void, String, Void> {
     protected Void doInBackground(Void... params) {
         BufferedReader in = null;
         HttpURLConnection connection = null;
+        db.clearOuis();
         try {
             for (String service : OUI_SERVICES) {
                 URL url = new URL(service);
@@ -66,6 +67,7 @@ public class DownloadOuisAsyncTask extends AsyncTask<Void, String, Void> {
                 in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 in.readLine(); // Skip headers.
                 String line;
+                db.beginTransaction();
                 while ((line = in.readLine()) != null) {
                     if (isCancelled()) {
                         return null;
@@ -81,15 +83,17 @@ public class DownloadOuisAsyncTask extends AsyncTask<Void, String, Void> {
 
                     if (db.insertOui(mac, vendor) == -1) {
                         publishProgress("Failed to insert MAC " + mac + " into the database. " +
-                                "Please run this again from the application settings");
+                                "Please run this operation again");
 
                         return null;
                     }
                 }
+                db.setTransactionSuccessful().endTransaction();
             }
         } catch (IOException e) {
             publishProgress(e.toString());
         } finally {
+            db.endTransaction();
             try {
                 if (in != null) {
                     in.close();

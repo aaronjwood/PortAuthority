@@ -15,18 +15,16 @@ public class Database extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "PortAuthority";
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_CREATE = "CREATE TABLE ouis (mac TEXT NOT NULL, vendor TEXT NOT NULL);" +
-            "CREATE TABLE ports (name TEXT, port INTEGER, protocol TEXT, description TEXT);";
-
     private static final String OUI_TABLE = "ouis";
     private static final String PORT_TABLE = "ports";
-
     private static final String MAC_FIELD = "mac";
     private static final String VENDOR_FIELD = "vendor";
     private static final String PORT_NAME_FIELD = "name";
     private static final String PORT_FIELD = "port";
     private static final String PROTOCOL_FIELD = "protocol";
     private static final String DESCRIPTION_FIELD = "description";
+    private static final String DATABASE_CREATE = "CREATE TABLE " + OUI_TABLE + " (" + MAC_FIELD + " TEXT NOT NULL, " + VENDOR_FIELD + " TEXT NOT NULL);" +
+            "CREATE TABLE " + PORT_TABLE + " (" + PORT_NAME_FIELD + " TEXT, " + PORT_FIELD + " INTEGER, " + PROTOCOL_FIELD + " TEXT, " + DESCRIPTION_FIELD + " TEXT);";
 
     private SQLiteDatabase db;
     private Context context;
@@ -39,6 +37,8 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(final SQLiteDatabase db) {
+        db.execSQL(DATABASE_CREATE);
+
         final Database instance = this;
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
         builder.setTitle("Generate OUI Database")
@@ -50,7 +50,6 @@ public class Database extends SQLiteOpenHelper {
 
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        db.execSQL(DATABASE_CREATE);
                         new DownloadOuisAsyncTask(instance, context).execute();
                     }
                 }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -66,12 +65,39 @@ public class Database extends SQLiteOpenHelper {
         // TODO implement when upgrades are needed.
     }
 
+    public Database beginTransaction() {
+        if (!db.inTransaction()) {
+            db.beginTransaction();
+        }
+
+        return this;
+    }
+
+    public Database endTransaction() {
+        if (db.inTransaction()) {
+            db.endTransaction();
+        }
+
+        return this;
+    }
+
+    public Database setTransactionSuccessful() {
+        db.setTransactionSuccessful();
+        return this;
+    }
+
     public long insertOui(String mac, String vendor) {
         ContentValues values = new ContentValues();
         values.put(MAC_FIELD, mac);
         values.put(VENDOR_FIELD, vendor);
 
         return db.insert(OUI_TABLE, null, values);
+    }
+
+    public Database clearOuis() {
+        db.execSQL("DELETE FROM " + OUI_TABLE);
+        db.execSQL("VACUUM");
+        return this;
     }
 
     public String selectVendor(String mac) {
