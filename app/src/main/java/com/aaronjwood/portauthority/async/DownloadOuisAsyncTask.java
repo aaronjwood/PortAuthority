@@ -69,9 +69,6 @@ public class DownloadOuisAsyncTask extends AsyncTask<Void, String, Void> {
                 String line;
                 while ((line = in.readLine()) != null) {
                     if (isCancelled()) {
-                        in.close();
-                        connection.disconnect();
-
                         return null;
                     }
 
