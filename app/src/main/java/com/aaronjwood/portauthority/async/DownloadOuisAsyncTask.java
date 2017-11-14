@@ -50,7 +50,6 @@ public class DownloadOuisAsyncTask extends AsyncTask<Void, String, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        String error = "Couldn't download OUI data: ";
         BufferedReader in = null;
         HttpURLConnection connection = null;
         try {
@@ -59,7 +58,7 @@ public class DownloadOuisAsyncTask extends AsyncTask<Void, String, Void> {
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
                 if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                    publishProgress(error + "server returned " + connection.getResponseCode() + " " + connection.getResponseMessage());
+                    publishProgress(connection.getResponseCode() + " " + connection.getResponseMessage());
 
                     return null;
                 }
@@ -89,7 +88,7 @@ public class DownloadOuisAsyncTask extends AsyncTask<Void, String, Void> {
                 }
             }
         } catch (IOException e) {
-            publishProgress(error + e.toString());
+            publishProgress(e.toString());
         } finally {
             try {
                 if (in != null) {
