@@ -1,14 +1,9 @@
 package com.aaronjwood.portauthority.async;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
-import com.aaronjwood.portauthority.R;
-import com.aaronjwood.portauthority.activity.MainActivity;
 import com.aaronjwood.portauthority.db.Database;
+import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,30 +16,19 @@ import javax.net.ssl.HttpsURLConnection;
 public class DownloadOuisAsyncTask extends AsyncTask<Void, String, Void> {
 
     private static final String OUI_SERVICE = "https://code.wireshark.org/review/gitweb?p=wireshark.git;a=blob_plain;f=manuf";
-    private WeakReference<Context> context;
+    private WeakReference<MainAsyncResponse> delegate;
     private Database db;
-    private ProgressDialog dialog;
 
-    public DownloadOuisAsyncTask(Database db, Context context) {
+    public DownloadOuisAsyncTask(Database db, MainAsyncResponse activity) {
         this.db = db;
-        this.context = new WeakReference<>(context);
+        this.delegate = new WeakReference<>(activity);
     }
 
     @Override
     protected void onPreExecute() {
-        final Context ctx = context.get();
-        final DownloadOuisAsyncTask task = this;
-        if (ctx != null) {
-            dialog = new ProgressDialog(ctx, R.style.DialogTheme);
-            dialog.setMessage(ctx.getResources().getString(R.string.downloadingOuis));
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialogInterface) {
-                    task.cancel(true);
-                }
-            });
-            dialog.show();
+        final MainAsyncResponse activity = delegate.get();
+        if (activity != null) {
+            activity.processFinish(this);
         }
     }
 
@@ -114,21 +98,17 @@ public class DownloadOuisAsyncTask extends AsyncTask<Void, String, Void> {
 
     @Override
     protected void onProgressUpdate(String... progress) {
-        Context ctx = context.get();
-        if (ctx != null) {
-            Toast.makeText(ctx, progress[0], Toast.LENGTH_LONG).show();
+        MainAsyncResponse activity = delegate.get();
+        if (activity != null) {
+            activity.processFinish(new Exception(progress[0]));
         }
     }
 
     @Override
     protected void onPostExecute(Void result) {
-        Context ctx = context.get();
-        if (ctx != null) {
-            if (dialog != null && dialog.isShowing()) {
-                dialog.dismiss();
-            }
-            MainActivity activity = (MainActivity) ctx;
-            activity.setupMac();
+        MainAsyncResponse activity = delegate.get();
+        if (activity != null) {
+            activity.processFinish(this, result);
         }
     }
 

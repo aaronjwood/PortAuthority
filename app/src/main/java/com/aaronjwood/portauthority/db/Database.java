@@ -1,19 +1,14 @@
 package com.aaronjwood.portauthority.db;
 
-import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.aaronjwood.portauthority.R;
-import com.aaronjwood.portauthority.async.DownloadOuisAsyncTask;
-
 public class Database extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "PortAuthority";
+    public static final String DATABASE_NAME = "PortAuthority";
     private static final int DATABASE_VERSION = 1;
     private static final String OUI_TABLE = "ouis";
     private static final String PORT_TABLE = "ports";
@@ -26,38 +21,25 @@ public class Database extends SQLiteOpenHelper {
     private static final String DATABASE_CREATE = "CREATE TABLE " + OUI_TABLE + " (" + MAC_FIELD + " TEXT NOT NULL, " + VENDOR_FIELD + " TEXT NOT NULL);" +
             "CREATE TABLE " + PORT_TABLE + " (" + PORT_NAME_FIELD + " TEXT, " + PORT_FIELD + " INTEGER, " + PROTOCOL_FIELD + " TEXT, " + DESCRIPTION_FIELD + " TEXT);";
 
+    private static Database singleton;
     private SQLiteDatabase db;
-    private Context context;
 
-    public Database(Context context) {
+    public static Database getInstance(Context context) {
+        if (singleton == null) {
+            singleton = new Database(context);
+        }
+
+        return singleton;
+    }
+
+    private Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context = context;
-        this.db = this.getWritableDatabase();
+        db = this.getWritableDatabase();
     }
 
     @Override
     public void onCreate(final SQLiteDatabase db) {
         db.execSQL(DATABASE_CREATE);
-
-        final Database instance = this;
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
-        builder.setTitle("Generate OUI Database")
-                .setMessage("Do you want to create the OUI database? " +
-                        "This will download the official OUI lists from the IEEE. " +
-                        "Note that you won't be able to resolve any MAC vendors without this data. " +
-                        "You can always perform this later in the settings.")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        new DownloadOuisAsyncTask(instance, context).execute();
-                    }
-                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                // We don't want to do anything.
-            }
-        }).setIcon(android.R.drawable.ic_dialog_alert).show().setCanceledOnTouchOutside(false);
     }
 
     @Override

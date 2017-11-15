@@ -1,10 +1,12 @@
 package com.aaronjwood.portauthority.activity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.sqlite.SQLiteException;
@@ -70,12 +72,15 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private Button discoverHostsBtn;
     private String discoverHostsStr; // Cache this so it's not looked up every time a host is found.
     private ProgressDialog scanProgressDialog;
+    private ProgressDialog dbUpdateDialog;
     private Handler signalHandler = new Handler();
     private Handler scanHandler;
     private BroadcastReceiver receiver;
     private IntentFilter intentFilter = new IntentFilter();
     private HostAdapter hostAdapter;
     private List<Host> hosts = Collections.synchronizedList(new ArrayList<Host>());
+    private Database db;
+    private DownloadOuisAsyncTask task;
     private boolean sortAscending;
 
     /**
@@ -105,10 +110,40 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         wifi = new Wireless(getApplicationContext());
         scanHandler = new Handler(Looper.getMainLooper());
 
+        checkDatabase();
+        db = Database.getInstance(getApplicationContext());
+
         setupHostsAdapter();
         setupDrawer();
         setupReceivers();
         setupHostDiscovery();
+    }
+
+    public void checkDatabase() {
+        if (getDatabasePath(Database.DATABASE_NAME).exists()) {
+            return;
+        }
+
+        final MainActivity activity = this;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogTheme);
+        builder.setTitle("Generate OUI Database")
+                .setMessage("Do you want to create the OUI database? " +
+                        "This will download the official OUI lists from the IEEE. " +
+                        "Note that you won't be able to resolve any MAC vendors without this data. " +
+                        "You can always perform this later in the settings.")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        task = new DownloadOuisAsyncTask(db, activity);
+                        task.execute();
+                    }
+                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // We don't want to do anything.
+            }
+        }).setIcon(android.R.drawable.ic_dialog_alert).show().setCanceledOnTouchOutside(false);
     }
 
     /**
@@ -149,7 +184,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             String mac = wifi.getMacAddress();
             macAddress.setText(mac);
 
-            String vendor = Host.findMacVendor(mac, this);
+            String vendor = Host.findMacVendor(mac, db);
             macVendor.setText(vendor);
         } catch (UnknownHostException | SocketException e) {
             macAddress.setText(R.string.noWifiConnection);
@@ -200,7 +235,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
                 try {
                     Integer ip = wifi.getInternalWifiIpAddress(Integer.class);
-                    Discovery.scanHosts(ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(getApplicationContext()), MainActivity.this);
+                    Discovery.scanHosts(ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(getApplicationContext()), MainActivity.this, db);
                     discoverHostsBtn.setAlpha(.3f);
                     discoverHostsBtn.setEnabled(false);
                 } catch (UnknownHostException e) {
@@ -457,7 +492,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
-                        new DownloadOuisAsyncTask(new Database(MainActivity.this), MainActivity.this).execute();
+                        task = new DownloadOuisAsyncTask(db, MainActivity.this);
+                        task.execute();
                         break;
                     case 1:
                         startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
@@ -516,7 +552,12 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
             scanProgressDialog.dismiss();
         }
+        if (dbUpdateDialog != null && dbUpdateDialog.isShowing()) {
+            dbUpdateDialog.dismiss();
+        }
+
         scanProgressDialog = null;
+        dbUpdateDialog = null;
     }
 
     /**
@@ -530,6 +571,10 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         if (receiver != null) {
             unregisterReceiver(receiver);
+        }
+
+        if (task != null) {
+            task.cancel(true);
         }
     }
 
@@ -659,6 +704,29 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 }
             }
         });
+    }
+
+    @Override
+    public void processFinish(final DownloadOuisAsyncTask task) {
+        dbUpdateDialog = new ProgressDialog(this, R.style.DialogTheme);
+        dbUpdateDialog.setMessage(getResources().getString(R.string.downloadingOuis));
+        dbUpdateDialog.setCanceledOnTouchOutside(false);
+        dbUpdateDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                task.cancel(true);
+            }
+        });
+        dbUpdateDialog.show();
+    }
+
+    @Override
+    public void processFinish(DownloadOuisAsyncTask task, Void result) {
+        if (dbUpdateDialog != null && dbUpdateDialog.isShowing()) {
+            dbUpdateDialog.dismiss();
+        }
+
+        setupMac();
     }
 
     /**

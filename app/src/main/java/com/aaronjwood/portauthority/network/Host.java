@@ -1,6 +1,5 @@
 package com.aaronjwood.portauthority.network;
 
-import android.content.Context;
 import android.database.sqlite.SQLiteException;
 
 import com.aaronjwood.portauthority.async.ScanPortsAsyncTask;
@@ -18,17 +17,9 @@ public class Host implements Serializable {
     private String mac;
     private String vendor;
 
-    /**
-     * Constructs a host with a known IP and MAC, and additionally looks up the MAC vendor.
-     *
-     * @param ip
-     * @param mac
-     * @param context
-     * @throws IOException
-     */
-    public Host(String ip, String mac, Context context) throws IOException {
+    public Host(String ip, String mac, Database db) throws IOException {
         this(ip, mac);
-        setVendor(context);
+        setVendor(db);
     }
 
     /**
@@ -63,15 +54,8 @@ public class Host implements Serializable {
         return this;
     }
 
-    /**
-     * Sets this host's MAC vendor.
-     *
-     * @param context
-     * @return
-     * @throws IOException
-     */
-    private Host setVendor(Context context) throws IOException {
-        vendor = findMacVendor(mac, context);
+    private Host setVendor(Database db) throws IOException {
+        vendor = findMacVendor(mac, db);
 
         return this;
     }
@@ -120,15 +104,9 @@ public class Host implements Serializable {
         new ScanPortsAsyncTask(delegate).execute(ip, startPort, stopPort, timeout);
     }
 
-    /**
-     * Fetches the MAC vendor from the database
-     *
-     * @param mac     MAC address
-     * @param context Application context
-     */
-    public static String findMacVendor(String mac, Context context) throws IOException, SQLiteException {
+    public static String findMacVendor(String mac, Database db) throws IOException, SQLiteException {
         String prefix = mac.substring(0, 8);
-        return new Database(context).selectVendor(prefix);
+        return db.selectVendor(prefix);
     }
 
 }

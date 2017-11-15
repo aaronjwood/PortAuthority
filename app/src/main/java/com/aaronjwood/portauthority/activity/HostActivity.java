@@ -56,7 +56,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         super.onCreate(savedInstanceState);
         setContentView(layout);
 
-        db = new Database(this);
+        db = Database.getInstance(getApplicationContext());
         handler = new Handler(Looper.getMainLooper());
 
         setupPortsAdapter();

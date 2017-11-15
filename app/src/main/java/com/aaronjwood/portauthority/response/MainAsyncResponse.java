@@ -1,5 +1,6 @@
 package com.aaronjwood.portauthority.response;
 
+import com.aaronjwood.portauthority.async.DownloadOuisAsyncTask;
 import com.aaronjwood.portauthority.network.Host;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,4 +35,8 @@ public interface MainAsyncResponse extends ErrorAsyncResponse {
      * @param output
      */
     void processFinish(boolean output);
+
+    void processFinish(DownloadOuisAsyncTask output);
+
+    void processFinish(DownloadOuisAsyncTask task, Void result);
 }
