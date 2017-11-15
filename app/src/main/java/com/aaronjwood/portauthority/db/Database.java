@@ -82,7 +82,10 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public Database setTransactionSuccessful() {
-        db.setTransactionSuccessful();
+        if (db.inTransaction()) {
+            db.setTransactionSuccessful();
+        }
+
         return this;
     }
 
