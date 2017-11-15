@@ -14,13 +14,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
 import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class DownloadOuisAsyncTask extends AsyncTask<Void, String, Void> {
 
-    private static final String[] OUI_SERVICES = {"http://standards-oui.ieee.org/oui36/oui36.csv",
-            "http://standards-oui.ieee.org/oui28/mam.csv", "http://standards-oui.ieee.org/oui/oui.csv"};
+    private static final String OUI_SERVICE = "https://code.wireshark.org/review/gitweb?p=wireshark.git;a=blob_plain;f=manuf";
     private WeakReference<Context> context;
     private Database db;
     private ProgressDialog dialog;
@@ -51,45 +51,48 @@ public class DownloadOuisAsyncTask extends AsyncTask<Void, String, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         BufferedReader in = null;
-        HttpURLConnection connection = null;
+        HttpsURLConnection connection = null;
         db.clearOuis();
         try {
-            for (String service : OUI_SERVICES) {
-                URL url = new URL(service);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect();
-                if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                    publishProgress(connection.getResponseCode() + " " + connection.getResponseMessage());
+            URL url = new URL(OUI_SERVICE);
+            connection = (HttpsURLConnection) url.openConnection();
+            connection.connect();
+            if (connection.getResponseCode() != HttpsURLConnection.HTTP_OK) {
+                publishProgress(connection.getResponseCode() + " " + connection.getResponseMessage());
 
+                return null;
+            }
+
+            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            in.readLine(); // Skip headers.
+            String line;
+            db.beginTransaction();
+            while ((line = in.readLine()) != null) {
+                if (isCancelled()) {
                     return null;
                 }
 
-                in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                in.readLine(); // Skip headers.
-                String line;
-                db.beginTransaction();
-                while ((line = in.readLine()) != null) {
-                    if (isCancelled()) {
-                        return null;
-                    }
-
-                    String[] data = line.split(",");
-                    if (data.length != 4) {
-                        continue; // Format is registry, assignment, name, address.
-                    }
-
-                    String mac = data[1];
-                    String vendor = data[2];
-
-                    if (db.insertOui(mac, vendor) == -1) {
-                        publishProgress("Failed to insert MAC " + mac + " into the database. " +
-                                "Please run this operation again");
-
-                        return null;
-                    }
+                if (line.isEmpty() || line.startsWith("#")) {
+                    continue; // Skip comments and empty lines.
                 }
-                db.setTransactionSuccessful().endTransaction();
+
+                String[] data = line.split("\\t");
+                String mac = data[0].toLowerCase();
+                String vendor;
+                if (data.length == 3) {
+                    vendor = data[2];
+                } else {
+                    vendor = data[1];
+                }
+
+                if (db.insertOui(mac, vendor) == -1) {
+                    publishProgress("Failed to insert MAC " + mac + " into the database. " +
+                            "Please run this operation again");
+
+                    return null;
+                }
             }
+            db.setTransactionSuccessful().endTransaction();
         } catch (IOException e) {
             publishProgress(e.toString());
         } finally {

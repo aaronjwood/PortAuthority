@@ -147,7 +147,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             String mac = wifi.getMacAddress();
             macAddress.setText(mac);
 
-            String vendor = Host.findMacVendor(mac.replace(":", "").substring(0, 6), this);
+            String vendor = Host.findMacVendor(mac, this);
             macVendor.setText(vendor);
         } catch (UnknownHostException | SocketException e) {
             macAddress.setText(R.string.noWifiConnection);

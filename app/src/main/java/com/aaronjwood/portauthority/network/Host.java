@@ -71,8 +71,7 @@ public class Host implements Serializable {
      * @throws IOException
      */
     private Host setVendor(Context context) throws IOException {
-        String prefix = mac.replace(":", "").substring(0, 6);
-        vendor = findMacVendor(prefix, context);
+        vendor = findMacVendor(mac, context);
 
         return this;
     }
@@ -128,7 +127,8 @@ public class Host implements Serializable {
      * @param context Application context
      */
     public static String findMacVendor(String mac, Context context) throws IOException, SQLiteException {
-        return new Database(context).selectVendor(mac);
+        String prefix = mac.substring(0, 8);
+        return new Database(context).selectVendor(prefix);
     }
 
 }
