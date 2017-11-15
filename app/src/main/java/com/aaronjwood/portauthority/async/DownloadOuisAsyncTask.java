@@ -50,7 +50,6 @@ public class DownloadOuisAsyncTask extends AsyncTask<Void, String, Void> {
             }
 
             in = new BufferedReader(new InputStreamReader(new GZIPInputStream(connection.getInputStream())));
-            in.readLine(); // Skip headers.
             String line;
             db.beginTransaction();
             while ((line = in.readLine()) != null) {
