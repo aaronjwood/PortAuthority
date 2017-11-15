@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.URL;
+import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -40,6 +41,7 @@ public class DownloadOuisAsyncTask extends AsyncTask<Void, String, Void> {
         try {
             URL url = new URL(OUI_SERVICE);
             connection = (HttpsURLConnection) url.openConnection();
+            connection.setRequestProperty("Accept-Encoding", "gzip");
             connection.connect();
             if (connection.getResponseCode() != HttpsURLConnection.HTTP_OK) {
                 publishProgress(connection.getResponseCode() + " " + connection.getResponseMessage());
@@ -47,7 +49,7 @@ public class DownloadOuisAsyncTask extends AsyncTask<Void, String, Void> {
                 return null;
             }
 
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            in = new BufferedReader(new InputStreamReader(new GZIPInputStream(connection.getInputStream())));
             in.readLine(); // Skip headers.
             String line;
             db.beginTransaction();
