@@ -34,6 +34,8 @@ import android.widget.Toast;
 import com.aaronjwood.portauthority.BuildConfig;
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.adapter.HostAdapter;
+import com.aaronjwood.portauthority.async.DownloadOuisAsyncTask;
+import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Discovery;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
@@ -455,6 +457,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
+                        new DownloadOuisAsyncTask(new Database(MainActivity.this), MainActivity.this).execute();
+                        break;
+                    case 1:
                         startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                         break;
                 }
