@@ -36,11 +36,13 @@ import android.widget.Toast;
 import com.aaronjwood.portauthority.BuildConfig;
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.adapter.HostAdapter;
+import com.aaronjwood.portauthority.async.DownloadAsyncTask;
 import com.aaronjwood.portauthority.async.DownloadOuisAsyncTask;
 import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Discovery;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
+import com.aaronjwood.portauthority.parser.OuiParser;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
@@ -126,16 +128,16 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         final MainActivity activity = this;
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogTheme);
-        builder.setTitle("Generate OUI Database")
-                .setMessage("Do you want to create the OUI database? " +
-                        "This will download the official OUI lists from the IEEE. " +
-                        "Note that you won't be able to resolve any MAC vendors without this data. " +
-                        "You can always perform this later in the settings.")
+        builder.setTitle("Generate Database")
+                .setMessage("Do you want to create the OUI and port databases? " +
+                        "This will download the official OUI list from Wireshark and port list from IANA. " +
+                        "Note that you won't be able to resolve any MAC vendors or identify services without this data. " +
+                        "You can always perform this from the menu later.")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        task = new DownloadOuisAsyncTask(db, activity);
+                        task = new DownloadOuisAsyncTask(db, new OuiParser(), activity);
                         task.execute();
                     }
                 }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -492,7 +494,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
-                        task = new DownloadOuisAsyncTask(db, MainActivity.this);
+                        task = new DownloadOuisAsyncTask(db, new OuiParser(), MainActivity.this);
                         task.execute();
                         break;
                     case 1:
@@ -707,7 +709,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     }
 
     @Override
-    public void processFinish(final DownloadOuisAsyncTask task) {
+    public void processFinish(final DownloadAsyncTask task) {
         dbUpdateDialog = new ProgressDialog(this, R.style.DialogTheme);
         dbUpdateDialog.setMessage(getResources().getString(R.string.downloadingOuis));
         dbUpdateDialog.setCanceledOnTouchOutside(false);
@@ -721,7 +723,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     }
 
     @Override
-    public void processFinish(DownloadOuisAsyncTask task, Void result) {
+    public void processFinish(DownloadAsyncTask task, Void result) {
         if (dbUpdateDialog != null && dbUpdateDialog.isShowing()) {
             dbUpdateDialog.dismiss();
         }
