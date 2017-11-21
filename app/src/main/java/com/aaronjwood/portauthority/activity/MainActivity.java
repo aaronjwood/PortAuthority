@@ -363,8 +363,10 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     private void setClip(CharSequence label, String text) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText(label, text);
-        clipboard.setPrimaryClip(clip);
+        if (clipboard != null) {
+            ClipData clip = ClipData.newPlainText(label, text);
+            clipboard.setPrimaryClip(clip);
+        }
     }
 
     /**
