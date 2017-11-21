@@ -6,8 +6,8 @@ public class PortParser implements Parser {
 
     @Override
     public String[] parseLine(String line) {
-        String[] data = line.split(",");
-        if (data.length != 11) {
+        String[] data = line.split(",", -1);
+        if (data.length != 12) {
             return null;
         }
 
@@ -17,12 +17,6 @@ public class PortParser implements Parser {
         }
 
         String port = data[1];
-        try {
-            Integer.parseInt(port);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-
         String description = data[3];
 
         return new String[]{port, description};
@@ -30,7 +24,6 @@ public class PortParser implements Parser {
 
     @Override
     public long saveLine(Database db, String[] data) {
-        int port = Integer.parseInt(data[0]);
-        return db.insertPort(port, data[1]);
+        return db.insertPort(data[0], data[1]);
     }
 }

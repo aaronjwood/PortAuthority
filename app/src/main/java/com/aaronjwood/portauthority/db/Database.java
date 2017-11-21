@@ -69,7 +69,7 @@ public class Database extends SQLiteOpenHelper {
         return db.insert(OUI_TABLE, null, values);
     }
 
-    public long insertPort(int port, String description) {
+    public long insertPort(String port, String description) {
         ContentValues values = new ContentValues();
         values.put(PORT_FIELD, port);
         values.put(DESCRIPTION_FIELD, description);
@@ -103,11 +103,11 @@ public class Database extends SQLiteOpenHelper {
         return vendor;
     }
 
-    public String selectPortName(int port) {
-        Cursor cursor = db.rawQuery("SELECT name FROM ports WHERE port = ?", new String[]{Integer.toString(port)});
+    public String selectPortName(String port) {
+        Cursor cursor = db.rawQuery("SELECT " + DESCRIPTION_FIELD + " FROM ports WHERE port = ?", new String[]{port});
         String name = "";
         if (cursor.moveToFirst()) {
-            name = cursor.getString(cursor.getColumnIndex("name"));
+            name = cursor.getString(cursor.getColumnIndex(DESCRIPTION_FIELD));
         }
 
         cursor.close();

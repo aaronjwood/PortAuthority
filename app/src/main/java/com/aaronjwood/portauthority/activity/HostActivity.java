@@ -271,7 +271,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         int scannedPort = output.keyAt(0);
         String item = String.valueOf(scannedPort);
 
-        String name = db.selectPortName(scannedPort);
+        String name = db.selectPortName(String.valueOf(scannedPort));
         name = (name.isEmpty()) ? "unknown" : name;
         item = formatOpenPort(output, scannedPort, name, item);
         addOpenPort(item);
