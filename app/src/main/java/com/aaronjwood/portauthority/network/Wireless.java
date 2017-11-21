@@ -246,7 +246,8 @@ public class Wireless {
      * @return True if enabled, false if disabled
      */
     public boolean isEnabled() {
-        return getWifiManager().isWifiEnabled();
+        WifiManager manager = getWifiManager();
+        return manager != null && manager.isWifiEnabled();
     }
 
     /**
