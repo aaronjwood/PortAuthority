@@ -570,6 +570,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         }
 
         scanProgressDialog = null;
+        ouiTask = null;
+        portTask = null;
     }
 
     /**
