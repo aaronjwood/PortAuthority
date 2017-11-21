@@ -1,8 +1,8 @@
 package com.aaronjwood.portauthority.async;
 
-import android.content.Context;
 import android.os.AsyncTask;
 
+import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
@@ -24,6 +24,7 @@ import jcifs.netbios.NbtAddress;
 
 public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     private final WeakReference<MainAsyncResponse> delegate;
+    private Database db;
     private static final String ARP_TABLE = "/proc/net/arp";
     private static final String ARP_INCOMPLETE = "0x0";
     private static final String ARP_INACTIVE = "00:00:00:00:00:00";
@@ -34,8 +35,9 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
      *
      * @param delegate Called when host discovery has finished
      */
-    public ScanHostsAsyncTask(MainAsyncResponse delegate) {
+    public ScanHostsAsyncTask(MainAsyncResponse delegate, Database db) {
         this.delegate = new WeakReference<>(delegate);
+        this.db = db;
     }
 
     /**
@@ -126,7 +128,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                         public void run() {
                             Host host;
                             try {
-                                host = new Host(ip, macAddress, (Context) activity);
+                                host = new Host(ip, macAddress, db);
                             } catch (IOException e) {
                                 host = new Host(ip, macAddress);
                             }

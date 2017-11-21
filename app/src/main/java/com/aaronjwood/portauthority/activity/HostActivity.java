@@ -4,8 +4,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,7 +29,6 @@ import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,15 +56,9 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         super.onCreate(savedInstanceState);
         setContentView(layout);
 
-        db = new Database(this);
-
-        try {
-            db.openDatabase("network.db");
-        } catch (IOException | SQLiteException e) {
-            Errors.showError(getApplicationContext(), getResources().getString(R.string.failedOpenDb));
-        }
-
+        db = Database.getInstance(getApplicationContext());
         handler = new Handler(Looper.getMainLooper());
+
         setupPortsAdapter();
     }
 
@@ -112,8 +103,6 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        db.close();
     }
 
     /**
@@ -282,16 +271,10 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         int scannedPort = output.keyAt(0);
         String item = String.valueOf(scannedPort);
 
-        Cursor cursor = db.queryDatabase("SELECT name, port FROM ports WHERE port = ?", new String[]{Integer.toString(scannedPort)});
-
-        if (cursor.moveToFirst()) {
-            String name = cursor.getString(cursor.getColumnIndex("name"));
-            name = (name.isEmpty()) ? "unknown" : name;
-            item = formatOpenPort(output, scannedPort, name, item);
-            addOpenPort(item);
-        }
-
-        cursor.close();
+        String name = db.selectPortDescription(String.valueOf(scannedPort));
+        name = (name.isEmpty()) ? "unknown" : name;
+        item = formatOpenPort(output, scannedPort, name, item);
+        addOpenPort(item);
     }
 
     /**

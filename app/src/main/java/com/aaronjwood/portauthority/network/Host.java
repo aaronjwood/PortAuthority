@@ -1,7 +1,5 @@
 package com.aaronjwood.portauthority.network;
 
-import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 
 import com.aaronjwood.portauthority.async.ScanPortsAsyncTask;
@@ -19,17 +17,9 @@ public class Host implements Serializable {
     private String mac;
     private String vendor;
 
-    /**
-     * Constructs a host with a known IP and MAC, and additionally looks up the MAC vendor.
-     *
-     * @param ip
-     * @param mac
-     * @param context
-     * @throws IOException
-     */
-    public Host(String ip, String mac, Context context) throws IOException {
+    public Host(String ip, String mac, Database db) throws IOException {
         this(ip, mac);
-        setVendor(context);
+        setVendor(db);
     }
 
     /**
@@ -64,16 +54,8 @@ public class Host implements Serializable {
         return this;
     }
 
-    /**
-     * Sets this host's MAC vendor.
-     *
-     * @param context
-     * @return
-     * @throws IOException
-     */
-    private Host setVendor(Context context) throws IOException {
-        String prefix = mac.replace(":", "").substring(0, 6);
-        vendor = findMacVendor(prefix, context);
+    private Host setVendor(Database db) throws IOException {
+        vendor = findMacVendor(mac, db);
 
         return this;
     }
@@ -123,27 +105,17 @@ public class Host implements Serializable {
     }
 
     /**
-     * Fetches the MAC vendor from the database
+     * Searches for the MAC vendor based on the provided MAc address.
      *
-     * @param mac     MAC address
-     * @param context Application context
+     * @param mac
+     * @param db
+     * @return
+     * @throws IOException
+     * @throws SQLiteException
      */
-    public static String findMacVendor(String mac, Context context) throws IOException, SQLiteException {
-        Database db = new Database(context);
-        db.openDatabase("network.db");
-        Cursor cursor = db.queryDatabase("SELECT vendor FROM ouis WHERE mac LIKE ?", new String[]{mac});
-        String vendor;
-
-        if (cursor.moveToFirst()) {
-            vendor = cursor.getString(cursor.getColumnIndex("vendor"));
-        } else {
-            vendor = "Vendor not in database";
-        }
-
-        cursor.close();
-        db.close();
-
-        return vendor;
+    public static String findMacVendor(String mac, Database db) throws IOException, SQLiteException {
+        String prefix = mac.substring(0, 8);
+        return db.selectVendor(prefix);
     }
 
 }

@@ -1,10 +1,12 @@
 package com.aaronjwood.portauthority.activity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.sqlite.SQLiteException;
@@ -34,9 +36,15 @@ import android.widget.Toast;
 import com.aaronjwood.portauthority.BuildConfig;
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.adapter.HostAdapter;
-import com.aaronjwood.portauthority.network.Discovery;
+import com.aaronjwood.portauthority.async.DownloadAsyncTask;
+import com.aaronjwood.portauthority.async.DownloadOuisAsyncTask;
+import com.aaronjwood.portauthority.async.DownloadPortDataAsyncTask;
+import com.aaronjwood.portauthority.async.ScanHostsAsyncTask;
+import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
+import com.aaronjwood.portauthority.parser.OuiParser;
+import com.aaronjwood.portauthority.parser.PortParser;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
@@ -74,6 +82,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private IntentFilter intentFilter = new IntentFilter();
     private HostAdapter hostAdapter;
     private List<Host> hosts = Collections.synchronizedList(new ArrayList<Host>());
+    private Database db;
+    private DownloadAsyncTask ouiTask;
+    private DownloadAsyncTask portTask;
     private boolean sortAscending;
 
     /**
@@ -103,10 +114,45 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         wifi = new Wireless(getApplicationContext());
         scanHandler = new Handler(Looper.getMainLooper());
 
+        checkDatabase();
+        db = Database.getInstance(getApplicationContext());
+
         setupHostsAdapter();
         setupDrawer();
         setupReceivers();
         setupHostDiscovery();
+    }
+
+    /**
+     * Determines if the initial download of OUI and port data needs to be done.
+     */
+    public void checkDatabase() {
+        if (getDatabasePath(Database.DATABASE_NAME).exists()) {
+            return;
+        }
+
+        final MainActivity activity = this;
+        new AlertDialog.Builder(activity, R.style.DialogTheme).setTitle("Generate Database")
+                .setMessage("Do you want to create the OUI and port databases? " +
+                        "This will download the official OUI list from Wireshark and port list from IANA. " +
+                        "Note that you won't be able to resolve any MAC vendors or identify services without this data. " +
+                        "You can always perform this from the menu later.")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                        ouiTask = new DownloadOuisAsyncTask(db, new OuiParser(), activity);
+                        portTask = new DownloadPortDataAsyncTask(db, new PortParser(), activity);
+                        ouiTask.execute();
+                        portTask.execute();
+                    }
+                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        }).setIcon(android.R.drawable.ic_dialog_alert).show().setCanceledOnTouchOutside(false);
     }
 
     /**
@@ -133,7 +179,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     /**
      * Sets up the device's MAC address and vendor
      */
-    private void setupMac() {
+    public void setupMac() {
         TextView macAddress = findViewById(R.id.deviceMacAddress);
         TextView macVendor = findViewById(R.id.deviceMacVendor);
         if (!wifi.isEnabled()) {
@@ -145,8 +191,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         try {
             String mac = wifi.getMacAddress();
-            String vendor = Host.findMacVendor(mac.replace(":", "").substring(0, 6), this);
             macAddress.setText(mac);
+
+            String vendor = Host.findMacVendor(mac, db);
             macVendor.setText(vendor);
         } catch (UnknownHostException | SocketException e) {
             macAddress.setText(R.string.noWifiConnection);
@@ -170,13 +217,11 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             public void onClick(View v) {
                 if (!wifi.isEnabled()) {
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.wifiDisabled), Toast.LENGTH_SHORT).show();
-
                     return;
                 }
 
                 if (!wifi.isConnectedWifi()) {
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedWifi), Toast.LENGTH_SHORT).show();
-
                     return;
                 }
 
@@ -197,7 +242,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
                 try {
                     Integer ip = wifi.getInternalWifiIpAddress(Integer.class);
-                    Discovery.scanHosts(ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(getApplicationContext()), MainActivity.this);
+                    new ScanHostsAsyncTask(MainActivity.this, db).execute(ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(getApplicationContext()));
                     discoverHostsBtn.setAlpha(.3f);
                     discoverHostsBtn.setEnabled(false);
                 } catch (UnknownHostException e) {
@@ -321,8 +366,10 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     private void setClip(CharSequence label, String text) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText(label, text);
-        clipboard.setPrimaryClip(clip);
+        if (clipboard != null) {
+            ClipData clip = ClipData.newPlainText(label, text);
+            clipboard.setPrimaryClip(clip);
+        }
     }
 
     /**
@@ -454,6 +501,14 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
+                        ouiTask = new DownloadOuisAsyncTask(db, new OuiParser(), MainActivity.this);
+                        ouiTask.execute();
+                        break;
+                    case 1:
+                        portTask = new DownloadPortDataAsyncTask(db, new PortParser(), MainActivity.this);
+                        portTask.execute();
+                        break;
+                    case 2:
                         startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                         break;
                 }
@@ -507,10 +562,21 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public void onPause() {
         super.onPause();
 
-        if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
+        if (scanProgressDialog != null) {
             scanProgressDialog.dismiss();
         }
+
+        if (ouiTask != null) {
+            ouiTask.cancel(true);
+        }
+
+        if (portTask != null) {
+            portTask.cancel(true);
+        }
+
         scanProgressDialog = null;
+        ouiTask = null;
+        portTask = null;
     }
 
     /**

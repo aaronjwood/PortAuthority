@@ -34,4 +34,5 @@ public interface MainAsyncResponse extends ErrorAsyncResponse {
      * @param output
      */
     void processFinish(boolean output);
+
 }
