@@ -38,11 +38,13 @@ import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.adapter.HostAdapter;
 import com.aaronjwood.portauthority.async.DownloadAsyncTask;
 import com.aaronjwood.portauthority.async.DownloadOuisAsyncTask;
+import com.aaronjwood.portauthority.async.DownloadPortDataAsyncTask;
 import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Discovery;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.parser.OuiParser;
+import com.aaronjwood.portauthority.parser.PortParser;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
@@ -74,7 +76,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private Button discoverHostsBtn;
     private String discoverHostsStr; // Cache this so it's not looked up every time a host is found.
     private ProgressDialog scanProgressDialog;
-    private ProgressDialog dbUpdateDialog;
     private Handler signalHandler = new Handler();
     private Handler scanHandler;
     private BroadcastReceiver receiver;
@@ -82,7 +83,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private HostAdapter hostAdapter;
     private List<Host> hosts = Collections.synchronizedList(new ArrayList<Host>());
     private Database db;
-    private DownloadOuisAsyncTask task;
+    private DownloadAsyncTask ouiTask;
+    private DownloadAsyncTask portTask;
     private boolean sortAscending;
 
     /**
@@ -127,8 +129,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         }
 
         final MainActivity activity = this;
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogTheme);
-        builder.setTitle("Generate Database")
+        new AlertDialog.Builder(activity, R.style.DialogTheme).setTitle("Generate Database")
                 .setMessage("Do you want to create the OUI and port databases? " +
                         "This will download the official OUI list from Wireshark and port list from IANA. " +
                         "Note that you won't be able to resolve any MAC vendors or identify services without this data. " +
@@ -137,13 +138,16 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        task = new DownloadOuisAsyncTask(db, new OuiParser(), activity);
-                        task.execute();
+                        dialogInterface.dismiss();
+                        ouiTask = new DownloadOuisAsyncTask(db, new OuiParser(), activity);
+                        portTask = new DownloadPortDataAsyncTask(db, new PortParser(), activity);
+                        ouiTask.execute();
+                        portTask.execute();
                     }
                 }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                // We don't want to do anything.
+                dialogInterface.cancel();
             }
         }).setIcon(android.R.drawable.ic_dialog_alert).show().setCanceledOnTouchOutside(false);
     }
@@ -210,13 +214,11 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             public void onClick(View v) {
                 if (!wifi.isEnabled()) {
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.wifiDisabled), Toast.LENGTH_SHORT).show();
-
                     return;
                 }
 
                 if (!wifi.isConnectedWifi()) {
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedWifi), Toast.LENGTH_SHORT).show();
-
                     return;
                 }
 
@@ -494,10 +496,14 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
-                        task = new DownloadOuisAsyncTask(db, new OuiParser(), MainActivity.this);
-                        task.execute();
+                        ouiTask = new DownloadOuisAsyncTask(db, new OuiParser(), MainActivity.this);
+                        ouiTask.execute();
                         break;
                     case 1:
+                        portTask = new DownloadPortDataAsyncTask(db, new PortParser(), MainActivity.this);
+                        portTask.execute();
+                        break;
+                    case 2:
                         startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                         break;
                 }
@@ -551,15 +557,19 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public void onPause() {
         super.onPause();
 
-        if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
+        if (scanProgressDialog != null) {
             scanProgressDialog.dismiss();
         }
-        if (dbUpdateDialog != null && dbUpdateDialog.isShowing()) {
-            dbUpdateDialog.dismiss();
+
+        if (ouiTask != null) {
+            ouiTask.cancel(true);
+        }
+
+        if (portTask != null) {
+            portTask.cancel(true);
         }
 
         scanProgressDialog = null;
-        dbUpdateDialog = null;
     }
 
     /**
@@ -573,10 +583,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         if (receiver != null) {
             unregisterReceiver(receiver);
-        }
-
-        if (task != null) {
-            task.cancel(true);
         }
     }
 
@@ -706,29 +712,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 }
             }
         });
-    }
-
-    @Override
-    public void processFinish(final DownloadAsyncTask task) {
-        dbUpdateDialog = new ProgressDialog(this, R.style.DialogTheme);
-        dbUpdateDialog.setMessage(getResources().getString(R.string.downloadingOuis));
-        dbUpdateDialog.setCanceledOnTouchOutside(false);
-        dbUpdateDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                task.cancel(true);
-            }
-        });
-        dbUpdateDialog.show();
-    }
-
-    @Override
-    public void processFinish(DownloadAsyncTask task, Void result) {
-        if (dbUpdateDialog != null && dbUpdateDialog.isShowing()) {
-            dbUpdateDialog.dismiss();
-        }
-
-        setupMac();
     }
 
     /**

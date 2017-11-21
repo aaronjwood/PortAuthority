@@ -20,6 +20,7 @@
     </string-array>
     <string-array name="lowerDrawer">
         <item>\u2195 Update OUI Database</item>
+        <item>\u2195 Update Port Database</item>
         <item>\u2699 Settings</item>
     </string-array>
     <string-array name="records">

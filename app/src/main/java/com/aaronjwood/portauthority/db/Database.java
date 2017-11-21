@@ -14,12 +14,10 @@ public class Database extends SQLiteOpenHelper {
     private static final String PORT_TABLE = "ports";
     private static final String MAC_FIELD = "mac";
     private static final String VENDOR_FIELD = "vendor";
-    private static final String PORT_NAME_FIELD = "name";
     private static final String PORT_FIELD = "port";
-    private static final String PROTOCOL_FIELD = "protocol";
     private static final String DESCRIPTION_FIELD = "description";
-    private static final String DATABASE_CREATE = "CREATE TABLE " + OUI_TABLE + " (" + MAC_FIELD + " TEXT NOT NULL, " + VENDOR_FIELD + " TEXT NOT NULL);" +
-            "CREATE TABLE " + PORT_TABLE + " (" + PORT_NAME_FIELD + " TEXT, " + PORT_FIELD + " INTEGER, " + PROTOCOL_FIELD + " TEXT, " + DESCRIPTION_FIELD + " TEXT);";
+    private static final String CREATE_OUI_TABLE = "CREATE TABLE " + OUI_TABLE + " (" + MAC_FIELD + " TEXT NOT NULL, " + VENDOR_FIELD + " TEXT NOT NULL);";
+    private static final String CREATE_PORT_TABLE = "CREATE TABLE " + PORT_TABLE + " (" + PORT_FIELD + " INTEGER NOT NULL, " + DESCRIPTION_FIELD + " TEXT);";
 
     private static Database singleton;
     private SQLiteDatabase db;
@@ -37,38 +35,30 @@ public class Database extends SQLiteOpenHelper {
         db = this.getWritableDatabase();
     }
 
+    public Database beginTransaction() {
+        db.beginTransactionNonExclusive();
+        return this;
+    }
+
+    public Database endTransaction() {
+        db.endTransaction();
+        return this;
+    }
+
+    public Database setTransactionSuccessful() {
+        db.setTransactionSuccessful();
+        return this;
+    }
+
     @Override
     public void onCreate(final SQLiteDatabase db) {
-        db.execSQL(DATABASE_CREATE);
+        db.execSQL(CREATE_OUI_TABLE);
+        db.execSQL(CREATE_PORT_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // TODO implement when upgrades are needed.
-    }
-
-    public Database beginTransaction() {
-        if (!db.inTransaction()) {
-            db.beginTransaction();
-        }
-
-        return this;
-    }
-
-    public Database endTransaction() {
-        if (db.inTransaction()) {
-            db.endTransaction();
-        }
-
-        return this;
-    }
-
-    public Database setTransactionSuccessful() {
-        if (db.inTransaction()) {
-            db.setTransactionSuccessful();
-        }
-
-        return this;
     }
 
     public long insertOui(String mac, String vendor) {
@@ -79,8 +69,22 @@ public class Database extends SQLiteOpenHelper {
         return db.insert(OUI_TABLE, null, values);
     }
 
+    public long insertPort(int port, String description) {
+        ContentValues values = new ContentValues();
+        values.put(PORT_FIELD, port);
+        values.put(DESCRIPTION_FIELD, description);
+
+        return db.insert(PORT_TABLE, null, values);
+    }
+
     public Database clearOuis() {
         db.execSQL("DELETE FROM " + OUI_TABLE);
+        db.execSQL("VACUUM");
+        return this;
+    }
+
+    public Database clearPorts() {
+        db.execSQL("DELETE FROM " + PORT_TABLE);
         db.execSQL("VACUUM");
         return this;
     }

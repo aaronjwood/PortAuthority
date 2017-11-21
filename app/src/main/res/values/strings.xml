@@ -42,7 +42,7 @@
     <string name="copyMac">Copy MAC</string>
     <string name="getMacVendorFailed">Failed to get MAC vendor</string>
     <string name="failedOpenDb">Failed to open database</string>
-    <string name="downloadingOuis">Downloading OUI Data</string>
+    <string name="downloadingData">Downloading Data</string>
     <string name="scanningDisclaimer">
         Please be aware that running port scans against public servers is normally considered malicious.
         Additionally, running these kinds of scans over your carrier\'s network instead of your own WiFi connection will be slower and will sometimes produce inaccurate results due to traffic shaping.

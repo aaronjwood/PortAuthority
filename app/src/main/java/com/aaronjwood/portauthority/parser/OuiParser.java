@@ -4,8 +4,8 @@ import com.aaronjwood.portauthority.db.Database;
 
 public class OuiParser implements Parser {
 
+    @Override
     public String[] parseLine(String line) {
-
         if (line.isEmpty() || line.startsWith("#")) {
             return null;
         }
@@ -23,6 +23,7 @@ public class OuiParser implements Parser {
 
     }
 
+    @Override
     public long saveLine(Database db, String[] line) {
         return db.insertOui(line[0], line[1]);
     }

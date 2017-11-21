@@ -1,17 +1,16 @@
 package com.aaronjwood.portauthority.async;
 
-import com.aaronjwood.portauthority.activity.MainActivity;
 import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.parser.Parser;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
 import java.lang.ref.WeakReference;
 
-public class DownloadOuisAsyncTask extends DownloadAsyncTask {
+public class DownloadPortDataAsyncTask extends DownloadAsyncTask {
 
-    private static final String SERVICE = "https://code.wireshark.org/review/gitweb?p=wireshark.git;a=blob_plain;f=manuf";
+    private static final String SERVICE = "https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.csv";
 
-    public DownloadOuisAsyncTask(Database database, Parser parser, MainAsyncResponse activity) {
+    public DownloadPortDataAsyncTask(Database database, Parser parser, MainAsyncResponse activity) {
         db = database;
         delegate = new WeakReference<>(activity);
         this.parser = parser;
@@ -24,7 +23,7 @@ public class DownloadOuisAsyncTask extends DownloadAsyncTask {
 
     @Override
     protected Void doInBackground(Void... params) {
-        db.clearOuis();
+        db.clearPorts();
         doInBackground(SERVICE, parser);
         return null;
     }
@@ -32,10 +31,6 @@ public class DownloadOuisAsyncTask extends DownloadAsyncTask {
     @Override
     protected void onPostExecute(Void result) {
         super.onPostExecute(result);
-        MainAsyncResponse activity = delegate.get();
-        if (activity != null) {
-            ((MainActivity) activity).setupMac();
-        }
     }
 
 }
