@@ -247,6 +247,17 @@ public class Wireless {
     }
 
     /**
+     * Determines if the device is connected to a wired network.
+     *
+     * @return
+     * @throws NoConnectivityManagerException
+     */
+    public boolean isConnectedEthernet() throws NoConnectivityManagerException {
+        NetworkInfo info = getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
+        return info != null && info.isConnectedOrConnecting();
+    }
+
+    /**
      * Determines if WiFi is enabled on the device or not
      *
      * @return True if enabled, false if disabled

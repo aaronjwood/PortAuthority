@@ -216,16 +216,11 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             @Override
             public void onClick(View v) {
                 try {
-                    if (!wifi.isEnabled()) {
-                        Errors.showError(getApplicationContext(), getResources().getString(R.string.wifiDisabled));
+                    if (!wifi.isConnectedWifi() && !wifi.isConnectedEthernet()) {
+                        Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                         return;
                     }
-
-                    if (!wifi.isConnectedWifi()) {
-                        Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedWifi));
-                        return;
-                    }
-                } catch (Wireless.NoWifiManagerException | Wireless.NoConnectivityManagerException e) {
+                } catch (Wireless.NoConnectivityManagerException e) {
                     Errors.showError(getApplicationContext(), getResources().getString(R.string.failedWifiManager));
                     return;
                 }
@@ -259,7 +254,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     discoverHostsBtn.setAlpha(.3f);
                     discoverHostsBtn.setEnabled(false);
                 } catch (UnknownHostException | Wireless.NoWifiManagerException e) {
-                    Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedWifi));
+                    Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                 }
             }
         });
