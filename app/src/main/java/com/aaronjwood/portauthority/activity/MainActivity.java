@@ -123,6 +123,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         setupHostDiscovery();
     }
 
+    /**
+     * Determines if the initial download of OUI and port data needs to be done.
+     */
     public void checkDatabase() {
         if (getDatabasePath(Database.DATABASE_NAME).exists()) {
             return;

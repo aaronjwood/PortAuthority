@@ -11,17 +11,33 @@ public class DownloadOuisAsyncTask extends DownloadAsyncTask {
 
     private static final String SERVICE = "https://code.wireshark.org/review/gitweb?p=wireshark.git;a=blob_plain;f=manuf";
 
+    /**
+     * Creates a new asynchronous task to handle downloading OUI data.
+     *
+     * @param database
+     * @param parser
+     * @param activity
+     */
     public DownloadOuisAsyncTask(Database database, Parser parser, MainAsyncResponse activity) {
         db = database;
         delegate = new WeakReference<>(activity);
         this.parser = parser;
     }
 
+    /**
+     * Sets up and displays the dialog.
+     */
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
     }
 
+    /**
+     * Downloads new OUI data.
+     *
+     * @param params
+     * @return
+     */
     @Override
     protected Void doInBackground(Void... params) {
         db.clearOuis();
@@ -29,6 +45,11 @@ public class DownloadOuisAsyncTask extends DownloadAsyncTask {
         return null;
     }
 
+    /**
+     * Updates the UI with the MAC address from the newly fetched data.
+     *
+     * @param result
+     */
     @Override
     protected void onPostExecute(Void result) {
         super.onPostExecute(result);

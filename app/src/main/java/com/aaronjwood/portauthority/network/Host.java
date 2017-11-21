@@ -104,6 +104,15 @@ public class Host implements Serializable {
         new ScanPortsAsyncTask(delegate).execute(ip, startPort, stopPort, timeout);
     }
 
+    /**
+     * Searches for the MAC vendor based on the provided MAc address.
+     *
+     * @param mac
+     * @param db
+     * @return
+     * @throws IOException
+     * @throws SQLiteException
+     */
     public static String findMacVendor(String mac, Database db) throws IOException, SQLiteException {
         String prefix = mac.substring(0, 8);
         return db.selectVendor(prefix);

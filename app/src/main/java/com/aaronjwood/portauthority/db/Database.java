@@ -22,6 +22,12 @@ public class Database extends SQLiteOpenHelper {
     private static Database singleton;
     private SQLiteDatabase db;
 
+    /**
+     * Returns the single instance of this class or creates one if it doesn't already exist.
+     *
+     * @param context
+     * @return
+     */
     public static Database getInstance(Context context) {
         if (singleton == null) {
             singleton = new Database(context);
@@ -30,37 +36,76 @@ public class Database extends SQLiteOpenHelper {
         return singleton;
     }
 
+    /**
+     * Sets up the database and returns the writable handle to it.
+     *
+     * @param context
+     */
     private Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         db = this.getWritableDatabase();
     }
 
+    /**
+     * Starts a transaction that allows for multiple readers and one writer.
+     *
+     * @return
+     */
     public Database beginTransaction() {
         db.beginTransactionNonExclusive();
         return this;
     }
 
+    /**
+     * Finishes the transaction.
+     *
+     * @return
+     */
     public Database endTransaction() {
         db.endTransaction();
         return this;
     }
 
+    /**
+     * Marks the transaction as successful and commits the transaction.
+     *
+     * @return
+     */
     public Database setTransactionSuccessful() {
         db.setTransactionSuccessful();
         return this;
     }
 
+    /**
+     * Called when the database doesn't exist and needs its schema created.
+     *
+     * @param db
+     */
     @Override
     public void onCreate(final SQLiteDatabase db) {
         db.execSQL(CREATE_OUI_TABLE);
         db.execSQL(CREATE_PORT_TABLE);
     }
 
+    /**
+     * Handles upgrades between database versions.
+     *
+     * @param db
+     * @param oldVersion
+     * @param newVersion
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // TODO implement when upgrades are needed.
     }
 
+    /**
+     * Inserts a new OUI entry containing a MAC address and its associated vendor.
+     *
+     * @param mac
+     * @param vendor
+     * @return
+     */
     public long insertOui(String mac, String vendor) {
         ContentValues values = new ContentValues();
         values.put(MAC_FIELD, mac);
@@ -69,6 +114,13 @@ public class Database extends SQLiteOpenHelper {
         return db.insert(OUI_TABLE, null, values);
     }
 
+    /**
+     * Inserts a new port containing the port number and its associated description.
+     *
+     * @param port
+     * @param description
+     * @return
+     */
     public long insertPort(String port, String description) {
         ContentValues values = new ContentValues();
         values.put(PORT_FIELD, port);
@@ -77,18 +129,34 @@ public class Database extends SQLiteOpenHelper {
         return db.insert(PORT_TABLE, null, values);
     }
 
+    /**
+     * Wipes out all of the OUIs that are currently in the database.
+     *
+     * @return
+     */
     public Database clearOuis() {
         db.execSQL("DELETE FROM " + OUI_TABLE);
         db.execSQL("VACUUM");
         return this;
     }
 
+    /**
+     * Wipes out all of the ports that are currently in the database.
+     *
+     * @return
+     */
     public Database clearPorts() {
         db.execSQL("DELETE FROM " + PORT_TABLE);
         db.execSQL("VACUUM");
         return this;
     }
 
+    /**
+     * Searches for a vendor based on the provided MAC address.
+     *
+     * @param mac
+     * @return
+     */
     public String selectVendor(String mac) {
         Cursor cursor = db.rawQuery("SELECT " + VENDOR_FIELD + " FROM " + OUI_TABLE + " WHERE " + MAC_FIELD + " LIKE ?", new String[]{mac});
         String vendor;
@@ -103,7 +171,13 @@ public class Database extends SQLiteOpenHelper {
         return vendor;
     }
 
-    public String selectPortName(String port) {
+    /**
+     * Searches for a port description based on the provided port.
+     *
+     * @param port
+     * @return
+     */
+    public String selectPortDescription(String port) {
         Cursor cursor = db.rawQuery("SELECT " + DESCRIPTION_FIELD + " FROM ports WHERE port = ?", new String[]{port});
         String name = "";
         if (cursor.moveToFirst()) {

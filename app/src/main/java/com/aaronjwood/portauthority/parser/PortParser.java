@@ -4,6 +4,12 @@ import com.aaronjwood.portauthority.db.Database;
 
 public class PortParser implements Parser {
 
+    /**
+     * Parses the line of port data based on IANA's format.
+     *
+     * @param line
+     * @return
+     */
     @Override
     public String[] parseLine(String line) {
         String[] data = line.split(",", -1);
@@ -22,6 +28,13 @@ public class PortParser implements Parser {
         return new String[]{port, description};
     }
 
+    /**
+     * Saves the parsed line to the database.
+     *
+     * @param db
+     * @param data
+     * @return
+     */
     @Override
     public long saveLine(Database db, String[] data) {
         return db.insertPort(data[0], data[1]);

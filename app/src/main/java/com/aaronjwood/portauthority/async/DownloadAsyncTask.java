@@ -28,6 +28,9 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, String, Void> {
 
     Parser parser;
 
+    /**
+     * Creates and displays the progress dialog.
+     */
     @Override
     protected void onPreExecute() {
         MainAsyncResponse activity = delegate.get();
@@ -49,6 +52,12 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, String, Void> {
         dialog.show();
     }
 
+    /**
+     * Downloads and parses data based on the service URL and parser.
+     *
+     * @param service
+     * @param parser
+     */
     final void doInBackground(String service, Parser parser) {
         BufferedReader in = null;
         HttpsURLConnection connection = null;
@@ -101,6 +110,11 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, String, Void> {
         }
     }
 
+    /**
+     * Handles errors.
+     *
+     * @param progress
+     */
     @Override
     protected void onProgressUpdate(String... progress) {
         MainAsyncResponse activity = delegate.get();
@@ -109,6 +123,11 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, String, Void> {
         }
     }
 
+    /**
+     * Dismisses the dialog.
+     *
+     * @param result
+     */
     @Override
     protected void onPostExecute(Void result) {
         MainAsyncResponse activity = delegate.get();
