@@ -24,6 +24,8 @@ android {
         targetSdkVersion 26
         versionCode 49
         versionName "2.0.1"
+        applicationId "com.aaronjwood.portauthority"
+        setProperty("archivesBaseName", "PortAuthority-$versionName")
     }
 
     compileOptions {
@@ -39,26 +41,22 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-                    'proguard.pro'
-            applicationVariants.all { variant ->
-                variant.outputs.each { output ->
-                    def formattedDate = new Date().format('yyyyMMdd')
-                    def newName = output.outputFile.name
-                    newName = newName.replace("app", "PortAuthority")
-                    newName = newName.replace("-release", "-release-" + formattedDate)
-                    output.outputFile = new File(output.outputFile.parent, newName)
-                }
-            }
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.pro'
         }
     }
 
+    flavorDimensions "main"
+
     productFlavors {
         free {
-            applicationId "com.aaronjwood.portauthority.free"
+            applicationIdSuffix ".free"
+            versionNameSuffix "-free"
+            dimension "main"
         }
         donate {
-            applicationId "com.aaronjwood.portauthority.donate"
+            applicationIdSuffix ".donate"
+            versionNameSuffix "-donate"
+            dimension "main"
         }
     }
 
