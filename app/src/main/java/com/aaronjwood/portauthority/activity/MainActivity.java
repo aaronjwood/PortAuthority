@@ -39,8 +39,8 @@ import com.aaronjwood.portauthority.adapter.HostAdapter;
 import com.aaronjwood.portauthority.async.DownloadAsyncTask;
 import com.aaronjwood.portauthority.async.DownloadOuisAsyncTask;
 import com.aaronjwood.portauthority.async.DownloadPortDataAsyncTask;
+import com.aaronjwood.portauthority.async.ScanHostsAsyncTask;
 import com.aaronjwood.portauthority.db.Database;
-import com.aaronjwood.portauthority.network.Discovery;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.parser.OuiParser;
@@ -242,7 +242,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
                 try {
                     Integer ip = wifi.getInternalWifiIpAddress(Integer.class);
-                    Discovery.scanHosts(ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(getApplicationContext()), MainActivity.this, db);
+                    new ScanHostsAsyncTask(MainActivity.this, db).execute(ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(getApplicationContext()));
                     discoverHostsBtn.setAlpha(.3f);
                     discoverHostsBtn.setEnabled(false);
                 } catch (UnknownHostException e) {
