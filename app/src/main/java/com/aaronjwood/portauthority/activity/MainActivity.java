@@ -31,7 +31,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aaronjwood.portauthority.BuildConfig;
 import com.aaronjwood.portauthority.R;
@@ -182,23 +181,24 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public void setupMac() {
         TextView macAddress = findViewById(R.id.deviceMacAddress);
         TextView macVendor = findViewById(R.id.deviceMacVendor);
-        if (!wifi.isEnabled()) {
-            macAddress.setText(R.string.wifiDisabled);
-            macVendor.setText(R.string.wifiDisabled);
-
-            return;
-        }
 
         try {
+            if (!wifi.isEnabled()) {
+                macAddress.setText(R.string.wifiDisabled);
+                macVendor.setText(R.string.wifiDisabled);
+
+                return;
+            }
+
             String mac = wifi.getMacAddress();
             macAddress.setText(mac);
 
             String vendor = Host.findMacVendor(mac, db);
             macVendor.setText(vendor);
-        } catch (UnknownHostException | SocketException e) {
+        } catch (UnknownHostException | SocketException | Wireless.NoWifiManagerException e) {
             macAddress.setText(R.string.noWifiConnection);
             macVendor.setText(R.string.noWifiConnection);
-        } catch (IOException | SQLiteException e) {
+        } catch (IOException | SQLiteException | UnsupportedOperationException e) {
             macVendor.setText(R.string.getMacVendorFailed);
         }
     }
@@ -215,13 +215,26 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
              */
             @Override
             public void onClick(View v) {
-                if (!wifi.isEnabled()) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.wifiDisabled), Toast.LENGTH_SHORT).show();
+                try {
+                    if (!wifi.isEnabled()) {
+                        Errors.showError(getApplicationContext(), getResources().getString(R.string.wifiDisabled));
+                        return;
+                    }
+
+                    if (!wifi.isConnectedWifi()) {
+                        Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedWifi));
+                        return;
+                    }
+                } catch (Wireless.NoWifiManagerException | Wireless.NoConnectivityManagerException e) {
+                    Errors.showError(getApplicationContext(), getResources().getString(R.string.failedWifiManager));
                     return;
                 }
 
-                if (!wifi.isConnectedWifi()) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedWifi), Toast.LENGTH_SHORT).show();
+                int numSubnetHosts;
+                try {
+                    numSubnetHosts = wifi.getNumberOfHostsInWifiSubnet();
+                } catch (Wireless.NoWifiManagerException e) {
+                    Errors.showError(getApplicationContext(), getResources().getString(R.string.failedSubnetHosts));
                     return;
                 }
 
@@ -234,10 +247,10 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 scanProgressDialog = new ProgressDialog(MainActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
                 scanProgressDialog.setTitle(getResources().getString(R.string.hostScan));
-                scanProgressDialog.setMessage(String.format(getResources().getString(R.string.subnetHosts), wifi.getNumberOfHostsInWifiSubnet()));
+                scanProgressDialog.setMessage(String.format(getResources().getString(R.string.subnetHosts), numSubnetHosts));
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 scanProgressDialog.setProgress(0);
-                scanProgressDialog.setMax(wifi.getNumberOfHostsInWifiSubnet());
+                scanProgressDialog.setMax(numSubnetHosts);
                 scanProgressDialog.show();
 
                 try {
@@ -245,7 +258,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     new ScanHostsAsyncTask(MainActivity.this, db).execute(ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(getApplicationContext()));
                     discoverHostsBtn.setAlpha(.3f);
                     discoverHostsBtn.setEnabled(false);
-                } catch (UnknownHostException e) {
+                } catch (UnknownHostException | Wireless.NoWifiManagerException e) {
                     Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedWifi));
                 }
             }
@@ -406,17 +419,22 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         setupMac();
         getExternalIp();
 
-        if (!info.isConnected() || !wifi.isEnabled()) {
-            signalHandler.removeCallbacksAndMessages(null);
-            internalIp.setText(Wireless.getInternalMobileIpAddress());
-        }
+        try {
+            boolean enabled = wifi.isEnabled();
+            if (!info.isConnected() || !enabled) {
+                signalHandler.removeCallbacksAndMessages(null);
+                internalIp.setText(Wireless.getInternalMobileIpAddress());
+            }
 
-        if (!wifi.isEnabled()) {
-            signalStrength.setText(R.string.wifiDisabled);
-            ssid.setText(R.string.wifiDisabled);
-            bssid.setText(R.string.wifiDisabled);
+            if (!enabled) {
+                signalStrength.setText(R.string.wifiDisabled);
+                ssid.setText(R.string.wifiDisabled);
+                bssid.setText(R.string.wifiDisabled);
 
-            return;
+                return;
+            }
+        } catch (Wireless.NoWifiManagerException e) {
+            Errors.showError(getApplicationContext(), getResources().getString(R.string.failedWifiManager));
         }
 
         if (!info.isConnected()) {
@@ -430,7 +448,23 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         signalHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                signalStrength.setText(String.format(getResources().getString(R.string.signalLink), wifi.getSignalStrength(), wifi.getLinkSpeed()));
+                int signal;
+                int speed;
+                try {
+                    speed = wifi.getLinkSpeed();
+                } catch (Wireless.NoWifiManagerException e) {
+                    Errors.showError(getApplicationContext(), getResources().getString(R.string.failedLinkSpeed));
+                    return;
+                }
+                try {
+                    signal = wifi.getSignalStrength();
+                } catch (Wireless.NoWifiManagerException e) {
+                    Errors.showError(getApplicationContext(), getResources().getString(R.string.failedSignal));
+                    return;
+                }
+
+
+                signalStrength.setText(String.format(getResources().getString(R.string.signalLink), signal, speed));
                 signalHandler.postDelayed(this, TIMER_INTERVAL);
             }
         }, 0);
@@ -438,8 +472,23 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         getInternalIp();
         getExternalIp();
 
-        ssid.setText(wifi.getSSID());
-        bssid.setText(wifi.getBSSID());
+        String wifiSsid;
+        String wifiBssid;
+        try {
+            wifiSsid = wifi.getSSID();
+        } catch (Wireless.NoWifiManagerException e) {
+            Errors.showError(getApplicationContext(), getResources().getString(R.string.failedSsid));
+            return;
+        }
+        try {
+            wifiBssid = wifi.getBSSID();
+        } catch (Wireless.NoWifiManagerException e) {
+            Errors.showError(getApplicationContext(), getResources().getString(R.string.failedBssid));
+            return;
+        }
+
+        ssid.setText(wifiSsid);
+        bssid.setText(wifiBssid);
     }
 
     /**
@@ -523,14 +572,13 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * then prints it along side the IP.
      */
     private void getInternalIp() {
-        int netmask = wifi.getInternalWifiSubnet();
         try {
+            int netmask = wifi.getInternalWifiSubnet();
             String internalIpWithSubnet = wifi.getInternalWifiIpAddress(String.class) + "/" + Integer.toString(netmask);
             internalIp.setText(internalIpWithSubnet);
-        } catch (UnknownHostException e) {
+        } catch (UnknownHostException | Wireless.NoWifiManagerException e) {
             Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
         }
-
     }
 
     /**

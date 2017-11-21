@@ -43,6 +43,12 @@
     <string name="getMacVendorFailed">Failed to get MAC vendor</string>
     <string name="failedOpenDb">Failed to open database</string>
     <string name="downloadingData">Downloading Data</string>
+    <string name="failedSubnetHosts">Failed to get the number of hosts in subnet</string>
+    <string name="failedSignal">Failed to get signal strength</string>
+    <string name="failedLinkSpeed">Failed to get link speed</string>
+    <string name="failedSsid">Failed to get SSID</string>
+    <string name="failedBssid">Failed to get BSSID</string>
+    <string name="failedWifiManager">Failed to get WifiManager for this device</string>
     <string name="scanningDisclaimer">
         Please be aware that running port scans against public servers is normally considered malicious.
         Additionally, running these kinds of scans over your carrier\'s network instead of your own WiFi connection will be slower and will sometimes produce inaccurate results due to traffic shaping.
