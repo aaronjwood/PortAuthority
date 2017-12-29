@@ -22,13 +22,13 @@ import java.util.Enumeration;
 
 public class Wireless {
 
+    private Context context;
+
     public static class NoWifiManagerException extends Exception {
     }
 
     public static class NoConnectivityManagerException extends Exception {
     }
-
-    private Context context;
 
     /**
      * Constructor to set the activity for context
