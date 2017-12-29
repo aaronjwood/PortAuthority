@@ -9,9 +9,10 @@ import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -108,10 +109,9 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         final AtomicInteger numHosts = new AtomicInteger(0);
 
         try {
-            reader = new BufferedReader(new FileReader(ARP_TABLE));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(ARP_TABLE), "UTF-8"));
             reader.readLine(); // Skip header.
             String line;
-
 
             while ((line = reader.readLine()) != null) {
                 String[] arpLine = line.split("\\s+");
