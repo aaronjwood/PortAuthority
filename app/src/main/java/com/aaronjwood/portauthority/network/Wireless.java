@@ -22,10 +22,10 @@ import java.util.Enumeration;
 
 public class Wireless {
 
-    public class NoWifiManagerException extends Exception {
+    public static class NoWifiManagerException extends Exception {
     }
 
-    public class NoConnectivityManagerException extends Exception {
+    public static class NoConnectivityManagerException extends Exception {
     }
 
     private Context context;
