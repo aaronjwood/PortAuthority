@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,9 +22,11 @@ import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.db.Database;
+import com.aaronjwood.portauthority.listener.ScanPortsListener;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.utils.Constants;
+import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.util.ArrayList;
@@ -53,10 +54,11 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(this.layout);
+        setContentView(layout);
 
-        db = new Database(this);
+        db = Database.getInstance(getApplicationContext());
         handler = new Handler(Looper.getMainLooper());
+
         setupPortsAdapter();
     }
 
@@ -72,10 +74,10 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * Sets up the adapter to handle discovered ports
      */
     private void setupPortsAdapter() {
-        this.portList = (ListView) findViewById(R.id.portList);
-        this.adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.port_list_item, ports);
-        this.portList.setAdapter(this.adapter);
-        this.setAnimations();
+        portList = findViewById(R.id.portList);
+        adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.port_list_item, ports);
+        portList.setAdapter(adapter);
+        setAnimations();
     }
 
     /**
@@ -85,14 +87,14 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     public void onPause() {
         super.onPause();
 
-        if (this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
-            this.scanProgressDialog.dismiss();
+        if (scanProgressDialog != null && scanProgressDialog.isShowing()) {
+            scanProgressDialog.dismiss();
         }
-        if (this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
-            this.portRangeDialog.dismiss();
+        if (portRangeDialog != null && portRangeDialog.isShowing()) {
+            portRangeDialog.dismiss();
         }
-        this.scanProgressDialog = null;
-        this.portRangeDialog = null;
+        scanProgressDialog = null;
+        portRangeDialog = null;
     }
 
     /**
@@ -101,10 +103,6 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        if (db != null) {
-            db.close();
-        }
     }
 
     /**
@@ -133,7 +131,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
             ports.addAll(Arrays.asList(savedList));
         }
 
-        this.setupPortsAdapter();
+        setupPortsAdapter();
     }
 
     /**
@@ -162,8 +160,8 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * @param ip       IP address
      */
     protected void startPortRangeScanClick(final NumberPicker start, final NumberPicker stop, final int timeout, final HostActivity activity, final String ip) {
-        Button startPortRangeScan = (Button) portRangeDialog.findViewById(R.id.startPortRangeScan);
-        startPortRangeScan.setOnClickListener(new View.OnClickListener() {
+        Button startPortRangeScan = portRangeDialog.findViewById(R.id.startPortRangeScan);
+        startPortRangeScan.setOnClickListener(new ScanPortsListener(ports, adapter) {
 
             /**
              * Click handler for starting a port range scan
@@ -171,6 +169,8 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
              */
             @Override
             public void onClick(View v) {
+                super.onClick(v);
+
                 start.clearFocus();
                 stop.clearFocus();
 
@@ -183,8 +183,6 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
 
                 UserPreference.savePortRangeStart(activity, startPort);
                 UserPreference.savePortRangeHigh(activity, stopPort);
-
-                ports.clear();
 
                 scanProgressDialog = new ProgressDialog(activity, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
@@ -203,7 +201,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * Event handler for when an item on the port list is clicked
      */
     protected void portListClick(final String ip) {
-        this.portList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        portList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             /**
              * Click handler to open certain ports to the browser
@@ -273,20 +271,10 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         int scannedPort = output.keyAt(0);
         String item = String.valueOf(scannedPort);
 
-        Cursor cursor = db.queryDatabase("SELECT name, port FROM ports WHERE port = ?", new String[]{Integer.toString(scannedPort)});
-
-        if (cursor != null) {
-            try {
-                if (cursor.moveToFirst()) {
-                    String name = cursor.getString(cursor.getColumnIndex("name"));
-                    name = (name.isEmpty()) ? "unknown" : name;
-                    item = this.formatOpenPort(output, scannedPort, name, item);
-                    this.addOpenPort(item);
-                }
-            } finally {
-                cursor.close();
-            }
-        }
+        String name = db.selectPortDescription(String.valueOf(scannedPort));
+        name = (name.isEmpty()) ? "unknown" : name;
+        item = formatOpenPort(output, scannedPort, name, item);
+        addOpenPort(item);
     }
 
     /**
@@ -336,6 +324,21 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                 });
 
                 adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    /**
+     * Delegate to handle bubbled up errors
+     *
+     * @param output The exception we want to handle
+     * @param <T>    Exception
+     */
+    public <T extends Throwable> void processFinish(final T output) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Errors.showError(getApplicationContext(), output.getLocalizedMessage());
             }
         });
     }

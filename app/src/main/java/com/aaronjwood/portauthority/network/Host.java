@@ -1,7 +1,6 @@
 package com.aaronjwood.portauthority.network;
 
-import android.content.Context;
-import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 
 import com.aaronjwood.portauthority.async.ScanPortsAsyncTask;
 import com.aaronjwood.portauthority.async.WolAsyncTask;
@@ -16,26 +15,20 @@ public class Host implements Serializable {
     private String hostname;
     private String ip;
     private String mac;
+    private String vendor;
 
-    /**
-     * Constructor to set necessary information without a known hostname
-     *
-     * @param ip  This host's IP address
-     * @param mac This host's MAC address
-     */
-    public Host(String ip, String mac) {
-        this(null, ip, mac);
+    public Host(String ip, String mac, Database db) throws IOException {
+        this(ip, mac);
+        setVendor(db);
     }
 
     /**
-     * Constructor to set necessary information with a known hostname
+     * Constructs a host with a known IP and MAC.
      *
-     * @param hostname This host's hostname
-     * @param ip       This host's IP address
-     * @param mac      This host's MAC address
+     * @param ip
+     * @param mac
      */
-    public Host(String hostname, String ip, String mac) {
-        this.hostname = hostname;
+    public Host(String ip, String mac) {
         this.ip = ip;
         this.mac = mac;
     }
@@ -46,7 +39,7 @@ public class Host implements Serializable {
      * @return
      */
     public String getHostname() {
-        return this.hostname;
+        return hostname;
     }
 
     /**
@@ -61,13 +54,28 @@ public class Host implements Serializable {
         return this;
     }
 
+    private Host setVendor(Database db) throws IOException {
+        vendor = findMacVendor(mac, db);
+
+        return this;
+    }
+
+    /**
+     * Gets this host's MAC vendor.
+     *
+     * @return
+     */
+    public String getVendor() {
+        return vendor;
+    }
+
     /**
      * Returns this host's IP address
      *
      * @return
      */
     public String getIp() {
-        return this.ip;
+        return ip;
     }
 
     /**
@@ -76,7 +84,7 @@ public class Host implements Serializable {
      * @return
      */
     public String getMac() {
-        return this.mac;
+        return mac;
     }
 
     public void wakeOnLan() {
@@ -97,30 +105,17 @@ public class Host implements Serializable {
     }
 
     /**
-     * Fetches the MAC vendor from the database
+     * Searches for the MAC vendor based on the provided MAc address.
      *
-     * @param mac     MAC address
-     * @param context Application context
+     * @param mac
+     * @param db
+     * @return
+     * @throws IOException
+     * @throws SQLiteException
      */
-    public static String getMacVendor(String mac, Context context) {
-        Database db = new Database(context);
-        Cursor cursor = db.queryDatabase("SELECT vendor FROM ouis WHERE mac LIKE ?", new String[]{mac});
-        String vendor;
-
-        try {
-            if (cursor != null && cursor.moveToFirst()) {
-                vendor = cursor.getString(cursor.getColumnIndex("vendor"));
-            } else {
-                vendor = "Vendor not in database";
-            }
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-                db.close();
-            }
-        }
-
-        return vendor;
+    public static String findMacVendor(String mac, Database db) throws IOException, SQLiteException {
+        String prefix = mac.substring(0, 8);
+        return db.selectVendor(prefix);
     }
 
 }

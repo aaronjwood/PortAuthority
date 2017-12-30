@@ -41,14 +41,13 @@ public class DnsLookupAsyncTask extends AsyncTask<String, Void, String> {
                 return "No records found.";
             }
 
-            String answer = "";
-
+            StringBuilder answer = new StringBuilder();
             for (Record record : records) {
                 String rClass = this.parseRecordClass(record.getDClass());
-                answer += String.format("%s\t\t\t%s\t\t\t%s\t\t\t%s%n%n", record.getName(), record.getTTL(), rClass, record.rdataToString());
+                answer.append(String.format("%s\t\t\t\t%s\t\t\t\t%s\t\t\t\t%s%n%n", record.getName(), record.getTTL(), rClass, record.rdataToString()));
             }
 
-            return answer;
+            return answer.toString();
         } catch (TextParseException e) {
             return "Error performing lookup!";
         }

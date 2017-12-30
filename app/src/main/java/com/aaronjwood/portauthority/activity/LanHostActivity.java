@@ -10,12 +10,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
+import com.aaronjwood.portauthority.listener.ScanPortsListener;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.utils.Constants;
+import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
-
-import java.io.IOException;
 
 public final class LanHostActivity extends HostActivity {
     private Wireless wifi;
@@ -28,31 +28,31 @@ public final class LanHostActivity extends HostActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.layout = R.layout.activity_lanhost;
+        layout = R.layout.activity_lanhost;
         super.onCreate(savedInstanceState);
 
-        TextView hostName = (TextView) findViewById(R.id.hostName);
-        TextView hostMacVendor = (TextView) findViewById(R.id.hostMacVendor);
-        TextView hostMac = (TextView) findViewById(R.id.hostMac);
-        TextView ipAddress = (TextView) findViewById(R.id.ipAddress);
+        TextView hostName = findViewById(R.id.hostName);
+        TextView hostMacVendor = findViewById(R.id.hostMacVendor);
+        TextView hostMac = findViewById(R.id.hostMac);
+        TextView ipAddress = findViewById(R.id.ipAddress);
         Bundle extras = getIntent().getExtras();
         if (extras == null) {
             return;
         }
 
-        this.wifi = new Wireless(getApplicationContext());
-        this.host = (Host) extras.get("HOST");
-        if (this.host == null) {
+        wifi = new Wireless(getApplicationContext());
+        host = (Host) extras.get("HOST");
+        if (host == null) {
             return;
         }
 
-        hostMacVendor.setText(Host.getMacVendor(this.host.getMac().replace(":", "").substring(0, 6), this));
-        hostName.setText(this.host.getHostname());
-        hostMac.setText(this.host.getMac());
-        ipAddress.setText(this.host.getIp());
+        hostMacVendor.setText(host.getVendor());
+        hostName.setText(host.getHostname());
+        hostMac.setText(host.getMac());
+        ipAddress.setText(host.getIp());
 
-        this.setupPortScan();
-        this.setupWol();
+        setupPortScan();
+        setupWol();
     }
 
     /**
@@ -64,7 +64,7 @@ public final class LanHostActivity extends HostActivity {
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
-        savedState.putSerializable("host", this.host);
+        savedState.putSerializable("host", host);
     }
 
     /**
@@ -75,15 +75,15 @@ public final class LanHostActivity extends HostActivity {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        this.host = (Host) savedInstanceState.get("host");
+        host = (Host) savedInstanceState.get("host");
     }
 
     /**
      * Event handler for when the well known port scan is initiated
      */
     private void scanWellKnownPortsClick() {
-        Button scanWellKnownPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
-        scanWellKnownPortsButton.setOnClickListener(new View.OnClickListener() {
+        Button scanWellKnownPortsButton = findViewById(R.id.scanWellKnownPorts);
+        scanWellKnownPortsButton.setOnClickListener(new ScanPortsListener(ports, adapter) {
 
             /**
              * Click handler for scanning well known ports
@@ -91,12 +91,17 @@ public final class LanHostActivity extends HostActivity {
              */
             @Override
             public void onClick(View v) {
-                if (!wifi.isConnectedWifi()) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedLan), Toast.LENGTH_SHORT).show();
+                super.onClick(v);
+
+                try {
+                    if (!wifi.isConnectedWifi()) {
+                        Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
+                        return;
+                    }
+                } catch (Wireless.NoConnectivityManagerException e) {
+                    Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                     return;
                 }
-
-                ports.clear();
 
                 int startPort = 1;
                 int stopPort = 1024;
@@ -117,7 +122,7 @@ public final class LanHostActivity extends HostActivity {
      * Event handler for when a port range scan is requested
      */
     private void scanPortRangeClick() {
-        Button scanPortRangeButton = (Button) findViewById(R.id.scanPortRange);
+        Button scanPortRangeButton = findViewById(R.id.scanPortRange);
         scanPortRangeButton.setOnClickListener(new View.OnClickListener() {
 
             /**
@@ -126,8 +131,13 @@ public final class LanHostActivity extends HostActivity {
              */
             @Override
             public void onClick(View v) {
-                if (!wifi.isConnectedWifi()) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedLan), Toast.LENGTH_SHORT).show();
+                try {
+                    if (!wifi.isConnectedWifi()) {
+                        Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
+                        return;
+                    }
+                } catch (Wireless.NoConnectivityManagerException e) {
+                    Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                     return;
                 }
 
@@ -136,8 +146,8 @@ public final class LanHostActivity extends HostActivity {
                 portRangeDialog.setContentView(R.layout.port_range);
                 portRangeDialog.show();
 
-                NumberPicker portRangePickerStart = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStart);
-                NumberPicker portRangePickerStop = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStop);
+                NumberPicker portRangePickerStart = portRangeDialog.findViewById(R.id.portRangePickerStart);
+                NumberPicker portRangePickerStop = portRangeDialog.findViewById(R.id.portRangePickerStop);
 
                 portRangePickerStart.setMinValue(Constants.MIN_PORT_VALUE);
                 portRangePickerStart.setMaxValue(Constants.MAX_PORT_VALUE);
@@ -158,13 +168,18 @@ public final class LanHostActivity extends HostActivity {
      * Event handler for waking up a host via WoL
      */
     private void setupWol() {
-        Button wakeUpButton = (Button) findViewById(R.id.wakeOnLan);
+        Button wakeUpButton = findViewById(R.id.wakeOnLan);
         wakeUpButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if (!wifi.isConnectedWifi()) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.notConnectedLan), Toast.LENGTH_SHORT).show();
+                try {
+                    if (!wifi.isConnectedWifi()) {
+                        Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
+                        return;
+                    }
+                } catch (Wireless.NoConnectivityManagerException e) {
+                    Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                     return;
                 }
 
@@ -178,9 +193,9 @@ public final class LanHostActivity extends HostActivity {
      * Sets up event handlers and functionality for various port scanning features
      */
     private void setupPortScan() {
-        this.scanWellKnownPortsClick();
-        this.scanPortRangeClick();
-        this.portListClick(this.host.getIp());
+        scanWellKnownPortsClick();
+        scanPortRangeClick();
+        portListClick(host.getIp());
     }
 
 
@@ -191,11 +206,11 @@ public final class LanHostActivity extends HostActivity {
      */
     @Override
     public void processFinish(boolean output) {
-        if (output && this.scanProgressDialog != null && this.scanProgressDialog.isShowing()) {
-            this.scanProgressDialog.dismiss();
+        if (output && scanProgressDialog != null && scanProgressDialog.isShowing()) {
+            scanProgressDialog.dismiss();
         }
-        if (output && this.portRangeDialog != null && this.portRangeDialog.isShowing()) {
-            this.portRangeDialog.dismiss();
+        if (output && portRangeDialog != null && portRangeDialog.isShowing()) {
+            portRangeDialog.dismiss();
         }
     }
 }

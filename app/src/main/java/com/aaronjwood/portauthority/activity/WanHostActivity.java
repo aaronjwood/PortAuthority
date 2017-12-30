@@ -6,11 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
+import com.aaronjwood.portauthority.listener.ScanPortsListener;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.UserPreference;
@@ -28,8 +28,8 @@ public final class WanHostActivity extends HostActivity {
         this.layout = R.layout.activity_wanhost;
         super.onCreate(savedInstanceState);
 
-        this.wanHost = (EditText) findViewById(R.id.hostAddress);
-        this.portList = (ListView) findViewById(R.id.portList);
+        this.wanHost = findViewById(R.id.hostAddress);
+        this.portList = findViewById(R.id.portList);
 
         this.wanHost.setText(UserPreference.getLastUsedHostAddress(this));
         this.setupPortScan();
@@ -48,8 +48,8 @@ public final class WanHostActivity extends HostActivity {
      * Event handler for when the well known port scan is initiated
      */
     private void scanWellKnownPortsClick() {
-        Button scanWellKnownPortsButton = (Button) findViewById(R.id.scanWellKnownPorts);
-        scanWellKnownPortsButton.setOnClickListener(new View.OnClickListener() {
+        Button scanWellKnownPortsButton = findViewById(R.id.scanWellKnownPorts);
+        scanWellKnownPortsButton.setOnClickListener(new ScanPortsListener(ports, adapter) {
 
             /**
              * Click handler for scanning well known ports
@@ -57,7 +57,7 @@ public final class WanHostActivity extends HostActivity {
              */
             @Override
             public void onClick(View v) {
-                ports.clear();
+                super.onClick(v);
 
                 int startPort = 1;
                 int stopPort = 1024;
@@ -79,7 +79,7 @@ public final class WanHostActivity extends HostActivity {
      * Event handler for when a port range scan is requested
      */
     private void scanPortRangeClick() {
-        Button scanPortRangeButton = (Button) findViewById(R.id.scanPortRange);
+        Button scanPortRangeButton = findViewById(R.id.scanPortRange);
         scanPortRangeButton.setOnClickListener(new View.OnClickListener() {
 
             /**
@@ -94,8 +94,8 @@ public final class WanHostActivity extends HostActivity {
                 portRangeDialog.setContentView(R.layout.port_range);
                 portRangeDialog.show();
 
-                NumberPicker portRangePickerStart = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStart);
-                NumberPicker portRangePickerStop = (NumberPicker) portRangeDialog.findViewById(R.id.portRangePickerStop);
+                NumberPicker portRangePickerStart = portRangeDialog.findViewById(R.id.portRangePickerStart);
+                NumberPicker portRangePickerStop = portRangeDialog.findViewById(R.id.portRangePickerStop);
 
                 portRangePickerStart.setMinValue(Constants.MIN_PORT_VALUE);
                 portRangePickerStart.setMaxValue(Constants.MAX_PORT_VALUE);

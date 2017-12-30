@@ -15,15 +15,17 @@ sonarqube {
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
-        minSdkVersion 11
-        targetSdkVersion 25
-        versionCode 49
-        versionName "2.0.1"
+        minSdkVersion 14
+        targetSdkVersion 26
+        versionCode 50
+        versionName "2.2.0"
+        applicationId "com.aaronjwood.portauthority"
+        setProperty("archivesBaseName", "PortAuthority-$versionName")
     }
 
     compileOptions {
@@ -39,26 +41,22 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-                    'proguard.pro'
-            applicationVariants.all { variant ->
-                variant.outputs.each { output ->
-                    def formattedDate = new Date().format('yyyyMMdd')
-                    def newName = output.outputFile.name
-                    newName = newName.replace("app", "PortAuthority")
-                    newName = newName.replace("-release", "-release-" + formattedDate)
-                    output.outputFile = new File(output.outputFile.parent, newName)
-                }
-            }
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.pro'
         }
     }
 
+    flavorDimensions "main"
+
     productFlavors {
         free {
-            applicationId "com.aaronjwood.portauthority.free"
+            applicationIdSuffix ".free"
+            versionNameSuffix "-free"
+            dimension "main"
         }
         donate {
-            applicationId "com.aaronjwood.portauthority.donate"
+            applicationIdSuffix ".donate"
+            versionNameSuffix "-donate"
+            dimension "main"
         }
     }
 
@@ -68,14 +66,14 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:support-v4:26.1.0'
+    compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'jcifs:jcifs:1.3.17'
     compile 'dnsjava:dnsjava:2.1.7'
     //This does absolutely nothing
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 }

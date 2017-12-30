@@ -1,4 +1,4 @@
-package com.aaronjwood.portauthority.adapters;
+package com.aaronjwood.portauthority.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -33,10 +33,10 @@ public final class HostAdapter extends ArrayAdapter<Host> {
             rowView = inflater.inflate(R.layout.host_list_item, parent, false);
 
             view = new ViewHolder();
-            view.hostname = (TextView) rowView.findViewById(R.id.hostname);
-            view.hostIp = (TextView) rowView.findViewById(R.id.hostIp);
-            view.hostMac = (TextView) rowView.findViewById(R.id.hostMac);
-            view.hostMacVendor = (TextView) rowView.findViewById(R.id.hostMacVendor);
+            view.hostname = rowView.findViewById(R.id.hostname);
+            view.hostIp = rowView.findViewById(R.id.hostIp);
+            view.hostMac = rowView.findViewById(R.id.hostMac);
+            view.hostMacVendor = rowView.findViewById(R.id.hostMacVendor);
 
             rowView.setTag(view);
         } else {
@@ -44,19 +44,18 @@ public final class HostAdapter extends ArrayAdapter<Host> {
         }
 
         Host item = data.get(position);
-        String mac = item.getMac().replace(":", "").substring(0, 6);
         view.hostname.setText(item.getHostname());
         view.hostIp.setText(item.getIp());
         view.hostMac.setText(item.getMac());
-        view.hostMacVendor.setText(Host.getMacVendor(mac, context));
+        view.hostMacVendor.setText(item.getVendor());
 
         return rowView;
     }
 
     private static class ViewHolder {
-        TextView hostname;
-        TextView hostIp;
-        TextView hostMac;
-        TextView hostMacVendor;
+        private TextView hostname;
+        private TextView hostIp;
+        private TextView hostMac;
+        private TextView hostMacVendor;
     }
 }

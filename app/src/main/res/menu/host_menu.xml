@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/sorting"
+        android:title="@string/sort">
+        <menu>
+            <item
+                android:id="@+id/sortHostname"
+                android:title="@string/sortHostname" />
+            <item
+                android:id="@+id/sortVendor"
+                android:title="@string/sortVendor" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/copyHostname"
+        android:title="@string/copyHostname" />
+    <item
+        android:id="@+id/copyIp"
+        android:title="@string/copyIp" />
+    <item
+        android:id="@+id/copyMac"
+        android:title="@string/copyMac" />
+
+</menu>

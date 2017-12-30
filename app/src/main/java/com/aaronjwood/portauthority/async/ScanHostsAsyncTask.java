@@ -2,24 +2,31 @@ package com.aaronjwood.portauthority.async;
 
 import android.os.AsyncTask;
 
+import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import jcifs.netbios.NbtAddress;
 
 public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     private final WeakReference<MainAsyncResponse> delegate;
+    private Database db;
+    private static final String ARP_TABLE = "/proc/net/arp";
     private static final String ARP_INCOMPLETE = "0x0";
     private static final String ARP_INACTIVE = "00:00:00:00:00:00";
     private static final int NETBIOS_FILE_SERVER = 0x20;
@@ -29,8 +36,9 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
      *
      * @param delegate Called when host discovery has finished
      */
-    public ScanHostsAsyncTask(MainAsyncResponse delegate) {
+    public ScanHostsAsyncTask(MainAsyncResponse delegate, Database db) {
         this.delegate = new WeakReference<>(delegate);
+        this.db = db;
     }
 
     /**
@@ -43,6 +51,15 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         int ipv4 = params[0];
         int cidr = params[1];
         int timeout = params[2];
+
+        MainAsyncResponse activity = delegate.get();
+        File file = new File(ARP_TABLE);
+        if (!file.exists() || !file.canRead()) {
+            activity.processFinish(new FileNotFoundException("Unable to access device ARP table"));
+            activity.processFinish(true);
+
+            return null;
+        }
 
         ExecutorService executor = Executors.newCachedThreadPool();
 
@@ -63,11 +80,12 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         }
 
         executor.shutdown();
-
         try {
             executor.awaitTermination(5, TimeUnit.MINUTES);
             executor.shutdownNow();
-        } catch (InterruptedException ignored) {
+        } catch (InterruptedException e) {
+            activity.processFinish(e);
+            return null;
         }
 
         publishProgress();
@@ -84,12 +102,15 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
      * @param params
      */
     @Override
-    protected final void onProgressUpdate(final Void... params) {
+    protected final void onProgressUpdate(Void... params) {
         BufferedReader reader = null;
+        final MainAsyncResponse activity = delegate.get();
+        ExecutorService executor = Executors.newCachedThreadPool();
+        final AtomicInteger numHosts = new AtomicInteger(0);
+
         try {
-            ExecutorService executor = Executors.newCachedThreadPool();
-            reader = new BufferedReader(new FileReader("/proc/net/arp"));
-            reader.readLine();
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(ARP_TABLE), "UTF-8"));
+            reader.readLine(); // Skip header.
             String line;
 
             while ((line = reader.readLine()) != null) {
@@ -100,20 +121,30 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                 final String macAddress = arpLine[3];
 
                 if (!ARP_INCOMPLETE.equals(flag) && !ARP_INACTIVE.equals(macAddress)) {
+                    numHosts.incrementAndGet();
                     executor.execute(new Runnable() {
+
                         @Override
                         public void run() {
-                            Host host = new Host(ip, macAddress);
+                            Host host;
+                            try {
+                                host = new Host(ip, macAddress, db);
+                            } catch (IOException e) {
+                                host = new Host(ip, macAddress);
+                            }
+
+                            MainAsyncResponse activity = delegate.get();
                             try {
                                 InetAddress add = InetAddress.getByName(ip);
                                 String hostname = add.getCanonicalHostName();
                                 host.setHostname(hostname);
 
-                                MainAsyncResponse activity = delegate.get();
                                 if (activity != null) {
-                                    activity.processFinish(host);
+                                    activity.processFinish(host, numHosts);
                                 }
-                            } catch (UnknownHostException ignored) {
+                            } catch (UnknownHostException e) {
+                                numHosts.decrementAndGet();
+                                activity.processFinish(e);
                                 return;
                             }
 
@@ -125,20 +156,30 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                                         return;
                                     }
                                 }
-                            } catch (UnknownHostException ignored) {
+                            } catch (UnknownHostException e) {
+                                // It's common that many discovered hosts won't have a NetBIOS entry.
                             }
                         }
                     });
                 }
             }
-            executor.shutdown();
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            if (activity != null) {
+                activity.processFinish(e);
+            }
+
         } finally {
+            executor.shutdown();
+            if (activity != null) {
+                activity.processFinish(true);
+            }
+
             try {
                 if (reader != null) {
                     reader.close();
                 }
             } catch (IOException ignored) {
+                // Something's really wrong if we can't close the stream...
             }
         }
     }

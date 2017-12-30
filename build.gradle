@@ -3,16 +3,20 @@
 buildscript {
     repositories {
         jcenter()
-        mavenCentral()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.2'
+        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.4'
     }
 }
 
 allprojects {
     repositories {
+        maven {
+            url 'https://maven.google.com'
+        }
         jcenter()
+        google()
     }
 }

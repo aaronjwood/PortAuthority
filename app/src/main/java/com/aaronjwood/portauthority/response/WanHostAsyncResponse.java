@@ -2,7 +2,7 @@ package com.aaronjwood.portauthority.response;
 
 import android.util.SparseArray;
 
-public interface WanHostAsyncResponse {
+interface WanHostAsyncResponse {
 
     /**
      * Delegate to handle integer outputs

@@ -35,17 +35,20 @@ public class ScanHostsRunnable implements Runnable {
      */
     @Override
     public void run() {
-        for (int i = this.start; i <= this.stop; i++) {
+        for (int i = start; i <= stop; i++) {
             Socket socket = new Socket();
             try {
                 socket.setTcpNoDelay(true);
                 byte[] bytes = BigInteger.valueOf(i).toByteArray();
-                socket.connect(new InetSocketAddress(InetAddress.getByAddress(bytes), 7), this.timeout);
+                socket.connect(new InetSocketAddress(InetAddress.getByAddress(bytes), 7), timeout);
             } catch (IOException ignored) {
+                // Connection failures aren't errors in this case.
+                // We want to fill up the ARP table with our connection attempts.
             } finally {
                 try {
                     socket.close();
-                } catch (IOException ignored) {
+                } catch (IOException e) {
+                    // Something's really wrong if we can't close the socket...
                 }
 
                 MainAsyncResponse activity = delegate.get();

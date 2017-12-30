@@ -24,6 +24,12 @@ public class Wireless {
 
     private Context context;
 
+    public static class NoWifiManagerException extends Exception {
+    }
+
+    public static class NoConnectivityManagerException extends Exception {
+    }
+
     /**
      * Constructor to set the activity for context
      *
@@ -38,37 +44,27 @@ public class Wireless {
      *
      * @return MAC address
      */
-    public String getMacAddress() {
-        String address = this.getWifiInfo().getMacAddress(); //Won't work on Android 6+ https://developer.android.com/about/versions/marshmallow/android-6.0-changes.html#behavior-hardware-id
+    public String getMacAddress() throws UnknownHostException, SocketException, NoWifiManagerException {
+        String address = getWifiInfo().getMacAddress(); //Won't work on Android 6+ https://developer.android.com/about/versions/marshmallow/android-6.0-changes.html#behavior-hardware-id
         if (!"02:00:00:00:00:00".equals(address)) {
             return address;
         }
 
         //This should get us the device's MAC address on Android 6+
-        try {
-            NetworkInterface iface = NetworkInterface.getByInetAddress(this.getWifiInetAddress());
-            if (iface == null) {
-                return "Unknown";
-            }
+        NetworkInterface iface = NetworkInterface.getByInetAddress(getWifiInetAddress());
 
-            byte[] mac = iface.getHardwareAddress();
-            if (mac == null) {
-                return "Unknown";
-            }
+        byte[] mac = iface.getHardwareAddress();
 
-            StringBuilder buf = new StringBuilder();
-            for (byte aMac : mac) {
-                buf.append(String.format("%02x:", aMac));
-            }
-
-            if (buf.length() > 0) {
-                buf.deleteCharAt(buf.length() - 1);
-            }
-
-            return buf.toString();
-        } catch (SocketException ex) {
-            return "Unknown";
+        StringBuilder buf = new StringBuilder();
+        for (byte aMac : mac) {
+            buf.append(String.format("%02x:", aMac));
         }
+
+        if (buf.length() > 0) {
+            buf.deleteCharAt(buf.length() - 1);
+        }
+
+        return buf.toString();
     }
 
     /**
@@ -76,13 +72,9 @@ public class Wireless {
      *
      * @return Wireless address
      */
-    private InetAddress getWifiInetAddress() {
-        String ipAddress = this.getInternalWifiIpAddress(String.class);
-        try {
-            return InetAddress.getByName(ipAddress);
-        } catch (UnknownHostException e) {
-            return null;
-        }
+    private InetAddress getWifiInetAddress() throws UnknownHostException, NoWifiManagerException {
+        String ipAddress = getInternalWifiIpAddress(String.class);
+        return InetAddress.getByName(ipAddress);
     }
 
     /**
@@ -90,8 +82,8 @@ public class Wireless {
      *
      * @return Signal strength
      */
-    public int getSignalStrength() {
-        return this.getWifiInfo().getRssi();
+    public int getSignalStrength() throws NoWifiManagerException {
+        return getWifiInfo().getRssi();
     }
 
     /**
@@ -99,8 +91,8 @@ public class Wireless {
      *
      * @return BSSID
      */
-    public String getBSSID() {
-        return this.getWifiInfo().getBSSID();
+    public String getBSSID() throws NoWifiManagerException {
+        return getWifiInfo().getBSSID();
     }
 
     /**
@@ -108,8 +100,8 @@ public class Wireless {
      *
      * @return SSID
      */
-    public String getSSID() {
-        String ssid = this.getWifiInfo().getSSID();
+    public String getSSID() throws NoWifiManagerException {
+        String ssid = getWifiInfo().getSSID();
         if (ssid.startsWith("\"") && ssid.endsWith("\"")) {
             ssid = ssid.substring(1, ssid.length() - 1);
         }
@@ -125,8 +117,8 @@ public class Wireless {
      * @param <T>
      * @return Local WiFi network LAN IP address
      */
-    public <T> T getInternalWifiIpAddress(Class<T> type) {
-        int ip = this.getWifiInfo().getIpAddress();
+    public <T> T getInternalWifiIpAddress(Class<T> type) throws UnknownHostException, NoWifiManagerException {
+        int ip = getWifiInfo().getIpAddress();
 
         //Endianness can be a potential issue on some hardware
         if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
@@ -135,15 +127,13 @@ public class Wireless {
 
         byte[] ipByteArray = BigInteger.valueOf(ip).toByteArray();
 
-        try {
-            if (type.isInstance("")) {
-                return type.cast(InetAddress.getByAddress(ipByteArray).getHostAddress());
-            } else {
-                return type.cast(new BigInteger(InetAddress.getByAddress(ipByteArray).getAddress()).intValue());
-            }
-        } catch (UnknownHostException ex) {
-            return null;
+
+        if (type.isInstance("")) {
+            return type.cast(InetAddress.getByAddress(ipByteArray).getHostAddress());
+        } else {
+            return type.cast(new BigInteger(InetAddress.getByAddress(ipByteArray).getAddress()).intValue());
         }
+
     }
 
     /**
@@ -151,8 +141,8 @@ public class Wireless {
      *
      * @return Internal Wifi Subnet Netmask
      */
-    public int getInternalWifiSubnet() {
-        WifiManager wifiManager = this.getWifiManager();
+    public int getInternalWifiSubnet() throws NoWifiManagerException {
+        WifiManager wifiManager = getWifiManager();
         if (wifiManager == null) {
             return 0;
         }
@@ -171,7 +161,7 @@ public class Wireless {
          */
         if (netmask < 4 || netmask > 32) {
             try {
-                InetAddress inetAddress = this.getWifiInetAddress();
+                InetAddress inetAddress = getWifiInetAddress();
                 NetworkInterface networkInterface = NetworkInterface.getByInetAddress(inetAddress);
                 if (networkInterface == null) {
                     return 0;
@@ -182,7 +172,7 @@ public class Wireless {
                         return address.getNetworkPrefixLength(); // This returns a short of the CIDR notation.
                     }
                 }
-            } catch (SocketException ignored) {
+            } catch (SocketException | UnknownHostException ignored) {
             }
         }
 
@@ -195,7 +185,7 @@ public class Wireless {
      *
      * @return Number of hosts as an integer.
      */
-    public int getNumberOfHostsInWifiSubnet() {
+    public int getNumberOfHostsInWifiSubnet() throws NoWifiManagerException {
         Double subnet = (double) getInternalWifiSubnet();
         double hosts;
         double bitsLeft = 32.0d - subnet;
@@ -242,8 +232,8 @@ public class Wireless {
      *
      * @return Wireless link speed
      */
-    public int getLinkSpeed() {
-        return this.getWifiInfo().getLinkSpeed();
+    public int getLinkSpeed() throws NoWifiManagerException {
+        return getWifiInfo().getLinkSpeed();
     }
 
     /**
@@ -251,9 +241,18 @@ public class Wireless {
      *
      * @return True if the device is connected, false if it isn't
      */
-    public boolean isConnectedWifi() {
-        NetworkInfo info = this.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+    public boolean isConnectedWifi() throws NoConnectivityManagerException {
+        NetworkInfo info = getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         return info != null && info.isConnectedOrConnecting();
+    }
+
+    /**
+     * Determines if WiFi is enabled on the device or not
+     *
+     * @return True if enabled, false if disabled
+     */
+    public boolean isEnabled() throws NoWifiManagerException {
+        return getWifiManager().isWifiEnabled();
     }
 
     /**
@@ -261,8 +260,13 @@ public class Wireless {
      *
      * @return WifiManager
      */
-    private WifiManager getWifiManager() {
-        return (WifiManager) this.context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+    private WifiManager getWifiManager() throws NoWifiManagerException {
+        WifiManager manager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (manager == null) {
+            throw new NoWifiManagerException();
+        }
+
+        return manager;
     }
 
     /**
@@ -270,8 +274,8 @@ public class Wireless {
      *
      * @return WiFi information
      */
-    private WifiInfo getWifiInfo() {
-        return this.getWifiManager().getConnectionInfo();
+    private WifiInfo getWifiInfo() throws NoWifiManagerException {
+        return getWifiManager().getConnectionInfo();
     }
 
     /**
@@ -279,8 +283,13 @@ public class Wireless {
      *
      * @return Connectivity manager
      */
-    private ConnectivityManager getConnectivityManager() {
-        return (ConnectivityManager) this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    private ConnectivityManager getConnectivityManager() throws NoConnectivityManagerException {
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (manager == null) {
+            throw new NoConnectivityManagerException();
+        }
+
+        return manager;
     }
 
     /**
@@ -288,12 +297,8 @@ public class Wireless {
      *
      * @return Network information
      */
-    private NetworkInfo getNetworkInfo(int type) {
-        ConnectivityManager manager = this.getConnectivityManager();
-        if (manager != null) {
-            return manager.getNetworkInfo(type);
-        }
-        return null;
+    private NetworkInfo getNetworkInfo(int type) throws NoConnectivityManagerException {
+        return getConnectivityManager().getNetworkInfo(type);
     }
 
 }

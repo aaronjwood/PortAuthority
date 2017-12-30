@@ -18,7 +18,7 @@
     <string name="openPorts">ポートを開く</string>
     <string name="portRangeStart">開始ポート</string>
     <string name="portRangeStop">終了ポート</string>
-    <string name="noWifi">WiFi 接続がありません</string>
+    <string name="wifiDisabled">WiFi 接続がありません</string>
     <string name="wanHostHint">URL/IP</string>
     <string name="scanningWarning">警告</string>
     <string name="domainName">ドメイン名</string>

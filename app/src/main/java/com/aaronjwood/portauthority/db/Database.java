@@ -1,103 +1,192 @@
 package com.aaronjwood.portauthority.db;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteOpenHelper;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+public class Database extends SQLiteOpenHelper {
 
-public class Database {
-    private Context context;
+    public static final String DATABASE_NAME = "PortAuthority";
+    private static final int DATABASE_VERSION = 1;
+    private static final String OUI_TABLE = "ouis";
+    private static final String PORT_TABLE = "ports";
+    private static final String MAC_FIELD = "mac";
+    private static final String VENDOR_FIELD = "vendor";
+    private static final String PORT_FIELD = "port";
+    private static final String DESCRIPTION_FIELD = "description";
+    private static final String CREATE_OUI_TABLE = "CREATE TABLE " + OUI_TABLE + " (" + MAC_FIELD + " TEXT NOT NULL, " + VENDOR_FIELD + " TEXT NOT NULL);";
+    private static final String CREATE_PORT_TABLE = "CREATE TABLE " + PORT_TABLE + " (" + PORT_FIELD + " INTEGER NOT NULL, " + DESCRIPTION_FIELD + " TEXT);";
+
+    private static Database singleton;
     private SQLiteDatabase db;
 
-    public Database(Context context) {
-        this.context = context;
-        openDatabase("network.db"); //Hardcode this for now since we only have one DB
-    }
-
     /**
-     * Checks if the database exists at the application's data directory
+     * Returns the single instance of this class or creates one if it doesn't already exist.
      *
-     * @param dbName Name of the database to check the existence of
-     * @return True if the database exists, false if not
+     * @param context
+     * @return
      */
-    private boolean checkDatabase(String dbName) {
-        File dbFile = new File(this.context.getApplicationInfo().dataDir + "/" + dbName);
-        return dbFile.exists();
-    }
-
-    /**
-     * Copies the database from assets to the application's data directory
-     *
-     * @param dbName Name of the database to be copied
-     */
-    private void copyDatabase(String dbName) {
-        InputStream input = null;
-        OutputStream output = null;
-        try {
-            input = this.context.getAssets().open(dbName);
-            output = new FileOutputStream(this.context.getApplicationInfo().dataDir + "/" + dbName);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = input.read(buffer)) > 0) {
-                output.write(buffer, 0, length);
-            }
-
-        } catch (IOException ignored) {
-        } finally {
-            try {
-                if (output != null && input != null) {
-                    output.close();
-                    input.close();
-                }
-            } catch (IOException ignored) {
-            }
+    public static Database getInstance(Context context) {
+        if (singleton == null) {
+            singleton = new Database(context);
         }
+
+        return singleton;
     }
 
     /**
-     * Opens a connection to a SQLite database
+     * Sets up the database and returns the writable handle to it.
      *
-     * @param dbName The database to open a connection to
+     * @param context
      */
-    private void openDatabase(String dbName) {
-        if (!this.checkDatabase(dbName)) {
-            this.copyDatabase(dbName);
-        }
-        try {
-            this.db = SQLiteDatabase.openDatabase(this.context.getApplicationInfo().dataDir + "/" + dbName, null, SQLiteDatabase.OPEN_READONLY);
-        } catch (SQLiteException e) {
-            this.db = null;
-        }
+    private Database(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        db = this.getWritableDatabase();
     }
 
     /**
-     * Performs a query against the database
+     * Starts a transaction that allows for multiple readers and one writer.
      *
-     * @param query The query itself
-     * @param args  Arguments for any bound parameters
-     * @return Cursor for iterating over results
+     * @return
      */
-    public Cursor queryDatabase(String query, String[] args) {
-        if (this.db != null && this.db.isOpen()) {
-            return db.rawQuery(query, args);
+    public Database beginTransaction() {
+        db.beginTransactionNonExclusive();
+        return this;
+    }
+
+    /**
+     * Finishes the transaction.
+     *
+     * @return
+     */
+    public Database endTransaction() {
+        db.endTransaction();
+        return this;
+    }
+
+    /**
+     * Marks the transaction as successful and commits the transaction.
+     *
+     * @return
+     */
+    public Database setTransactionSuccessful() {
+        db.setTransactionSuccessful();
+        return this;
+    }
+
+    /**
+     * Called when the database doesn't exist and needs its schema created.
+     *
+     * @param db
+     */
+    @Override
+    public void onCreate(final SQLiteDatabase db) {
+        db.execSQL(CREATE_OUI_TABLE);
+        db.execSQL(CREATE_PORT_TABLE);
+    }
+
+    /**
+     * Handles upgrades between database versions.
+     *
+     * @param db
+     * @param oldVersion
+     * @param newVersion
+     */
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // TODO implement when upgrades are needed.
+    }
+
+    /**
+     * Inserts a new OUI entry containing a MAC address and its associated vendor.
+     *
+     * @param mac
+     * @param vendor
+     * @return
+     */
+    public long insertOui(String mac, String vendor) {
+        ContentValues values = new ContentValues();
+        values.put(MAC_FIELD, mac);
+        values.put(VENDOR_FIELD, vendor);
+
+        return db.insert(OUI_TABLE, null, values);
+    }
+
+    /**
+     * Inserts a new port containing the port number and its associated description.
+     *
+     * @param port
+     * @param description
+     * @return
+     */
+    public long insertPort(String port, String description) {
+        ContentValues values = new ContentValues();
+        values.put(PORT_FIELD, port);
+        values.put(DESCRIPTION_FIELD, description);
+
+        return db.insert(PORT_TABLE, null, values);
+    }
+
+    /**
+     * Wipes out all of the OUIs that are currently in the database.
+     *
+     * @return
+     */
+    public Database clearOuis() {
+        db.execSQL("DELETE FROM " + OUI_TABLE);
+        db.execSQL("VACUUM");
+        return this;
+    }
+
+    /**
+     * Wipes out all of the ports that are currently in the database.
+     *
+     * @return
+     */
+    public Database clearPorts() {
+        db.execSQL("DELETE FROM " + PORT_TABLE);
+        db.execSQL("VACUUM");
+        return this;
+    }
+
+    /**
+     * Searches for a vendor based on the provided MAC address.
+     *
+     * @param mac
+     * @return
+     */
+    public String selectVendor(String mac) {
+        Cursor cursor = db.rawQuery("SELECT " + VENDOR_FIELD + " FROM " + OUI_TABLE + " WHERE " + MAC_FIELD + " LIKE ?", new String[]{mac});
+        String vendor;
+        if (cursor.moveToFirst()) {
+            vendor = cursor.getString(cursor.getColumnIndex("vendor"));
         } else {
-            return null;
+            vendor = "Vendor not in database";
         }
+
+        cursor.close();
+
+        return vendor;
     }
 
     /**
-     * Closes the database handle
+     * Searches for a port description based on the provided port.
+     *
+     * @param port
+     * @return
      */
-    public void close() {
-        if (this.db != null) {
-            this.db.close();
+    public String selectPortDescription(String port) {
+        Cursor cursor = db.rawQuery("SELECT " + DESCRIPTION_FIELD + " FROM ports WHERE port = ?", new String[]{port});
+        String name = "";
+        if (cursor.moveToFirst()) {
+            name = cursor.getString(cursor.getColumnIndex(DESCRIPTION_FIELD));
         }
+
+        cursor.close();
+
+        return name;
     }
 
 }
