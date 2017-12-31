@@ -15,15 +15,15 @@ sonarqube {
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.2'
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 26
-        versionCode 51
-        versionName "2.2.1"
+        targetSdkVersion 27
+        versionCode 53
+        versionName "2.2.4"
         applicationId "com.aaronjwood.portauthority"
         setProperty("archivesBaseName", "PortAuthority-$versionName")
     }
@@ -66,8 +66,8 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:26.1.0'
-    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:support-v4:27.0.2'
+    compile 'com.android.support:appcompat-v7:27.0.2'
     compile 'jcifs:jcifs:1.3.17'
     compile 'dnsjava:dnsjava:2.1.7'
     //This does absolutely nothing
