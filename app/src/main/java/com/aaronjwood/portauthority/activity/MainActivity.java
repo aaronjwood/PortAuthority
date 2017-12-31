@@ -470,7 +470,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         }, 0);
 
         getInternalIp();
-        getExternalIp();
 
         String wifiSsid;
         String wifiBssid;
