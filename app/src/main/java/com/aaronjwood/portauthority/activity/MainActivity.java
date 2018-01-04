@@ -32,7 +32,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.aaronjwood.portauthority.BuildConfig;
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.adapter.HostAdapter;
 import com.aaronjwood.portauthority.async.DownloadAsyncTask;
@@ -47,7 +46,6 @@ import com.aaronjwood.portauthority.parser.PortParser;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
-import com.squareup.leakcanary.LeakCanary;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -111,10 +109,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (BuildConfig.DEBUG) {
-            LeakCanary.install(getApplication());
-        }
 
         setContentView(R.layout.activity_main);
 
