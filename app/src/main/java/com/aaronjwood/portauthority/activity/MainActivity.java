@@ -76,7 +76,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private ProgressDialog scanProgressDialog;
     private Handler signalHandler = new Handler();
     private Handler scanHandler;
-    private BroadcastReceiver receiver;
     private IntentFilter intentFilter = new IntentFilter();
     private HostAdapter hostAdapter;
     private List<Host> hosts = Collections.synchronizedList(new ArrayList<Host>());
@@ -84,6 +83,25 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private DownloadAsyncTask ouiTask;
     private DownloadAsyncTask portTask;
     private boolean sortAscending;
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+        /**
+         * Detect if a network connection has been lost or established
+         * @param context
+         * @param intent
+         */
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+            if (info == null) {
+                return;
+            }
+
+            getNetworkInfo(info);
+        }
+
+    };
 
     /**
      * Activity created
@@ -117,8 +135,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         setupHostsAdapter();
         setupDrawer();
-        setupReceivers();
         setupHostDiscovery();
+
+        intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
     }
 
     /**
@@ -385,33 +404,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     }
 
     /**
-     * Sets up and registers receivers
-     */
-    private void setupReceivers() {
-        receiver = new BroadcastReceiver() {
-
-            /**
-             * Detect if a network connection has been lost or established
-             * @param context
-             * @param intent
-             */
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                if (info == null) {
-                    return;
-                }
-
-                getNetworkInfo(info);
-            }
-
-        };
-
-        intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        registerReceiver(receiver, intentFilter);
-    }
-
-    /**
      * Gets network information about the device and updates various UI elements
      */
     private void getNetworkInfo(NetworkInfo info) {
@@ -604,6 +596,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public void onPause() {
         super.onPause();
 
+        unregisterReceiver(receiver);
+        signalHandler.removeCallbacksAndMessages(null);
+
         if (scanProgressDialog != null) {
             scanProgressDialog.dismiss();
         }
@@ -622,25 +617,11 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     }
 
     /**
-     * Activity destroyed
+     * Activity resumed.
      */
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        signalHandler.removeCallbacksAndMessages(null);
-
-        if (receiver != null) {
-            unregisterReceiver(receiver);
-        }
-    }
-
-    /**
-     * Activity restarted
-     */
-    @Override
-    public void onRestart() {
-        super.onRestart();
+    public void onResume() {
+        super.onResume();
 
         registerReceiver(receiver, intentFilter);
     }
