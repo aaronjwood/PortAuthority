@@ -50,10 +50,10 @@ import com.aaronjwood.portauthority.utils.UserPreference;
 import com.squareup.leakcanary.LeakCanary;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -681,8 +681,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     @Override
                     public int compare(Host lhs, Host rhs) {
                         try {
-                            int leftIp = new BigInteger(InetAddress.getByName(lhs.getIp()).getAddress()).intValue();
-                            int rightIp = new BigInteger(InetAddress.getByName(rhs.getIp()).getAddress()).intValue();
+                            int leftIp = ByteBuffer.wrap(InetAddress.getByName(lhs.getIp()).getAddress()).getInt();
+                            int rightIp = ByteBuffer.wrap(InetAddress.getByName(rhs.getIp()).getAddress()).getInt();
 
                             return leftIp - rightIp;
                         } catch (UnknownHostException ignored) {
