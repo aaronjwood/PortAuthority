@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Administration des Ports</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="macAddress">MAC</string>
+    <string name="macVendor">Fournisseur</string>
+    <string name="internalIpLabel">LAN IP</string>
+    <string name="externalIpLabel">WAN IP</string>
+    <string name="fetching">Récupération…</string>
+    <string name="signalLabel">Signal/Vitesse</string>
+    <string name="hostDiscovery">Trouver les Hôtes</string>
+    <string name="ssid">SSID</string>
+    <string name="bssid">BSSID</string>
+    <string name="scanWellKnownPorts">Scanner les Ports Connus</string>
+    <string name="scanPortRange">Scanner l\'intervalle de ports</string>
+    <string name="resetPortRange">Réinitialiser l\'intervalle de ports</string>
+    <string name="openPorts">Ports Ouverts</string>
+    <string name="portRangeStart">Port de Départ</string>
+    <string name="portRangeStop">Port de Fin</string>
+    <string name="wifiDisabled">Wi-Fi désactivé</string>
+    <string name="noWifiConnection">Pas de connexion Wi-Fi</string>
+    <string name="wanHostHint">URL/IP</string>
+    <string name="scanningWarning">ATTENTION</string>
+    <string name="domainName">Nom Domaine</string>
+    <string name="dnsLookup">Recherche DNS</string>
+    <string name="wakeOnLan">Wake Up</string>
+    <string name="waking">Réveil de %1$s…</string>
+    <string name="ipAddress">Adresse IP</string>
+    <string name="startingDnsLookup">Récupération des enregistrements DNS...</string>
+    <string name="dnsInputError">Entrez un domaine et sélectionnez un type d\'enregistrement</string>
+    <string name="notConnectedLan">Vous n\'êtes pas connecté au réseau local</string>
+    <string name="notConnectedWifi">Vous n\'êtes connecté à aucun réseau Wi-Fi!</string>
+    <string name="signalLink">%1$ddBm/%2$dMbps</string>
+    <string name="hostScan">Recherche d\'Hôtes</string>
+    <string name="subnetHosts">%1$d hôtes dans votre sous-réseau</string>
+    <string name="sort">Trier</string>
+    <string name="sortHostname">Par nom d\'hôte</string>
+    <string name="sortVendor">Par fournisseur</string>
+    <string name="copyHostname">Copier le nom d\'hôte</string>
+    <string name="copyIp">Copier l\'IP</string>
+    <string name="copyMac">Copier le MAC</string>
+    <string name="getMacVendorFailed">Fournisseur MAC indisponible</string>
+    <string name="failedOpenDb">Échec de l\'ouverture de la base de données</string>
+    <string name="downloadingData">Téléchargement des données</string>
+    <string name="failedSubnetHosts">Échec de l\'obtention du nombre d\'hôtes dans le sous-réseau</string>
+    <string name="failedSignal">Échec de l\'obtention de la force du signal</string>
+    <string name="failedLinkSpeed">Impossible d\'obtenir la vitesse de liaison</string>
+    <string name="failedSsid">Échec de l\'obtention du SSID</string>
+    <string name="failedBssid">Échec de l\'obtention du BSSID</string>
+    <string name="failedWifiManager">Échec de l\'obtention du WifiManager pour cet appareil</string>
+    <string name="scanningDisclaimer">Sachez que scanner des ports sur des serveurs publics est généralement considéré comme malveillant. En outre, l\'exécution de ce type d\'analyse sur le réseau de votre opérateur plutôt que sur votre propre connexion Wi-Fi sera plus lent et produira parfois des résultats inexacts en raison de la mise en forme du trafic. Votre opérateur peut également considérer que le trafic généré par cette analyse est malveillant.</string>
+
+</resources>
