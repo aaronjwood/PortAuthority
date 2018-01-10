@@ -10,6 +10,7 @@ import java.lang.ref.WeakReference;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class WanIpAsyncTask extends AsyncTask<Void, Void, String> {
 
@@ -40,11 +41,13 @@ public class WanIpAsyncTask extends AsyncTask<Void, Void, String> {
 
         try {
             Response response = httpClient.newCall(request).execute();
+            ResponseBody body = response.body();
             if (!response.isSuccessful()) {
+                body.close();
                 return error;
             }
 
-            return response.body().string().trim();
+            return response.body().string().trim(); // string() closes the resource automatically.
         } catch (IOException e) {
             return error;
         }
