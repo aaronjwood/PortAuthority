@@ -15,13 +15,13 @@
         <item>A</item>
     </string-array>
     <string-array name="upperDrawer">
-        <item>\\u2601 Scanner l\'hôte WAN</item>
-        <item>\\u2194 Recherche DNS</item>
+        <item>\u2601 Scanner l\'hôte WAN</item>
+        <item>\u2194 Recherche DNS</item>
     </string-array>
     <string-array name="lowerDrawer">
-        <item>\\u2699 Paramètres</item>
-        <item>\\u2195 MAJ Liste Ports</item>
-        <item>\\u2699 Paramètres</item>
+        <item>\u2699 Paramètres</item>
+        <item>\u2195 MAJ Liste Ports</item>
+        <item>\u2699 Paramètres</item>
     </string-array>
     <string-array name="records">
         <item>Type d\'Enregistrement</item>
