@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Administration des Ports</string>
+    <string name="app_name">Gestion des Ports</string>
     <string name="action_settings">Paramètres</string>
     <string name="macAddress">MAC</string>
     <string name="macVendor">Fournisseur</string>
