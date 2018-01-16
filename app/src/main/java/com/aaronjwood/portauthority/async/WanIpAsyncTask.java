@@ -1,5 +1,6 @@
 package com.aaronjwood.portauthority.async;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
@@ -10,7 +11,6 @@ import java.lang.ref.WeakReference;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 public class WanIpAsyncTask extends AsyncTask<Void, Void, String> {
 
@@ -34,20 +34,18 @@ public class WanIpAsyncTask extends AsyncTask<Void, Void, String> {
      * @return External IP address
      */
     @Override
+    @SuppressLint("NewApi")
     protected String doInBackground(Void... params) {
         String error = "Couldn't get your external IP";
         OkHttpClient httpClient = new OkHttpClient();
         Request request = new Request.Builder().url(EXTERNAL_IP_SERVICE).build();
 
-        try {
-            Response response = httpClient.newCall(request).execute();
-            ResponseBody body = response.body();
+        try (Response response = httpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                body.close();
                 return error;
             }
 
-            return response.body().string().trim(); // string() closes the resource automatically.
+            return response.body().string().trim();
         } catch (IOException e) {
             return error;
         }
