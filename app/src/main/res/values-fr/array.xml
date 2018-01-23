@@ -12,14 +12,14 @@
         <item>100</item>
         <item>50</item>
         <item>25</item>
-        <item>A</item>
+        <item>10</item>
     </string-array>
     <string-array name="upperDrawer">
         <item>\u2601 Scanner l\'hôte WAN</item>
         <item>\u2194 Recherche DNS</item>
     </string-array>
     <string-array name="lowerDrawer">
-        <item>\u2699 Paramètres</item>
+        <item>\u2195 MAJ Base de données OUI</item>
         <item>\u2195 MAJ Liste Ports</item>
         <item>\u2699 Paramètres</item>
     </string-array>
@@ -52,7 +52,7 @@
         <item>RRSIG</item>
         <item>SIG</item>
         <item>SOA</item>
-        <item>Q</item>
+        <item>SRV</item>
         <item>SSHFP</item>
         <item>TLSA</item>
         <item>TXT</item>
