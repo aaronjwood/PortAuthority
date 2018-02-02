@@ -21,8 +21,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 53
-        versionName "2.2.4"
+        versionCode 54
+        versionName "2.2.6"
         applicationId "com.aaronjwood.portauthority"
         setProperty("archivesBaseName", "PortAuthority-$versionName")
     }
