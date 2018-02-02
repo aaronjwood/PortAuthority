@@ -1,19 +1,16 @@
 package com.aaronjwood.portauthority.async;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class WanIpAsyncTask extends AsyncTask<Void, Void, String> {
 
@@ -37,20 +34,18 @@ public class WanIpAsyncTask extends AsyncTask<Void, Void, String> {
      * @return External IP address
      */
     @Override
+    @SuppressLint("NewApi")
     protected String doInBackground(Void... params) {
         String error = "Couldn't get your external IP";
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpGet httpget = new HttpGet(EXTERNAL_IP_SERVICE);
+        OkHttpClient httpClient = new OkHttpClient();
+        Request request = new Request.Builder().url(EXTERNAL_IP_SERVICE).build();
 
-        try {
-            HttpResponse response = httpclient.execute(httpget);
-            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+        try (Response response = httpClient.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
                 return error;
             }
 
-            return EntityUtils.toString(response.getEntity()).trim();
-        } catch (ClientProtocolException e) {
-            return error;
+            return response.body().string().trim();
         } catch (IOException e) {
             return error;
         }
