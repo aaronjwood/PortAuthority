@@ -41,6 +41,7 @@ import com.aaronjwood.portauthority.async.DownloadPortDataAsyncTask;
 import com.aaronjwood.portauthority.async.ScanHostsAsyncTask;
 import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Host;
+import com.aaronjwood.portauthority.network.Network;
 import com.aaronjwood.portauthority.network.Wired;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.parser.OuiParser;
@@ -112,11 +113,13 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         discoverHostsBtn = findViewById(R.id.discoverHosts);
         discoverHostsStr = getResources().getString(R.string.hostDiscovery);
 
-        wifi = new Wireless(getApplicationContext());
+        Context ctx = getApplicationContext();
+        wifi = new Wireless(ctx);
+        ethernet = new Wired(ctx);
         scanHandler = new Handler(Looper.getMainLooper());
 
         checkDatabase();
-        db = Database.getInstance(getApplicationContext());
+        db = Database.getInstance(ctx);
 
         setupHostsAdapter();
         setupDrawer();
@@ -222,7 +225,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                         Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                         return;
                     }
-                } catch (Wireless.NoConnectivityManagerException e) {
+                } catch (Network.NoConnectivityManagerException e) {
                     Errors.showError(getApplicationContext(), getResources().getString(R.string.failedWifiManager));
                     return;
                 }
