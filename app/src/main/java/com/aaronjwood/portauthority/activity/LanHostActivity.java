@@ -94,7 +94,7 @@ public final class LanHostActivity extends HostActivity {
                 super.onClick(v);
 
                 try {
-                    if (!wifi.isConnectedWifi()) {
+                    if (!wifi.isConnected()) {
                         Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                         return;
                     }
@@ -132,7 +132,7 @@ public final class LanHostActivity extends HostActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    if (!wifi.isConnectedWifi()) {
+                    if (!wifi.isConnected()) {
                         Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                         return;
                     }
@@ -174,7 +174,7 @@ public final class LanHostActivity extends HostActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    if (!wifi.isConnectedWifi()) {
+                    if (!wifi.isConnected()) {
                         Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                         return;
                     }

@@ -41,6 +41,7 @@ import com.aaronjwood.portauthority.async.DownloadPortDataAsyncTask;
 import com.aaronjwood.portauthority.async.ScanHostsAsyncTask;
 import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Host;
+import com.aaronjwood.portauthority.network.Wired;
 import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.parser.OuiParser;
 import com.aaronjwood.portauthority.parser.PortParser;
@@ -65,6 +66,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private final static int TIMER_INTERVAL = 1500;
 
     private Wireless wifi;
+    private Wired ethernet;
     private ListView hostList;
     private TextView internalIp;
     private TextView externalIp;
@@ -216,7 +218,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             @Override
             public void onClick(View v) {
                 try {
-                    if (!wifi.isConnectedWifi() && !wifi.isConnectedEthernet()) {
+                    if (!wifi.isConnected() && !ethernet.isConnected()) {
                         Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                         return;
                     }
@@ -250,7 +252,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
                 try {
                     Integer ip = wifi.getInternalWifiIpAddress(Integer.class);
-                    new ScanHostsAsyncTask(MainActivity.this, db).execute(ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(getApplicationContext()));
+                    new ScanHostsAsyncTask(MainActivity.this, db).execute(ip, wifi.getSubnet(), UserPreference.getHostSocketTimeout(getApplicationContext()));
                     discoverHostsBtn.setAlpha(.3f);
                     discoverHostsBtn.setEnabled(false);
                 } catch (UnknownHostException | Wireless.NoWifiManagerException e) {
@@ -568,7 +570,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     private void getInternalIp() {
         try {
-            int netmask = wifi.getInternalWifiSubnet();
+            int netmask = wifi.getSubnet();
             String internalIpWithSubnet = wifi.getInternalWifiIpAddress(String.class) + "/" + Integer.toString(netmask);
             internalIp.setText(internalIpWithSubnet);
         } catch (UnknownHostException | Wireless.NoWifiManagerException e) {

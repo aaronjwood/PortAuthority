@@ -20,15 +20,10 @@ import java.net.UnknownHostException;
 import java.nio.ByteOrder;
 import java.util.Enumeration;
 
-public class Wireless {
+public class Wireless extends Network {
 
     public class NoWifiManagerException extends Exception {
     }
-
-    public class NoConnectivityManagerException extends Exception {
-    }
-
-    private Context context;
 
     /**
      * Constructor to set the activity for context
@@ -36,7 +31,7 @@ public class Wireless {
      * @param context The activity to use for context
      */
     public Wireless(Context context) {
-        this.context = context;
+        super(context);
     }
 
     /**
@@ -141,7 +136,7 @@ public class Wireless {
      *
      * @return Internal Wifi Subnet Netmask
      */
-    public int getInternalWifiSubnet() throws NoWifiManagerException {
+    public int getSubnet() throws NoWifiManagerException {
         WifiManager wifiManager = getWifiManager();
         if (wifiManager == null) {
             return 0;
@@ -186,7 +181,7 @@ public class Wireless {
      * @return Number of hosts as an integer.
      */
     public int getNumberOfHostsInWifiSubnet() throws NoWifiManagerException {
-        Double subnet = (double) getInternalWifiSubnet();
+        Double subnet = (double) getSubnet();
         double hosts;
         double bitsLeft = 32.0d - subnet;
         hosts = Math.pow(2.0d, bitsLeft) - 2.0d;
@@ -241,19 +236,8 @@ public class Wireless {
      *
      * @return True if the device is connected, false if it isn't
      */
-    public boolean isConnectedWifi() throws NoConnectivityManagerException {
+    public boolean isConnected() throws NoConnectivityManagerException {
         NetworkInfo info = getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        return info != null && info.isConnectedOrConnecting();
-    }
-
-    /**
-     * Determines if the device is connected to a wired network.
-     *
-     * @return
-     * @throws NoConnectivityManagerException
-     */
-    public boolean isConnectedEthernet() throws NoConnectivityManagerException {
-        NetworkInfo info = getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
         return info != null && info.isConnectedOrConnecting();
     }
 
@@ -289,27 +273,5 @@ public class Wireless {
         return getWifiManager().getConnectionInfo();
     }
 
-    /**
-     * Gets the Android connectivity manager in the context of the current activity
-     *
-     * @return Connectivity manager
-     */
-    private ConnectivityManager getConnectivityManager() throws NoConnectivityManagerException {
-        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (manager == null) {
-            throw new NoConnectivityManagerException();
-        }
-
-        return manager;
-    }
-
-    /**
-     * Gets the Android network information in the context of the current activity
-     *
-     * @return Network information
-     */
-    private NetworkInfo getNetworkInfo(int type) throws NoConnectivityManagerException {
-        return getConnectivityManager().getNetworkInfo(type);
-    }
 
 }
