@@ -30,6 +30,10 @@ public class Wireless {
     public static class NoConnectivityManagerException extends Exception {
     }
 
+    public static class NoWifiInterface extends Exception {
+
+    }
+
     /**
      * Constructor to set the activity for context
      *
@@ -44,7 +48,7 @@ public class Wireless {
      *
      * @return MAC address
      */
-    public String getMacAddress() throws UnknownHostException, SocketException, NoWifiManagerException {
+    public String getMacAddress() throws UnknownHostException, SocketException, NoWifiManagerException, NoWifiInterface {
         String address = getWifiInfo().getMacAddress(); //Won't work on Android 6+ https://developer.android.com/about/versions/marshmallow/android-6.0-changes.html#behavior-hardware-id
         if (!"02:00:00:00:00:00".equals(address)) {
             return address;
@@ -52,6 +56,9 @@ public class Wireless {
 
         //This should get us the device's MAC address on Android 6+
         NetworkInterface iface = NetworkInterface.getByInetAddress(getWifiInetAddress());
+        if (iface == null) {
+            throw new NoWifiInterface();
+        }
 
         byte[] mac = iface.getHardwareAddress();
 

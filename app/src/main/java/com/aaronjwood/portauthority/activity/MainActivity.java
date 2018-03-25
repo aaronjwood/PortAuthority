@@ -213,6 +213,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             macVendor.setText(R.string.noWifiConnection);
         } catch (IOException | SQLiteException | UnsupportedOperationException e) {
             macVendor.setText(R.string.getMacVendorFailed);
+        } catch (Wireless.NoWifiInterface e) {
+            macAddress.setText(R.string.noWifiInterface);
         }
     }
 
