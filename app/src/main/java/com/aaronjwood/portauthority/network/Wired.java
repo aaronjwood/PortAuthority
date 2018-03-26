@@ -11,11 +11,12 @@ public class Wired extends Network {
     }
 
     /**
-     * Determines if the device is connected to a wired network.
+     * Checks if ethernet is connected.
      *
-     * @return
+     * @return True if connected or in the process of connecting, false otherwise.
      * @throws NoConnectivityManagerException
      */
+    @Override
     public boolean isConnected() throws NoConnectivityManagerException {
         NetworkInfo info = getNetworkInfo(ConnectivityManager.TYPE_ETHERNET);
         return info != null && info.isConnectedOrConnecting();

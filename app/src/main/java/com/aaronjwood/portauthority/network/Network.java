@@ -20,6 +20,10 @@ public abstract class Network {
      *
      * @return Network information
      */
+    NetworkInfo getNetworkInfo() throws NoConnectivityManagerException {
+        return getConnectivityManager().getActiveNetworkInfo();
+    }
+
     NetworkInfo getNetworkInfo(int type) throws NoConnectivityManagerException {
         return getConnectivityManager().getNetworkInfo(type);
     }
@@ -36,6 +40,17 @@ public abstract class Network {
         }
 
         return manager;
+    }
+
+    /**
+     * Checks if there is an active connection.
+     *
+     * @return True if connected or in the process of connecting, false otherwise.
+     * @throws NoConnectivityManagerException
+     */
+    public boolean isConnected() throws NoConnectivityManagerException {
+        NetworkInfo info = getNetworkInfo();
+        return info != null && info.isConnectedOrConnecting();
     }
 
 }

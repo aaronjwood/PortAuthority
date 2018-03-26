@@ -232,16 +232,6 @@ public class Wireless extends Network {
     }
 
     /**
-     * Determines if the device is connected to a WiFi network or not
-     *
-     * @return True if the device is connected, false if it isn't
-     */
-    public boolean isConnected() throws NoConnectivityManagerException {
-        NetworkInfo info = getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        return info != null && info.isConnectedOrConnecting();
-    }
-
-    /**
      * Determines if WiFi is enabled on the device or not
      *
      * @return True if enabled, false if disabled
@@ -271,6 +261,18 @@ public class Wireless extends Network {
      */
     private WifiInfo getWifiInfo() throws NoWifiManagerException {
         return getWifiManager().getConnectionInfo();
+    }
+
+    /**
+     * Checks if WiFi is connected.
+     *
+     * @return True if connected or in the process of connecting, false otherwise.
+     * @throws NoConnectivityManagerException
+     */
+    @Override
+    public boolean isConnected() throws NoConnectivityManagerException {
+        NetworkInfo info = getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return info != null && info.isConnectedOrConnecting();
     }
 
 
