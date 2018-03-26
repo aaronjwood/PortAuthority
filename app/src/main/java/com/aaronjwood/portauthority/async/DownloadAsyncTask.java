@@ -73,7 +73,7 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, String, Void> {
                 return;
             }
 
-            in = new BufferedReader(new InputStreamReader(new GZIPInputStream(connection.getInputStream())));
+            in = new BufferedReader(new InputStreamReader(new GZIPInputStream(connection.getInputStream()), "UTF-8"));
             String line;
 
             while ((line = in.readLine()) != null) {

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteException;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
@@ -32,7 +33,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.aaronjwood.portauthority.BuildConfig;
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.adapter.HostAdapter;
 import com.aaronjwood.portauthority.async.DownloadAsyncTask;
@@ -49,13 +49,12 @@ import com.aaronjwood.portauthority.parser.PortParser;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
-import com.squareup.leakcanary.LeakCanary;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -71,7 +70,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private ListView hostList;
     private TextView internalIp;
     private TextView externalIp;
-    private String cachedWanIp;
     private TextView signalStrength;
     private TextView ssid;
     private TextView bssid;
@@ -80,7 +78,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private ProgressDialog scanProgressDialog;
     private Handler signalHandler = new Handler();
     private Handler scanHandler;
-    private BroadcastReceiver receiver;
     private IntentFilter intentFilter = new IntentFilter();
     private HostAdapter hostAdapter;
     private List<Host> hosts = Collections.synchronizedList(new ArrayList<Host>());
@@ -88,6 +85,25 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private DownloadAsyncTask ouiTask;
     private DownloadAsyncTask portTask;
     private boolean sortAscending;
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+        /**
+         * Detect if a network connection has been lost or established
+         * @param context
+         * @param intent
+         */
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+            if (info == null) {
+                return;
+            }
+
+            getNetworkInfo(info);
+        }
+
+    };
 
     /**
      * Activity created
@@ -97,10 +113,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (BuildConfig.DEBUG) {
-            LeakCanary.install(getApplication());
-        }
 
         setContentView(R.layout.activity_main);
 
@@ -123,8 +135,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         setupHostsAdapter();
         setupDrawer();
-        setupReceivers();
         setupHostDiscovery();
+
+        intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
     }
 
     /**
@@ -205,6 +218,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             macVendor.setText(R.string.noWifiConnection);
         } catch (IOException | SQLiteException | UnsupportedOperationException e) {
             macVendor.setText(R.string.getMacVendorFailed);
+        } catch (Wireless.NoWifiInterface e) {
+            macAddress.setText(R.string.noWifiInterface);
         }
     }
 
@@ -220,6 +235,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
              */
             @Override
             public void onClick(View v) {
+                Resources resources = getResources();
+                Context context = getApplicationContext();
                 try {
                     if (!wifi.isConnected() && !ethernet.isConnected()) {
                         Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
@@ -234,7 +251,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 try {
                     numSubnetHosts = wifi.getNumberOfHostsInWifiSubnet();
                 } catch (Wireless.NoWifiManagerException e) {
-                    Errors.showError(getApplicationContext(), getResources().getString(R.string.failedSubnetHosts));
+                    Errors.showError(context, resources.getString(R.string.failedSubnetHosts));
                     return;
                 }
 
@@ -246,8 +263,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
                 scanProgressDialog = new ProgressDialog(MainActivity.this, R.style.DialogTheme);
                 scanProgressDialog.setCancelable(false);
-                scanProgressDialog.setTitle(getResources().getString(R.string.hostScan));
-                scanProgressDialog.setMessage(String.format(getResources().getString(R.string.subnetHosts), numSubnetHosts));
+                scanProgressDialog.setTitle(resources.getString(R.string.hostScan));
+                scanProgressDialog.setMessage(String.format(resources.getString(R.string.subnetHosts), numSubnetHosts));
                 scanProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 scanProgressDialog.setProgress(0);
                 scanProgressDialog.setMax(numSubnetHosts);
@@ -386,39 +403,14 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     }
 
     /**
-     * Sets up and registers receivers
-     */
-    private void setupReceivers() {
-        receiver = new BroadcastReceiver() {
-
-            /**
-             * Detect if a network connection has been lost or established
-             * @param context
-             * @param intent
-             */
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                if (info == null) {
-                    return;
-                }
-
-                getNetworkInfo(info);
-            }
-
-        };
-
-        intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        registerReceiver(receiver, intentFilter);
-    }
-
-    /**
      * Gets network information about the device and updates various UI elements
      */
     private void getNetworkInfo(NetworkInfo info) {
         setupMac();
         getExternalIp();
 
+        final Resources resources = getResources();
+        final Context context = getApplicationContext();
         try {
             boolean enabled = wifi.isEnabled();
             if (!info.isConnected() || !enabled) {
@@ -434,7 +426,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 return;
             }
         } catch (Wireless.NoWifiManagerException e) {
-            Errors.showError(getApplicationContext(), getResources().getString(R.string.failedWifiManager));
+            Errors.showError(context, resources.getString(R.string.failedWifiManager));
         }
 
         if (!info.isConnected()) {
@@ -453,37 +445,35 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 try {
                     speed = wifi.getLinkSpeed();
                 } catch (Wireless.NoWifiManagerException e) {
-                    Errors.showError(getApplicationContext(), getResources().getString(R.string.failedLinkSpeed));
+                    Errors.showError(context, resources.getString(R.string.failedLinkSpeed));
                     return;
                 }
                 try {
                     signal = wifi.getSignalStrength();
                 } catch (Wireless.NoWifiManagerException e) {
-                    Errors.showError(getApplicationContext(), getResources().getString(R.string.failedSignal));
+                    Errors.showError(context, resources.getString(R.string.failedSignal));
                     return;
                 }
 
-
-                signalStrength.setText(String.format(getResources().getString(R.string.signalLink), signal, speed));
+                signalStrength.setText(String.format(resources.getString(R.string.signalLink), signal, speed));
                 signalHandler.postDelayed(this, TIMER_INTERVAL);
             }
         }, 0);
 
         getInternalIp();
-        getExternalIp();
 
         String wifiSsid;
         String wifiBssid;
         try {
             wifiSsid = wifi.getSSID();
         } catch (Wireless.NoWifiManagerException e) {
-            Errors.showError(getApplicationContext(), getResources().getString(R.string.failedSsid));
+            Errors.showError(context, resources.getString(R.string.failedSsid));
             return;
         }
         try {
             wifiBssid = wifi.getBSSID();
         } catch (Wireless.NoWifiManagerException e) {
-            Errors.showError(getApplicationContext(), getResources().getString(R.string.failedBssid));
+            Errors.showError(context, resources.getString(R.string.failedBssid));
             return;
         }
 
@@ -593,10 +583,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         if (UserPreference.getFetchExternalIp(this)) {
             label.setVisibility(View.VISIBLE);
             ip.setVisibility(View.VISIBLE);
-
-            if (cachedWanIp == null) {
-                wifi.getExternalIpAddress(this);
-            }
+            wifi.getExternalIpAddress(this);
         } else {
             label.setVisibility(View.GONE);
             ip.setVisibility(View.GONE);
@@ -609,6 +596,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     @Override
     public void onPause() {
         super.onPause();
+
+        unregisterReceiver(receiver);
+        signalHandler.removeCallbacksAndMessages(null);
 
         if (scanProgressDialog != null) {
             scanProgressDialog.dismiss();
@@ -628,25 +618,11 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     }
 
     /**
-     * Activity destroyed
+     * Activity resumed.
      */
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        signalHandler.removeCallbacksAndMessages(null);
-
-        if (receiver != null) {
-            unregisterReceiver(receiver);
-        }
-    }
-
-    /**
-     * Activity restarted
-     */
-    @Override
-    public void onRestart() {
-        super.onRestart();
+    public void onResume() {
+        super.onResume();
 
         registerReceiver(receiver, intentFilter);
     }
@@ -668,7 +644,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 adapterData.add(item);
             }
             savedState.putSerializable("hosts", adapterData);
-            savedState.putString("wanIp", cachedWanIp);
         }
     }
 
@@ -682,8 +657,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public void onRestoreInstanceState(Bundle savedState) {
         super.onRestoreInstanceState(savedState);
 
-        cachedWanIp = savedState.getString("wanIp");
-        externalIp.setText(cachedWanIp);
         hosts = (ArrayList<Host>) savedState.getSerializable("hosts");
         if (hosts != null) {
             setupHostsAdapter();
@@ -709,8 +682,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     @Override
                     public int compare(Host lhs, Host rhs) {
                         try {
-                            int leftIp = new BigInteger(InetAddress.getByName(lhs.getIp()).getAddress()).intValue();
-                            int rightIp = new BigInteger(InetAddress.getByName(rhs.getIp()).getAddress()).intValue();
+                            int leftIp = ByteBuffer.wrap(InetAddress.getByName(lhs.getIp()).getAddress()).getInt();
+                            int rightIp = ByteBuffer.wrap(InetAddress.getByName(rhs.getIp()).getAddress()).getInt();
 
                             return leftIp - rightIp;
                         } catch (UnknownHostException ignored) {
@@ -747,7 +720,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     @Override
     public void processFinish(String output) {
-        cachedWanIp = output;
         externalIp.setText(output);
     }
 

@@ -22,7 +22,11 @@ import java.util.Enumeration;
 
 public class Wireless extends Network {
 
-    public class NoWifiManagerException extends Exception {
+    public static class NoWifiManagerException extends Exception {
+    }
+
+    public static class NoWifiInterface extends Exception {
+
     }
 
     /**
@@ -39,7 +43,7 @@ public class Wireless extends Network {
      *
      * @return MAC address
      */
-    public String getMacAddress() throws UnknownHostException, SocketException, NoWifiManagerException {
+    public String getMacAddress() throws UnknownHostException, SocketException, NoWifiManagerException, NoWifiInterface {
         String address = getWifiInfo().getMacAddress(); //Won't work on Android 6+ https://developer.android.com/about/versions/marshmallow/android-6.0-changes.html#behavior-hardware-id
         if (!"02:00:00:00:00:00".equals(address)) {
             return address;
@@ -47,6 +51,9 @@ public class Wireless extends Network {
 
         //This should get us the device's MAC address on Android 6+
         NetworkInterface iface = NetworkInterface.getByInetAddress(getWifiInetAddress());
+        if (iface == null) {
+            throw new NoWifiInterface();
+        }
 
         byte[] mac = iface.getHardwareAddress();
 

@@ -7,11 +7,11 @@ import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.nio.channels.IllegalBlockingModeException;
 
 public class ScanPortsRunnable implements Runnable {
@@ -65,12 +65,13 @@ public class ScanPortsRunnable implements Runnable {
             SparseArray<String> portData = new SparseArray<>();
             String data = null;
             try {
+                InputStreamReader input = new InputStreamReader(socket.getInputStream(), "UTF-8");
+                BufferedReader buffered = new BufferedReader(input);
                 if (i == 22) {
-                    data = parseSSH(new BufferedReader(new InputStreamReader(socket.getInputStream())));
+                    data = parseSSH(buffered);
                 } else if (i == 80 || i == 443 || i == 8080) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                    data = parseHTTP(in, out);
+                    PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
+                    data = parseHTTP(buffered, out);
                 }
             } catch (IOException e) {
                 activity.processFinish(e);
