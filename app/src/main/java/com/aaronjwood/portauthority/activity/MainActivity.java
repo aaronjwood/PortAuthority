@@ -239,11 +239,11 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 Context context = getApplicationContext();
                 try {
                     if (!wifi.isConnected() && !ethernet.isConnected()) {
-                        Errors.showError(context, getResources().getString(R.string.notConnectedLan));
+                        Errors.showError(context, resources.getString(R.string.notConnectedLan));
                         return;
                     }
                 } catch (Network.NoConnectivityManagerException e) {
-                    Errors.showError(context, getResources().getString(R.string.failedWifiManager));
+                    Errors.showError(context, resources.getString(R.string.failedWifiManager));
                     return;
                 }
 
@@ -276,7 +276,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     discoverHostsBtn.setAlpha(.3f);
                     discoverHostsBtn.setEnabled(false);
                 } catch (UnknownHostException | Wireless.NoWifiManagerException e) {
-                    Errors.showError(context, getResources().getString(R.string.notConnectedLan));
+                    Errors.showError(context, resources.getString(R.string.notConnectedLan));
                 }
             }
         });
