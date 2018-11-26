@@ -2,6 +2,7 @@ package com.aaronjwood.portauthority.activity;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -24,6 +25,9 @@ import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.listener.ScanPortsListener;
 import com.aaronjwood.portauthority.network.Host;
+import com.aaronjwood.portauthority.network.Network;
+import com.aaronjwood.portauthority.network.Wired;
+import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.Errors;
@@ -37,6 +41,8 @@ import java.util.List;
 
 public abstract class HostActivity extends AppCompatActivity implements HostAsyncResponse {
 
+    protected Wireless wifi;
+    protected Wired wired;
     protected int layout;
     protected ArrayAdapter<String> adapter;
     protected ListView portList;
@@ -56,7 +62,10 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         super.onCreate(savedInstanceState);
         setContentView(layout);
 
-        db = Database.getInstance(getApplicationContext());
+        Context ctx = getApplicationContext();
+        db = Database.getInstance(ctx);
+        wifi = new Wireless(ctx);
+        wired = new Wired(ctx);
         handler = new Handler(Looper.getMainLooper());
 
         setupPortsAdapter();
@@ -341,5 +350,18 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
                 Errors.showError(getApplicationContext(), output.getLocalizedMessage());
             }
         });
+    }
+
+    /**
+     * Determines if there is an active network connection.
+     *
+     * @return True if there's a connection, otherwise false.
+     */
+    protected boolean isConnected() {
+        try {
+            return wifi.isConnected() || wired.isConnected();
+        } catch (Network.NoConnectivityManagerException e) {
+            return false;
+        }
     }
 }

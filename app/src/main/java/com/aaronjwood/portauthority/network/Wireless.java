@@ -1,9 +1,7 @@
 package com.aaronjwood.portauthority.network;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
-import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
@@ -269,18 +267,5 @@ public class Wireless extends Network {
     private WifiInfo getWifiInfo() throws NoWifiManagerException {
         return getWifiManager().getConnectionInfo();
     }
-
-    /**
-     * Checks if WiFi is connected.
-     *
-     * @return True if connected or in the process of connecting, false otherwise.
-     * @throws NoConnectivityManagerException
-     */
-    @Override
-    public boolean isConnected() throws NoConnectivityManagerException {
-        NetworkInfo info = getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        return info != null && info.isConnectedOrConnecting();
-    }
-
 
 }

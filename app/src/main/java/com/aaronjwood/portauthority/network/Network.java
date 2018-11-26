@@ -20,12 +20,8 @@ public abstract class Network {
      *
      * @return Network information
      */
-    NetworkInfo getNetworkInfo() throws NoConnectivityManagerException {
+    private NetworkInfo getNetworkInfo() throws NoConnectivityManagerException {
         return getConnectivityManager().getActiveNetworkInfo();
-    }
-
-    NetworkInfo getNetworkInfo(int type) throws NoConnectivityManagerException {
-        return getConnectivityManager().getNetworkInfo(type);
     }
 
     /**

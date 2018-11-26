@@ -12,13 +12,13 @@ import android.widget.Toast;
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.listener.ScanPortsListener;
 import com.aaronjwood.portauthority.network.Host;
-import com.aaronjwood.portauthority.network.Wireless;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
+import java.util.Objects;
+
 public final class LanHostActivity extends HostActivity {
-    private Wireless wifi;
     private Host host;
 
     /**
@@ -40,13 +40,9 @@ public final class LanHostActivity extends HostActivity {
             return;
         }
 
-        wifi = new Wireless(getApplicationContext());
         host = (Host) extras.get("HOST");
-        if (host == null) {
-            return;
-        }
 
-        hostMacVendor.setText(host.getVendor());
+        hostMacVendor.setText(Objects.requireNonNull(host).getVendor());
         hostName.setText(host.getHostname());
         hostMac.setText(host.getMac());
         ipAddress.setText(host.getIp());
@@ -92,13 +88,7 @@ public final class LanHostActivity extends HostActivity {
             @Override
             public void onClick(View v) {
                 super.onClick(v);
-
-                try {
-                    if (!wifi.isConnected()) {
-                        Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
-                        return;
-                    }
-                } catch (Wireless.NoConnectivityManagerException e) {
+                if (!isConnected()) {
                     Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                     return;
                 }
@@ -131,12 +121,7 @@ public final class LanHostActivity extends HostActivity {
              */
             @Override
             public void onClick(View v) {
-                try {
-                    if (!wifi.isConnected()) {
-                        Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
-                        return;
-                    }
-                } catch (Wireless.NoConnectivityManagerException e) {
+                if (!isConnected()) {
                     Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                     return;
                 }
@@ -173,12 +158,7 @@ public final class LanHostActivity extends HostActivity {
 
             @Override
             public void onClick(View v) {
-                try {
-                    if (!wifi.isConnected()) {
-                        Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
-                        return;
-                    }
-                } catch (Wireless.NoConnectivityManagerException e) {
+                if (!isConnected()) {
                     Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                     return;
                 }
@@ -209,6 +189,7 @@ public final class LanHostActivity extends HostActivity {
         if (output && scanProgressDialog != null && scanProgressDialog.isShowing()) {
             scanProgressDialog.dismiss();
         }
+        
         if (output && portRangeDialog != null && portRangeDialog.isShowing()) {
             portRangeDialog.dismiss();
         }
