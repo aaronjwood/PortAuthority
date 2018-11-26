@@ -70,6 +70,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private ListView hostList;
     private TextView internalIp;
     private TextView externalIp;
+    private String cachedWanIp;
     private TextView signalStrength;
     private TextView ssid;
     private TextView bssid;
@@ -454,7 +455,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     Errors.showError(context, resources.getString(R.string.failedSignal));
                     return;
                 }
-
+                
                 signalStrength.setText(String.format(resources.getString(R.string.signalLink), signal, speed));
                 signalHandler.postDelayed(this, TIMER_INTERVAL);
             }
@@ -583,7 +584,10 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         if (UserPreference.getFetchExternalIp(this)) {
             label.setVisibility(View.VISIBLE);
             ip.setVisibility(View.VISIBLE);
-            wifi.getExternalIpAddress(this);
+
+            if (cachedWanIp == null) {
+                wifi.getExternalIpAddress(this);
+            }
         } else {
             label.setVisibility(View.GONE);
             ip.setVisibility(View.GONE);
@@ -644,6 +648,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 adapterData.add(item);
             }
             savedState.putSerializable("hosts", adapterData);
+            savedState.putString("wanIp", cachedWanIp);
         }
     }
 
@@ -657,6 +662,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public void onRestoreInstanceState(Bundle savedState) {
         super.onRestoreInstanceState(savedState);
 
+        cachedWanIp = savedState.getString("wanIp");
+        externalIp.setText(cachedWanIp);
         hosts = (ArrayList<Host>) savedState.getSerializable("hosts");
         if (hosts != null) {
             setupHostsAdapter();
@@ -720,6 +727,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     @Override
     public void processFinish(String output) {
+        cachedWanIp = output;
         externalIp.setText(output);
     }
 

@@ -16,13 +16,13 @@ sonarqube {
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.2'
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 54
-        versionName "2.2.6"
+        versionCode 55
+        versionName "2.2.8"
         applicationId "com.aaronjwood.portauthority"
         setProperty("archivesBaseName", "PortAuthority-$versionName")
     }
