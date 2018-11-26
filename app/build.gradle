@@ -65,9 +65,9 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:27.0.2'
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    compile 'com.squareup.okhttp3:okhttp:3.9.1'
+    compile 'com.android.support:support-v4:27.1.1'
+    compile 'com.android.support:appcompat-v7:27.1.1'
+    compile 'com.squareup.okhttp3:okhttp:3.10.0'
     compile 'jcifs:jcifs:1.3.17'
     compile 'dnsjava:dnsjava:2.1.7'
     //This does absolutely nothing
