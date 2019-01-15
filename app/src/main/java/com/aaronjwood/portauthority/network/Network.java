@@ -67,5 +67,18 @@ public abstract class Network {
      * @throws Exception
      */
     abstract int getSubnet() throws Exception;
+    
+    /**
+     * Returns the number of hosts in the subnet.
+     *
+     * @return Number of hosts.
+     */
+    public int getNumberOfSubnetHosts(int subnet) {
+        Double sub = (double) subnet;
+        double bitsLeft = 32.0d - sub;
+        double hosts = Math.pow(2.0d, bitsLeft) - 2.0d;
+
+        return (int) hosts;
+    }
 
 }

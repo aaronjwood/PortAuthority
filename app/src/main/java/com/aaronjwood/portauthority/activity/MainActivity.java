@@ -249,16 +249,18 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 }
 
                 int numSubnetHosts;
+                int netmask = 0;
                 try {
-                    numSubnetHosts = wifi.getNumberOfHostsInWifiSubnet();
+                    netmask = wifi.getSubnet();
                 } catch (Wireless.NoWifiManagerException e) {
-                    Errors.showError(context, resources.getString(R.string.failedSubnetHosts));
+                    Errors.showError(context, resources.getString(R.string.notConnectedLan));
                     return;
                 } catch (Network.SubnetNotFoundException e) {
                     Errors.showError(context, resources.getString(R.string.subnetNotFound));
                     return;
                 }
 
+                numSubnetHosts = wifi.getNumberOfSubnetHosts(netmask);
                 setAnimations();
 
                 hosts.clear();
@@ -276,13 +278,11 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
                 try {
                     Integer ip = wifi.getInternalWifiIpAddress(Integer.class);
-                    new ScanHostsAsyncTask(MainActivity.this, db).execute(ip, wifi.getSubnet(), UserPreference.getHostSocketTimeout(context));
+                    new ScanHostsAsyncTask(MainActivity.this, db).execute(ip, netmask, UserPreference.getHostSocketTimeout(context));
                     discoverHostsBtn.setAlpha(.3f);
                     discoverHostsBtn.setEnabled(false);
                 } catch (UnknownHostException | Wireless.NoWifiManagerException e) {
                     Errors.showError(context, resources.getString(R.string.notConnectedLan));
-                } catch (Network.SubnetNotFoundException e) {
-                    Errors.showError(context, resources.getString(R.string.subnetNotFound));
                 }
             }
         });
@@ -460,7 +460,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     Errors.showError(context, resources.getString(R.string.failedSignal));
                     return;
                 }
-                
+
                 signalStrength.setText(String.format(resources.getString(R.string.signalLink), signal, speed));
                 signalHandler.postDelayed(this, TIMER_INTERVAL);
             }

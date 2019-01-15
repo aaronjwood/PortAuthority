@@ -41,6 +41,7 @@ public class Wireless extends Network {
      *
      * @return MAC address
      */
+    @Override
     public String getMacAddress() throws UnknownHostException, SocketException, NoWifiManagerException, NoWifiInterfaceException {
         String address = getWifiInfo().getMacAddress(); //Won't work on Android 6+ https://developer.android.com/about/versions/marshmallow/android-6.0-changes.html#behavior-hardware-id
         if (!"02:00:00:00:00:00".equals(address)) {
@@ -141,6 +142,7 @@ public class Wireless extends Network {
      *
      * @return Internal Wifi Subnet Netmask
      */
+    @Override
     public int getSubnet() throws NoWifiManagerException, SubnetNotFoundException {
         WifiManager wifiManager = getWifiManager();
         if (wifiManager == null) {
@@ -177,21 +179,6 @@ public class Wireless extends Network {
         }
 
         return netmask;
-    }
-
-
-    /**
-     * Returns the number of hosts in the subnet.
-     *
-     * @return Number of hosts as an integer.
-     */
-    public int getNumberOfHostsInWifiSubnet() throws NoWifiManagerException, SubnetNotFoundException {
-        Double subnet = (double) getSubnet();
-        double hosts;
-        double bitsLeft = 32.0d - subnet;
-        hosts = Math.pow(2.0d, bitsLeft) - 2.0d;
-
-        return (int) hosts;
     }
 
 

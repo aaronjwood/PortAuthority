@@ -12,6 +12,8 @@ import java.util.List;
 
 public class Wired extends Network {
 
+    private final static String ETHERNET_ADDRESS = "/sys/class/net/eth0/address";
+
     public Wired(Context context) {
         super(context);
     }
@@ -23,8 +25,8 @@ public class Wired extends Network {
      * @throws IOException
      */
     @Override
-    String getMacAddress() throws IOException {
-        try (BufferedReader br = new BufferedReader(new FileReader("/sys/class/net/eth0/address"))) {
+    public String getMacAddress() throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(ETHERNET_ADDRESS))) {
             String address = br.readLine();
             return address.substring(0, 17);
         }
@@ -38,7 +40,7 @@ public class Wired extends Network {
      * @throws NoConnectivityManagerException
      */
     @Override
-    int getSubnet() throws SubnetNotFoundException, NoConnectivityManagerException {
+    public int getSubnet() throws SubnetNotFoundException, NoConnectivityManagerException {
         ConnectivityManager cm = getConnectivityManager();
         List<LinkAddress> addresses = cm.getLinkProperties(cm.getActiveNetwork()).getLinkAddresses();
         for (LinkAddress address : addresses) {
