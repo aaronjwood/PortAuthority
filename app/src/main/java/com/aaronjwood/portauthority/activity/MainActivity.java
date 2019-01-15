@@ -78,7 +78,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private Handler scanHandler;
     private IntentFilter intentFilter = new IntentFilter();
     private HostAdapter hostAdapter;
-    private List<Host> hosts = Collections.synchronizedList(new ArrayList<Host>());
+    private List<Host> hosts = Collections.synchronizedList(new ArrayList<>());
     private Database db;
     private DownloadAsyncTask ouiTask;
     private DownloadAsyncTask portTask;
