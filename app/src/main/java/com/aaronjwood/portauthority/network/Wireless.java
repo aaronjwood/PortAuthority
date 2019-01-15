@@ -23,7 +23,7 @@ public class Wireless extends Network {
     public static class NoWifiManagerException extends Exception {
     }
 
-    public static class NoWifiInterface extends Exception {
+    public static class NoWifiInterfaceException extends Exception {
 
     }
 
@@ -37,11 +37,11 @@ public class Wireless extends Network {
     }
 
     /**
-     * Gets the MAC address of the device
+     * Gets the MAC address of the wireless interface.
      *
      * @return MAC address
      */
-    public String getMacAddress() throws UnknownHostException, SocketException, NoWifiManagerException, NoWifiInterface {
+    public String getMacAddress() throws UnknownHostException, SocketException, NoWifiManagerException, NoWifiInterfaceException {
         String address = getWifiInfo().getMacAddress(); //Won't work on Android 6+ https://developer.android.com/about/versions/marshmallow/android-6.0-changes.html#behavior-hardware-id
         if (!"02:00:00:00:00:00".equals(address)) {
             return address;
@@ -50,7 +50,7 @@ public class Wireless extends Network {
         //This should get us the device's MAC address on Android 6+
         NetworkInterface iface = NetworkInterface.getByInetAddress(getWifiInetAddress());
         if (iface == null) {
-            throw new NoWifiInterface();
+            throw new NoWifiInterfaceException();
         }
 
         byte[] mac = iface.getHardwareAddress();
@@ -137,19 +137,19 @@ public class Wireless extends Network {
     }
 
     /**
-     * Gets the Wifi Manager DHCP information and returns the Netmask of the internal Wifi Network as an int
+     * Gets the subnet of the wireless interface.
      *
      * @return Internal Wifi Subnet Netmask
      */
-    public int getSubnet() throws NoWifiManagerException {
+    public int getSubnet() throws NoWifiManagerException, SubnetNotFoundException {
         WifiManager wifiManager = getWifiManager();
         if (wifiManager == null) {
-            return 0;
+            throw new NoWifiManagerException();
         }
 
         DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
         if (dhcpInfo == null) {
-            return 0;
+            throw new SubnetNotFoundException();
         }
 
         int netmask = Integer.bitCount(dhcpInfo.netmask);
@@ -185,7 +185,7 @@ public class Wireless extends Network {
      *
      * @return Number of hosts as an integer.
      */
-    public int getNumberOfHostsInWifiSubnet() throws NoWifiManagerException {
+    public int getNumberOfHostsInWifiSubnet() throws NoWifiManagerException, SubnetNotFoundException {
         Double subnet = (double) getSubnet();
         double hosts;
         double bitsLeft = 32.0d - subnet;

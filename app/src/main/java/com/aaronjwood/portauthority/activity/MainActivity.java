@@ -219,7 +219,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             macVendor.setText(R.string.noWifiConnection);
         } catch (IOException | SQLiteException | UnsupportedOperationException e) {
             macVendor.setText(R.string.getMacVendorFailed);
-        } catch (Wireless.NoWifiInterface e) {
+        } catch (Wireless.NoWifiInterfaceException e) {
             macAddress.setText(R.string.noWifiInterface);
         }
     }
@@ -254,6 +254,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 } catch (Wireless.NoWifiManagerException e) {
                     Errors.showError(context, resources.getString(R.string.failedSubnetHosts));
                     return;
+                } catch (Network.SubnetNotFoundException e) {
+                    Errors.showError(context, resources.getString(R.string.subnetNotFound));
+                    return;
                 }
 
                 setAnimations();
@@ -278,6 +281,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     discoverHostsBtn.setEnabled(false);
                 } catch (UnknownHostException | Wireless.NoWifiManagerException e) {
                     Errors.showError(context, resources.getString(R.string.notConnectedLan));
+                } catch (Network.SubnetNotFoundException e) {
+                    Errors.showError(context, resources.getString(R.string.subnetNotFound));
                 }
             }
         });
@@ -569,6 +574,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             internalIp.setText(internalIpWithSubnet);
         } catch (UnknownHostException | Wireless.NoWifiManagerException e) {
             Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
+        } catch (Network.SubnetNotFoundException e) {
+            Errors.showError(getApplicationContext(), getResources().getString(R.string.subnetNotFound));
         }
     }
 

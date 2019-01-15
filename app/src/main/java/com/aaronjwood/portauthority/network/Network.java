@@ -9,6 +9,9 @@ public abstract class Network {
     public class NoConnectivityManagerException extends Exception {
     }
 
+    public static class SubnetNotFoundException extends Exception {
+    }
+
     protected Context context;
 
     Network(Context context) {
@@ -29,7 +32,7 @@ public abstract class Network {
      *
      * @return Connectivity manager
      */
-    private ConnectivityManager getConnectivityManager() throws NoConnectivityManagerException {
+    protected ConnectivityManager getConnectivityManager() throws NoConnectivityManagerException {
         ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (manager == null) {
             throw new NoConnectivityManagerException();
@@ -56,5 +59,13 @@ public abstract class Network {
      * @throws Exception
      */
     abstract String getMacAddress() throws Exception;
+
+    /**
+     * Gets the interface's subnet.
+     *
+     * @return Subnet.
+     * @throws Exception
+     */
+    abstract int getSubnet() throws Exception;
 
 }
