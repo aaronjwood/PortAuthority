@@ -49,4 +49,12 @@ public abstract class Network {
         return info != null && info.isConnectedOrConnecting();
     }
 
+    /**
+     * Gets the interface's MAC address.
+     *
+     * @return MAC address.
+     * @throws Exception
+     */
+    abstract String getMacAddress() throws Exception;
+
 }
