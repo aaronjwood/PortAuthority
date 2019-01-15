@@ -4,6 +4,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.aaronjwood.portauthority.async.WanIpAsyncTask;
+import com.aaronjwood.portauthority.response.MainAsyncResponse;
+
 public abstract class Network {
 
     public class NoConnectivityManagerException extends Exception {
@@ -67,7 +70,7 @@ public abstract class Network {
      * @throws Exception
      */
     abstract int getSubnet() throws Exception;
-    
+
     /**
      * Returns the number of hosts in the subnet.
      *
@@ -79,6 +82,15 @@ public abstract class Network {
         double hosts = Math.pow(2.0d, bitsLeft) - 2.0d;
 
         return (int) hosts;
+    }
+
+    /**
+     * Gets the device's external (WAN) IP address
+     *
+     * @param delegate Called when the external IP address has been fetched
+     */
+    public void getWanIp(MainAsyncResponse delegate) {
+        new WanIpAsyncTask(delegate).execute();
     }
 
 }

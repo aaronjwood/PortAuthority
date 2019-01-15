@@ -204,15 +204,6 @@ public class Wireless extends Network {
     }
 
     /**
-     * Gets the device's external (WAN) IP address
-     *
-     * @param delegate Called when the external IP address has been fetched
-     */
-    public void getWanIp(MainAsyncResponse delegate) {
-        new WanIpAsyncTask(delegate).execute();
-    }
-
-    /**
      * Gets the current link speed of the wireless network that the device is connected to
      *
      * @return Wireless link speed
