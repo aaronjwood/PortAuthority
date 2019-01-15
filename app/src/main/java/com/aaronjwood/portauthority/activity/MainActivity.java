@@ -277,7 +277,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 scanProgressDialog.show();
 
                 try {
-                    Integer ip = wifi.getInternalWifiIpAddress(Integer.class);
+                    Integer ip = wifi.getPrivateLanIp(Integer.class);
                     new ScanHostsAsyncTask(MainActivity.this, db).execute(ip, netmask, UserPreference.getHostSocketTimeout(context));
                     discoverHostsBtn.setAlpha(.3f);
                     discoverHostsBtn.setEnabled(false);
@@ -421,7 +421,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             boolean enabled = wifi.isEnabled();
             if (!info.isConnected() || !enabled) {
                 signalHandler.removeCallbacksAndMessages(null);
-                internalIp.setText(Wireless.getInternalMobileIpAddress());
+                internalIp.setText(Wireless.getPrivateCellIp());
             }
 
             if (!enabled) {
@@ -570,7 +570,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private void getInternalIp() {
         try {
             int netmask = wifi.getSubnet();
-            String internalIpWithSubnet = wifi.getInternalWifiIpAddress(String.class) + "/" + Integer.toString(netmask);
+            String internalIpWithSubnet = wifi.getPrivateLanIp(String.class) + "/" + Integer.toString(netmask);
             internalIp.setText(internalIpWithSubnet);
         } catch (UnknownHostException | Wireless.NoWifiManagerException e) {
             Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
@@ -593,7 +593,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             ip.setVisibility(View.VISIBLE);
 
             if (cachedWanIp == null) {
-                wifi.getExternalIpAddress(this);
+                wifi.getWanIp(this);
             }
         } else {
             label.setVisibility(View.GONE);

@@ -49,7 +49,7 @@ public class Wireless extends Network {
         }
 
         //This should get us the device's MAC address on Android 6+
-        NetworkInterface iface = NetworkInterface.getByInetAddress(getWifiInetAddress());
+        NetworkInterface iface = NetworkInterface.getByInetAddress(getPrivateLanAddress());
         if (iface == null) {
             throw new NoWifiInterfaceException();
         }
@@ -73,8 +73,8 @@ public class Wireless extends Network {
      *
      * @return Wireless address
      */
-    private InetAddress getWifiInetAddress() throws UnknownHostException, NoWifiManagerException {
-        String ipAddress = getInternalWifiIpAddress(String.class);
+    private InetAddress getPrivateLanAddress() throws UnknownHostException, NoWifiManagerException {
+        String ipAddress = getPrivateLanIp(String.class);
         return InetAddress.getByName(ipAddress);
     }
 
@@ -110,33 +110,6 @@ public class Wireless extends Network {
         return ssid;
     }
 
-
-    /**
-     * Gets the device's internal LAN IP address associated with the WiFi network
-     *
-     * @param type
-     * @param <T>
-     * @return Local WiFi network LAN IP address
-     */
-    public <T> T getInternalWifiIpAddress(Class<T> type) throws UnknownHostException, NoWifiManagerException {
-        int ip = getWifiInfo().getIpAddress();
-
-        //Endianness can be a potential issue on some hardware
-        if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
-            ip = Integer.reverseBytes(ip);
-        }
-
-        byte[] ipByteArray = BigInteger.valueOf(ip).toByteArray();
-
-
-        if (type.isInstance("")) {
-            return type.cast(InetAddress.getByAddress(ipByteArray).getHostAddress());
-        } else {
-            return type.cast(new BigInteger(InetAddress.getByAddress(ipByteArray).getAddress()).intValue());
-        }
-
-    }
-
     /**
      * Gets the subnet of the wireless interface.
      *
@@ -163,7 +136,7 @@ public class Wireless extends Network {
          */
         if (netmask < 4 || netmask > 32) {
             try {
-                InetAddress inetAddress = getWifiInetAddress();
+                InetAddress inetAddress = getPrivateLanAddress();
                 NetworkInterface networkInterface = NetworkInterface.getByInetAddress(inetAddress);
                 if (networkInterface == null) {
                     return 0;
@@ -181,13 +154,38 @@ public class Wireless extends Network {
         return netmask;
     }
 
+    /**
+     * Gets the device's internal LAN IP address associated with the WiFi network
+     *
+     * @param type
+     * @param <T>
+     * @return Local WiFi network LAN IP address
+     */
+    public <T> T getPrivateLanIp(Class<T> type) throws UnknownHostException, NoWifiManagerException {
+        int ip = getWifiInfo().getIpAddress();
+
+        //Endianness can be a potential issue on some hardware
+        if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
+            ip = Integer.reverseBytes(ip);
+        }
+
+        byte[] ipByteArray = BigInteger.valueOf(ip).toByteArray();
+
+
+        if (type.isInstance("")) {
+            return type.cast(InetAddress.getByAddress(ipByteArray).getHostAddress());
+        } else {
+            return type.cast(new BigInteger(InetAddress.getByAddress(ipByteArray).getAddress()).intValue());
+        }
+
+    }
 
     /**
      * Gets the device's internal LAN IP address associated with the cellular network
      *
      * @return Local cellular network LAN IP address
      */
-    public static String getInternalMobileIpAddress() {
+    public static String getPrivateCellIp() {
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en != null && en.hasMoreElements(); ) {
                 NetworkInterface intf = en.nextElement();
@@ -210,7 +208,7 @@ public class Wireless extends Network {
      *
      * @param delegate Called when the external IP address has been fetched
      */
-    public void getExternalIpAddress(MainAsyncResponse delegate) {
+    public void getWanIp(MainAsyncResponse delegate) {
         new WanIpAsyncTask(delegate).execute();
     }
 
