@@ -1,5 +1,6 @@
 package com.aaronjwood.portauthority.activity;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -9,13 +10,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteException;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -62,6 +67,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class MainActivity extends AppCompatActivity implements MainAsyncResponse {
 
     private final static int TIMER_INTERVAL = 1500;
+    private final static int COARSE_LOCATION_REQUEST = 1;
 
     private Wireless wifi;
     private ListView hostList;
@@ -123,15 +129,39 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         discoverHostsBtn = findViewById(R.id.discoverHosts);
         discoverHostsStr = getResources().getString(R.string.hostDiscovery);
 
-        wifi = new Wireless(getApplicationContext());
+        Context context = getApplicationContext();
+        wifi = new Wireless(context);
         scanHandler = new Handler(Looper.getMainLooper());
 
         checkDatabase();
-        db = Database.getInstance(getApplicationContext());
+        db = Database.getInstance(context);
 
         setupHostsAdapter();
         setupDrawer();
         setupHostDiscovery();
+
+        // Android 8+ now require this permission to read the SSID.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (!UserPreference.getLocationPermDiag(context)) {
+                new AlertDialog.Builder(this, R.style.DialogTheme).setTitle("SSID Access")
+                        .setMessage("Android 8+ now requires location permissions to read the SSID. " +
+                                "If this is not something you're comfortable with just deny the request and go without the functionality.")
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                UserPreference.saveLocationPermDiag(context);
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert).show().setCanceledOnTouchOutside(false);
+            }
+
+            if (ContextCompat.checkSelfPermission(context,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        COARSE_LOCATION_REQUEST);
+            }
+        }
 
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
     }
@@ -455,7 +485,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     Errors.showError(context, resources.getString(R.string.failedSignal));
                     return;
                 }
-                
+
                 signalStrength.setText(String.format(resources.getString(R.string.signalLink), signal, speed));
                 signalHandler.postDelayed(this, TIMER_INTERVAL);
             }
