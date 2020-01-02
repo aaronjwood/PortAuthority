@@ -169,23 +169,19 @@ public final class LanHostActivity extends HostActivity {
      */
     private void setupWol() {
         Button wakeUpButton = findViewById(R.id.wakeOnLan);
-        wakeUpButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                try {
-                    if (!wifi.isConnectedWifi()) {
-                        Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
-                        return;
-                    }
-                } catch (Wireless.NoConnectivityManagerException e) {
+        wakeUpButton.setOnClickListener(v -> {
+            try {
+                if (!wifi.isConnectedWifi()) {
                     Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                     return;
                 }
-
-                host.wakeOnLan();
-                Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), host.getHostname()), Toast.LENGTH_LONG).show();
+            } catch (Wireless.NoConnectivityManagerException e) {
+                Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
+                return;
             }
+
+            host.wakeOnLan();
+            Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), host.getHostname()), Toast.LENGTH_LONG).show();
         });
     }
 

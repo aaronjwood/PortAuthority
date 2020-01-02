@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -174,7 +175,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                     }
                 }
             } else {
-                reader = new BufferedReader(new InputStreamReader(new FileInputStream(ARP_TABLE), "UTF-8"));
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(ARP_TABLE), StandardCharsets.UTF_8));
                 reader.readLine(); // Skip header.
                 String line;
 
@@ -194,43 +195,39 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
             for (Pair<String, String> pair : pairs) {
                 String ip = pair.first;
                 String macAddress = pair.second;
-                executor.execute(new Runnable() {
+                executor.execute(() -> {
+                    Host host;
+                    try {
+                        host = new Host(ip, macAddress, db);
+                    } catch (IOException e) {
+                        host = new Host(ip, macAddress);
+                    }
 
-                    @Override
-                    public void run() {
-                        Host host;
-                        try {
-                            host = new Host(ip, macAddress, db);
-                        } catch (IOException e) {
-                            host = new Host(ip, macAddress);
+                    MainAsyncResponse activity1 = delegate.get();
+                    try {
+                        InetAddress add = InetAddress.getByName(ip);
+                        String hostname = add.getCanonicalHostName();
+                        host.setHostname(hostname);
+
+                        if (activity1 != null) {
+                            activity1.processFinish(host, numHosts);
                         }
+                    } catch (UnknownHostException e) {
+                        numHosts.decrementAndGet();
+                        activity1.processFinish(e);
+                        return;
+                    }
 
-                        MainAsyncResponse activity = delegate.get();
-                        try {
-                            InetAddress add = InetAddress.getByName(ip);
-                            String hostname = add.getCanonicalHostName();
-                            host.setHostname(hostname);
-
-                            if (activity != null) {
-                                activity.processFinish(host, numHosts);
+                    try {
+                        NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
+                        for (NbtAddress addr : netbios) {
+                            if (addr.getNameType() == NETBIOS_FILE_SERVER) {
+                                host.setHostname(addr.getHostName());
+                                return;
                             }
-                        } catch (UnknownHostException e) {
-                            numHosts.decrementAndGet();
-                            activity.processFinish(e);
-                            return;
                         }
-
-                        try {
-                            NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
-                            for (NbtAddress addr : netbios) {
-                                if (addr.getNameType() == NETBIOS_FILE_SERVER) {
-                                    host.setHostname(addr.getHostName());
-                                    return;
-                                }
-                            }
-                        } catch (UnknownHostException e) {
-                            // It's common that many discovered hosts won't have a NetBIOS entry.
-                        }
+                    } catch (UnknownHostException e) {
+                        // It's common that many discovered hosts won't have a NetBIOS entry.
                     }
                 });
             }
