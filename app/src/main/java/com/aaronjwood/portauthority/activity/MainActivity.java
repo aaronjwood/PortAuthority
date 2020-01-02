@@ -1,6 +1,7 @@
 package com.aaronjwood.portauthority.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -143,7 +144,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         // Android 8+ now require this permission to read the SSID.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (!UserPreference.getLocationPermDiag(context)) {
-                new AlertDialog.Builder(this, R.style.DialogTheme).setTitle("SSID Access")
+                Activity activity = this;
+                new AlertDialog.Builder(activity, R.style.DialogTheme).setTitle("SSID Access")
                         .setMessage("Android 8+ now requires location permissions to read the SSID. " +
                                 "If this is not something you're comfortable with just deny the request and go without the functionality.")
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -151,15 +153,14 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();
                                 UserPreference.saveLocationPermDiag(context);
+                                if (ContextCompat.checkSelfPermission(context,
+                                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                                            COARSE_LOCATION_REQUEST);
+                                }
                             }
                         })
                         .setIcon(android.R.drawable.ic_dialog_alert).show().setCanceledOnTouchOutside(false);
-            }
-
-            if (ContextCompat.checkSelfPermission(context,
-                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        COARSE_LOCATION_REQUEST);
             }
         }
 
