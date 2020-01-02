@@ -21,7 +21,7 @@ public class WolAsyncTask extends AsyncTask<String, Void, Void> {
         String ip = params[1];
 
         byte[] macBytes = new byte[6];
-        String[] macHex = mac.split("(:|-)");
+        String[] macHex = mac.split("([:\\-])");
         for (int i = 0; i < 6; i++) {
             macBytes[i] = (byte) Integer.parseInt(macHex[i], 16);
         }

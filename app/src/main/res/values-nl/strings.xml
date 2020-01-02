@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Port Authority</string>
+    <string name="action_settings">Instellingen</string>
+    <string name="macAddress">MAC</string>
+    <string name="macVendor">Leverancier</string>
+    <string name="internalIpLabel">LAN IP</string>
+    <string name="externalIpLabel">WAN IP</string>
+    <string name="fetching">Ophalen…</string>
+    <string name="signalLabel">Signaal/Snelheid</string>
+    <string name="hostDiscovery">Ontdek hosts</string>
+    <string name="ssid">SSID</string>
+    <string name="bssid">BSSID</string>
+    <string name="scanWellKnownPorts">Scan welbekende poorten</string>
+    <string name="scanPortRange">Scan poortbereik</string>
+    <string name="resetPortRange">Reset poortbereik</string>
+    <string name="openPorts">Open poorten</string>
+    <string name="portRangeStart">Beginpoort</string>
+    <string name="portRangeStop">Eindpoort</string>
+    <string name="wifiDisabled">Wifi is niet ingeschakeld</string>
+    <string name="noWifiConnection">Geen wifiverbinding</string>
+    <string name="wanHostHint">URL/IP</string>
+    <string name="scanningWarning">WAARSCHUWING</string>
+    <string name="domainName">Domeinnaam</string>
+    <string name="dnsLookup">DNS-lookup</string>
+    <string name="wakeOnLan">Wakker maken</string>
+    <string name="waking">Wakker aan het maken %1$s…</string>
+    <string name="ipAddress">IP-adres</string>
+    <string name="startingDnsLookup">Ophalen van DNS-records…</string>
+    <string name="dnsInputError">Voer een domein in en selecteer een recordtype</string>
+    <string name="notConnectedLan">Je bent niet verbonden met een lokaal netwerk</string>
+    <string name="notConnectedWifi">Je bent niet verbonden met een wifinetwerk!</string>
+    <string name="signalLink">%1$ddBm/%2$dMbps</string>
+    <string name="hostScan">Scannen naar hosts</string>
+    <string name="subnetHosts">%1$d hosts in je subnet</string>
+    <string name="sort">Sorteer</string>
+    <string name="sortHostname">Op hostnaam</string>
+    <string name="sortVendor">Op leverancier</string>
+    <string name="copyHostname">Kopieer hostnaam</string>
+    <string name="copyIp">Kopieer IP</string>
+    <string name="copyMac">Kopieer MAC</string>
+    <string name="getMacVendorFailed">Opvragen MAC-leverancier is mislukt</string>
+    <string name="failedOpenDb">Openen database is mislukt</string>
+    <string name="downloadingData">Gegevens aan het downloaden</string>
+    <string name="failedSubnetHosts">Opgraven van aantal hosts in dit subnet is mislukt</string>
+    <string name="failedSignal">Opvragen signaalsterkte is mislukt</string>
+    <string name="failedLinkSpeed">Opvragen verbindingssnelheid is mislukt</string>
+    <string name="failedSsid">Opvragen SSID is mislukt</string>
+    <string name="failedBssid">Opvragen BSSID is mislukt</string>
+    <string name="failedWifiManager">Opvragen WifiManager van dit apparaat is mislukt</string>
+    <string name="noWifiInterface">Geen wifi-interface gevonden</string>
+    <string name="scanningDisclaimer">
+        Houd er rekening mee dat het uitvoeren van poortscans tegen openbare servers normaal gesproken als kwaadaardig wordt beschouwd.
+        Bovendien zal het uitvoeren van dit soort scans over het netwerk van je provider in plaats van je eigen wifiverbinding trager verlopen en soms onnauwkeurige resultaten opleveren als gevolg van traffic shaping.
+        Je provider kan ook het verkeer dat door deze scan wordt gegenereerd als kwaadaardig beschouwen.
+    </string>
+
+</resources>

@@ -40,7 +40,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     protected int layout;
     protected ArrayAdapter<String> adapter;
     protected ListView portList;
-    protected final List<String> ports = Collections.synchronizedList(new ArrayList<String>());
+    protected final List<String> ports = Collections.synchronizedList(new ArrayList<>());
     protected ProgressDialog scanProgressDialog;
     protected Dialog portRangeDialog;
     protected Handler handler;

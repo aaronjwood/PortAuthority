@@ -22,6 +22,7 @@ public class UserPreference {
     private static final String LAN_SOCKET_TIMEOUT = "lanTimeout";
     private static final String WAN_SOCKET_TIMEOUT = "wanTimeout";
     private static final String HOST_SOCKET_TIMEOUT = "hostTimeout";
+    private static final String LOCATION_PERM_DIAG = "locationPermDiag";
 
     /**
      * Saves the last used host address for later use.
@@ -35,6 +36,22 @@ public class UserPreference {
         } else {
             preferences.edit().putString(KEY_HOST_ADDRESS, hostAddress).apply();
         }
+    }
+
+    /**
+     * Saves the state of the location permission dialog.
+     */
+    public static void saveLocationPermDiag(@NonNull Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        preferences.edit().putBoolean(LOCATION_PERM_DIAG, true).apply();
+    }
+
+    /**
+     * Saves the state of the location permission dialog.
+     */
+    public static boolean getLocationPermDiag(@NonNull Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(LOCATION_PERM_DIAG, false);
     }
 
     /**
