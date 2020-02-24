@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -61,7 +60,6 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -69,6 +67,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
     private final static int TIMER_INTERVAL = 1500;
     private final static int COARSE_LOCATION_REQUEST = 1;
+    private final static int FINE_LOCATION_REQUEST = 2;
 
     private Wireless wifi;
     private ListView hostList;
@@ -141,27 +140,56 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         setupDrawer();
         setupHostDiscovery();
 
-        // Android 8+ now require this permission to read the SSID.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (!UserPreference.getLocationPermDiag(context)) {
-                Activity activity = this;
-                new AlertDialog.Builder(activity, R.style.DialogTheme).setTitle("SSID Access")
-                        .setMessage("Android 8+ now requires location permissions to read the SSID. " +
-                                "If this is not something you're comfortable with just deny the request and go without the functionality.")
-                        .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
-                            dialogInterface.dismiss();
-                            UserPreference.saveLocationPermDiag(context);
-                            if (ContextCompat.checkSelfPermission(context,
-                                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                                        COARSE_LOCATION_REQUEST);
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert).show().setCanceledOnTouchOutside(false);
-            }
-        }
-
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+
+        ssidAccess(context);
+    }
+
+    /**
+     * Android 8+ now requires extra location permissions to read the SSID.
+     * Determine what permissions to prompt the user for based on saved state.
+     *
+     * @param context
+     */
+    private void ssidAccess(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (UserPreference.getCoarseLocationPermDiag(context) || UserPreference.getFineLocationPermDiag(context)) {
+                return;
+            }
+
+            Activity activity = this;
+            String title = "Android 8-9 SSID Access";
+            String message = "Android 8-9 requires coarse location permissions to read the SSID. " +
+                    "If this is not something you're comfortable with just deny the request and go without the functionality.";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                title = "Android 10+ SSID Access";
+                message = "Android 10+ requires fine location permissions to read the SSID. " +
+                        "If this is not something you're comfortable with just deny the request and go without the functionality.";
+            }
+
+            new AlertDialog.Builder(activity, R.style.DialogTheme).setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
+                        dialogInterface.dismiss();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            UserPreference.saveFineLocationPermDiag(context);
+                        } else {
+                            UserPreference.saveCoarseLocationPermDiag(context);
+                        }
+
+                        String perm = Manifest.permission.ACCESS_COARSE_LOCATION;
+                        int request = COARSE_LOCATION_REQUEST;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            perm = Manifest.permission.ACCESS_FINE_LOCATION;
+                            request = FINE_LOCATION_REQUEST;
+                        }
+
+                        if (ContextCompat.checkSelfPermission(context, perm) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(activity, new String[]{perm}, request);
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert).show().setCanceledOnTouchOutside(false);
+        }
     }
 
     /**
