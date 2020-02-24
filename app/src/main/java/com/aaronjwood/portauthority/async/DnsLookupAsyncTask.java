@@ -1,14 +1,21 @@
 package com.aaronjwood.portauthority.async;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.aaronjwood.portauthority.response.DnsAsyncResponse;
 
+import org.xbill.DNS.ExtendedResolver;
 import org.xbill.DNS.Lookup;
 import org.xbill.DNS.Record;
+import org.xbill.DNS.Resolver;
 import org.xbill.DNS.TextParseException;
+import org.xbill.DNS.config.AndroidResolverConfigProvider;
+import org.xbill.DNS.config.InitializationException;
 
 import java.lang.ref.WeakReference;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 public class DnsLookupAsyncTask extends AsyncTask<String, Void, String> {
 
@@ -33,11 +40,23 @@ public class DnsLookupAsyncTask extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... params) {
         String domain = params[0];
         int recordType = Integer.parseInt(params[1]);
+        AndroidResolverConfigProvider resolverCfg = new AndroidResolverConfigProvider();
+        Context ctx = (Context) this.delegate.get();
+        AndroidResolverConfigProvider.setContext(ctx);
         Record[] records;
-
         try {
-            records = new Lookup(domain, recordType).run();
-            if (records == null) {
+            resolverCfg.initialize();
+            String[] servers = new String[resolverCfg.servers().size()];
+            for (int i = 0; i < resolverCfg.servers().size(); i++) {
+                InetSocketAddress server = resolverCfg.servers().get(i);
+                servers[i] = server.getHostName();
+            }
+
+            Resolver resolver = new ExtendedResolver(servers);
+            Lookup lookup = new Lookup(domain, recordType);
+            lookup.setResolver(resolver);
+            records = lookup.run();
+            if (records == null || records.length == 0) {
                 return "No records found.";
             }
 
@@ -49,7 +68,11 @@ public class DnsLookupAsyncTask extends AsyncTask<String, Void, String> {
 
             return answer.toString();
         } catch (TextParseException e) {
-            return "Error performing lookup!";
+            return "Error performing lookup: " + e.getMessage();
+        } catch (InitializationException e) {
+            return "Error initializing resolver: " + e.getMessage();
+        } catch (UnknownHostException e) {
+            return "Resolver host is unknown:: " + e.getMessage();
         }
     }
 
