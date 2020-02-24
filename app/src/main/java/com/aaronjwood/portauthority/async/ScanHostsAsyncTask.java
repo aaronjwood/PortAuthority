@@ -18,7 +18,6 @@ import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -149,7 +148,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                     throw new Exception("Unable to access ARP entries");
                 }
 
-                reader = new BufferedReader(new InputStreamReader(ipProc.getInputStream()));
+                reader = new BufferedReader(new InputStreamReader(ipProc.getInputStream(), "UTF-8"));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String[] neighborLine = line.split("\\s+");
@@ -175,7 +174,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                     }
                 }
             } else {
-                reader = new BufferedReader(new InputStreamReader(new FileInputStream(ARP_TABLE), StandardCharsets.UTF_8));
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(ARP_TABLE), "UTF-8"));
                 reader.readLine(); // Skip header.
                 String line;
 

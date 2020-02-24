@@ -32,7 +32,6 @@ import com.aaronjwood.portauthority.utils.UserPreference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public abstract class HostActivity extends AppCompatActivity implements HostAsyncResponse {

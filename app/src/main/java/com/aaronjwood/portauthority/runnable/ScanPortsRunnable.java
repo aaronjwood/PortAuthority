@@ -13,7 +13,6 @@ import java.lang.ref.WeakReference;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.channels.IllegalBlockingModeException;
-import java.nio.charset.StandardCharsets;
 
 public class ScanPortsRunnable implements Runnable {
     private String ip;
@@ -66,12 +65,12 @@ public class ScanPortsRunnable implements Runnable {
             SparseArray<String> portData = new SparseArray<>();
             String data = null;
             try {
-                InputStreamReader input = new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8);
+                InputStreamReader input = new InputStreamReader(socket.getInputStream(), "UTF-8");
                 BufferedReader buffered = new BufferedReader(input);
                 if (i == 22) {
                     data = parseSSH(buffered);
                 } else if (i == 80 || i == 443 || i == 8080) {
-                    PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
+                    PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
                     data = parseHTTP(buffered, out);
                 }
             } catch (IOException e) {
@@ -115,9 +114,13 @@ public class ScanPortsRunnable implements Runnable {
     private String parseHTTP(BufferedReader reader, PrintWriter writer) throws IOException {
         writer.println("GET / HTTP/1.1\r\nHost: " + ip + "\r\n");
         char[] buffer = new char[256];
-        reader.read(buffer, 0, buffer.length);
+        int bytesRead = reader.read(buffer, 0, buffer.length);
         writer.close();
         reader.close();
+        if (bytesRead == 0) {
+            return null;
+        }
+
         String data = new String(buffer).toLowerCase();
 
         if (data.contains("apache") || data.contains("httpd")) {
@@ -130,6 +133,18 @@ public class ScanPortsRunnable implements Runnable {
 
         if (data.contains("nginx")) {
             return "NGINX";
+        }
+
+        if (data.contains("node")) {
+            return "Node.js";
+        }
+
+        if (data.contains("tomcat")) {
+            return "Tomcat";
+        }
+
+        if (data.contains("litespeed")) {
+            return "LiteSpeed";
         }
 
         return null;

@@ -4,8 +4,9 @@
 <a href="https://play.google.com/store/apps/details?id=com.aaronjwood.portauthority.free"><img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="60"></a>
 
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/74a6e90f803d46a1a39b34daabeb8af1)](https://www.codacy.com/app/aaronjwood/PortAuthority)
-[![Build Status](https://travis-ci.org/aaronjwood/PortAuthority.svg?branch=master)](https://travis-ci.org/aaronjwood/PortAuthority)
+[![Build Status](https://travis-ci.org/aaronjwood/PortAuthority.svg)](https://travis-ci.org/aaronjwood/PortAuthority)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/8687/badge.svg)](https://scan.coverity.com/projects/aaronjwood-portauthority)
+[![Known Vulnerabilities](https://snyk.io/test/github/aaronjwood/PortAuthority/badge.svg)](https://snyk.io/test/github/aaronjwood/PortAuthority)
 
 ## Overview
 
