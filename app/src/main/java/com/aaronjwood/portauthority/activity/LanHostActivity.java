@@ -154,18 +154,15 @@ public final class LanHostActivity extends HostActivity {
      */
     private void setupWol() {
         Button wakeUpButton = findViewById(R.id.wakeOnLan);
-        wakeUpButton.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                if (!isConnected()) {
-                    Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
-                    return;
-                }
-
-                host.wakeOnLan();
-                Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), host.getHostname()), Toast.LENGTH_LONG).show();
+        wakeUpButton.setOnClickListener(v -> {
+            if (!isConnected()) {
+                Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
+                return;
             }
+
+            host.wakeOnLan();
+            Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), host.getHostname()), Toast.LENGTH_LONG).show();
         });
     }
 
@@ -189,7 +186,7 @@ public final class LanHostActivity extends HostActivity {
         if (output && scanProgressDialog != null && scanProgressDialog.isShowing()) {
             scanProgressDialog.dismiss();
         }
-        
+
         if (output && portRangeDialog != null && portRangeDialog.isShowing()) {
             portRangeDialog.dismiss();
         }

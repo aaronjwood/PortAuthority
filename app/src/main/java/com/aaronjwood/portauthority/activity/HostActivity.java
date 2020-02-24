@@ -123,7 +123,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     public void onSaveInstanceState(Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
-        String[] savedList = ports.toArray(new String[ports.size()]);
+        String[] savedList = ports.toArray(new String[0]);
         savedState.putStringArray("ports", savedList);
     }
 
@@ -150,12 +150,9 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * @param stop  Stopping port picker
      */
     protected void resetPortRangeScanClick(final NumberPicker start, final NumberPicker stop) {
-        portRangeDialog.findViewById(R.id.resetPortRangeScan).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start.setValue(Constants.MIN_PORT_VALUE);
-                stop.setValue(Constants.MAX_PORT_VALUE);
-            }
+        portRangeDialog.findViewById(R.id.resetPortRangeScan).setOnClickListener(v -> {
+            start.setValue(Constants.MIN_PORT_VALUE);
+            stop.setValue(Constants.MAX_PORT_VALUE);
         });
     }
 
@@ -259,13 +256,9 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      */
     @Override
     public void processFinish(final int output) {
-        handler.post(new Runnable() {
-
-            @Override
-            public void run() {
-                if (scanProgressDialog != null) {
-                    scanProgressDialog.incrementProgressBy(output);
-                }
+        handler.post(() -> {
+            if (scanProgressDialog != null) {
+                scanProgressDialog.incrementProgressBy(output);
             }
         });
     }
@@ -316,24 +309,16 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      */
     private void addOpenPort(final String port) {
         setAnimations();
-        handler.post(new Runnable() {
+        handler.post(() -> {
+            ports.add(port);
+            Collections.sort(ports, (lhs, rhs) -> {
+                int left = Integer.parseInt(lhs.substring(0, lhs.indexOf('-') - 1));
+                int right = Integer.parseInt(rhs.substring(0, rhs.indexOf('-') - 1));
 
-            @Override
-            public void run() {
-                ports.add(port);
-                Collections.sort(ports, new Comparator<String>() {
+                return left - right;
+            });
 
-                    @Override
-                    public int compare(String lhs, String rhs) {
-                        int left = Integer.parseInt(lhs.substring(0, lhs.indexOf('-') - 1));
-                        int right = Integer.parseInt(rhs.substring(0, rhs.indexOf('-') - 1));
-
-                        return left - right;
-                    }
-                });
-
-                adapter.notifyDataSetChanged();
-            }
+            adapter.notifyDataSetChanged();
         });
     }
 
@@ -344,12 +329,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * @param <T>    Exception
      */
     public <T extends Throwable> void processFinish(final T output) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Errors.showError(getApplicationContext(), output.getLocalizedMessage());
-            }
-        });
+        handler.post(() -> Errors.showError(getApplicationContext(), output.getLocalizedMessage()));
     }
 
     /**
