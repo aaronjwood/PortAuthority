@@ -43,7 +43,6 @@ public class DnsLookupAsyncTask extends AsyncTask<String, Void, String> {
         AndroidResolverConfigProvider resolverCfg = new AndroidResolverConfigProvider();
         Context ctx = (Context) this.delegate.get();
         AndroidResolverConfigProvider.setContext(ctx);
-        Record[] records;
         try {
             resolverCfg.initialize();
             String[] servers = new String[resolverCfg.servers().size()];
@@ -55,7 +54,7 @@ public class DnsLookupAsyncTask extends AsyncTask<String, Void, String> {
             Resolver resolver = new ExtendedResolver(servers);
             Lookup lookup = new Lookup(domain, recordType);
             lookup.setResolver(resolver);
-            records = lookup.run();
+            Record[] records = lookup.run();
             if (records == null || records.length == 0) {
                 return "No records found.";
             }
