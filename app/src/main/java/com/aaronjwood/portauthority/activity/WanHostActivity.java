@@ -138,13 +138,7 @@ public final class WanHostActivity extends HostActivity {
         }
 
         if (!output) {
-            handler.post(new Runnable() {
-
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), "Please enter a valid URL or IP address", Toast.LENGTH_SHORT).show();
-                }
-            });
+            handler.post(() -> Toast.makeText(getApplicationContext(), "Please enter a valid URL or IP address", Toast.LENGTH_SHORT).show());
         }
     }
 }

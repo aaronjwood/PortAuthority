@@ -1,6 +1,8 @@
 package com.aaronjwood.portauthority.async;
 
 import android.os.AsyncTask;
+import android.os.Build;
+import android.util.Pair;
 
 import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Host;
@@ -16,6 +18,9 @@ import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +32,9 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     private final WeakReference<MainAsyncResponse> delegate;
     private Database db;
     private static final String ARP_TABLE = "/proc/net/arp";
+    private static final String IP_CMD = "ip neighbor";
+    private static final String NEIGHBOR_INCOMPLETE = "INCOMPLETE";
+    private static final String NEIGHBOR_FAILED = "FAILED";
     private static final String ARP_INCOMPLETE = "0x0";
     private static final String ARP_INACTIVE = "00:00:00:00:00:00";
     private static final int NETBIOS_FILE_SERVER = 0x20;
@@ -51,14 +59,38 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         int ipv4 = params[0];
         int cidr = params[1];
         int timeout = params[2];
-
         MainAsyncResponse activity = delegate.get();
-        File file = new File(ARP_TABLE);
-        if (!file.exists() || !file.canRead()) {
-            activity.processFinish(new FileNotFoundException("Unable to access device ARP table"));
-            activity.processFinish(true);
 
-            return null;
+        // Android 10+ doesn't let us access the ARP table.
+        // Do an early check to see if we can get what we need from the system.
+        // https://developer.android.com/about/versions/10/privacy/changes#proc-net-filesystem
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            try {
+                Process ipProc = Runtime.getRuntime().exec(IP_CMD);
+                ipProc.waitFor();
+                if (ipProc.exitValue() != 0) {
+                    activity.processFinish(new IOException("Unable to access ARP entries"));
+                    activity.processFinish(true);
+
+                    return null;
+                }
+            } catch (IOException | InterruptedException e) {
+                activity.processFinish(new IOException("Unable to parse ARP entries"));
+                activity.processFinish(true);
+            }
+        } else {
+            File file = new File(ARP_TABLE);
+            if (!file.exists()) {
+                activity.processFinish(new FileNotFoundException("Unable to find ARP table"));
+                activity.processFinish(true);
+
+                return null;
+            }
+
+            if (!file.canRead()) {
+                activity.processFinish(new IOException("Unable to read ARP table"));
+                activity.processFinish(true);
+            }
         }
 
         ExecutorService executor = Executors.newCachedThreadPool();
@@ -107,63 +139,99 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         final MainAsyncResponse activity = delegate.get();
         ExecutorService executor = Executors.newCachedThreadPool();
         final AtomicInteger numHosts = new AtomicInteger(0);
+        List<Pair<String, String>> pairs = new ArrayList<>();
 
         try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(ARP_TABLE), "UTF-8"));
-            reader.readLine(); // Skip header.
-            String line;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                Process ipProc = Runtime.getRuntime().exec(IP_CMD);
+                ipProc.waitFor();
+                if (ipProc.exitValue() != 0) {
+                    throw new Exception("Unable to access ARP entries");
+                }
 
-            while ((line = reader.readLine()) != null) {
-                String[] arpLine = line.split("\\s+");
+                reader = new BufferedReader(new InputStreamReader(ipProc.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] neighborLine = line.split("\\s+");
 
-                final String ip = arpLine[0];
-                final String flag = arpLine[2];
-                final String macAddress = arpLine[3];
+                    // We don't have a validated ARP entry for this case.
+                    if (neighborLine.length <= 4) {
+                        continue;
+                    }
 
-                if (!ARP_INCOMPLETE.equals(flag) && !ARP_INACTIVE.equals(macAddress)) {
-                    numHosts.incrementAndGet();
-                    executor.execute(new Runnable() {
+                    String ip = neighborLine[0];
+                    InetAddress addr = InetAddress.getByName(ip);
+                    if (addr.isLinkLocalAddress() || addr.isLoopbackAddress()) {
+                        continue;
+                    }
 
-                        @Override
-                        public void run() {
-                            Host host;
-                            try {
-                                host = new Host(ip, macAddress, db);
-                            } catch (IOException e) {
-                                host = new Host(ip, macAddress);
-                            }
+                    String macAddress = neighborLine[4];
+                    String state = neighborLine[neighborLine.length - 1];
 
-                            MainAsyncResponse activity = delegate.get();
-                            try {
-                                InetAddress add = InetAddress.getByName(ip);
-                                String hostname = add.getCanonicalHostName();
-                                host.setHostname(hostname);
+                    // Determine if the ARP entry is valid.
+                    // https://github.com/sivasankariit/iproute2/blob/master/ip/ipneigh.c
+                    if (!NEIGHBOR_FAILED.equals(state) && !NEIGHBOR_INCOMPLETE.equals(state)) {
+                        pairs.add(new Pair<>(ip, macAddress));
+                    }
+                }
+            } else {
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(ARP_TABLE), StandardCharsets.UTF_8));
+                reader.readLine(); // Skip header.
+                String line;
 
-                                if (activity != null) {
-                                    activity.processFinish(host, numHosts);
-                                }
-                            } catch (UnknownHostException e) {
-                                numHosts.decrementAndGet();
-                                activity.processFinish(e);
-                                return;
-                            }
+                while ((line = reader.readLine()) != null) {
+                    String[] arpLine = line.split("\\s+");
+                    String ip = arpLine[0];
+                    String flag = arpLine[2];
+                    String macAddress = arpLine[3];
 
-                            try {
-                                NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
-                                for (NbtAddress addr : netbios) {
-                                    if (addr.getNameType() == NETBIOS_FILE_SERVER) {
-                                        host.setHostname(addr.getHostName());
-                                        return;
-                                    }
-                                }
-                            } catch (UnknownHostException e) {
-                                // It's common that many discovered hosts won't have a NetBIOS entry.
-                            }
-                        }
-                    });
+                    if (!ARP_INCOMPLETE.equals(flag) && !ARP_INACTIVE.equals(macAddress)) {
+                        pairs.add(new Pair<>(ip, macAddress));
+                    }
                 }
             }
-        } catch (IOException e) {
+
+            numHosts.addAndGet(pairs.size());
+            for (Pair<String, String> pair : pairs) {
+                String ip = pair.first;
+                String macAddress = pair.second;
+                executor.execute(() -> {
+                    Host host;
+                    try {
+                        host = new Host(ip, macAddress, db);
+                    } catch (IOException e) {
+                        host = new Host(ip, macAddress);
+                    }
+
+                    MainAsyncResponse activity1 = delegate.get();
+                    try {
+                        InetAddress add = InetAddress.getByName(ip);
+                        String hostname = add.getCanonicalHostName();
+                        host.setHostname(hostname);
+
+                        if (activity1 != null) {
+                            activity1.processFinish(host, numHosts);
+                        }
+                    } catch (UnknownHostException e) {
+                        numHosts.decrementAndGet();
+                        activity1.processFinish(e);
+                        return;
+                    }
+
+                    try {
+                        NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
+                        for (NbtAddress addr : netbios) {
+                            if (addr.getNameType() == NETBIOS_FILE_SERVER) {
+                                host.setHostname(addr.getHostName());
+                                return;
+                            }
+                        }
+                    } catch (UnknownHostException e) {
+                        // It's common that many discovered hosts won't have a NetBIOS entry.
+                    }
+                });
+            }
+        } catch (Exception e) {
             if (activity != null) {
                 activity.processFinish(e);
             }

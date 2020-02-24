@@ -2,7 +2,6 @@ package com.aaronjwood.portauthority.async;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 
 import com.aaronjwood.portauthority.R;
@@ -15,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -42,12 +42,9 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, String, Void> {
         dialog = new ProgressDialog(ctx, R.style.DialogTheme);
         dialog.setMessage(ctx.getResources().getString(R.string.downloadingData));
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                dialogInterface.cancel();
-                cancel(true);
-            }
+        dialog.setOnCancelListener(dialogInterface -> {
+            dialogInterface.cancel();
+            cancel(true);
         });
         dialog.show();
     }
@@ -73,7 +70,7 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, String, Void> {
                 return;
             }
 
-            in = new BufferedReader(new InputStreamReader(new GZIPInputStream(connection.getInputStream()), "UTF-8"));
+            in = new BufferedReader(new InputStreamReader(new GZIPInputStream(connection.getInputStream()), StandardCharsets.UTF_8));
             String line;
 
             while ((line = in.readLine()) != null) {

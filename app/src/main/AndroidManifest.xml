@@ -5,10 +5,11 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- Needed to read the SSID on Android 8-9. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- Needed to read the SSID on Android 10+. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".PortAuthority"
         android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"

@@ -1,21 +1,26 @@
 package com.aaronjwood.portauthority.activity;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteException;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -55,13 +60,14 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class MainActivity extends AppCompatActivity implements MainAsyncResponse {
 
     private final static int TIMER_INTERVAL = 1500;
+    private final static int COARSE_LOCATION_REQUEST = 1;
+    private final static int FINE_LOCATION_REQUEST = 2;
 
     private Wireless wifi;
     private ListView hostList;
@@ -78,7 +84,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private Handler scanHandler;
     private IntentFilter intentFilter = new IntentFilter();
     private HostAdapter hostAdapter;
-    private List<Host> hosts = Collections.synchronizedList(new ArrayList<Host>());
+    private List<Host> hosts = Collections.synchronizedList(new ArrayList<>());
     private Database db;
     private DownloadAsyncTask ouiTask;
     private DownloadAsyncTask portTask;
@@ -123,17 +129,67 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         discoverHostsBtn = findViewById(R.id.discoverHosts);
         discoverHostsStr = getResources().getString(R.string.hostDiscovery);
 
-        wifi = new Wireless(getApplicationContext());
+        Context context = getApplicationContext();
+        wifi = new Wireless(context);
         scanHandler = new Handler(Looper.getMainLooper());
 
         checkDatabase();
-        db = Database.getInstance(getApplicationContext());
+        db = Database.getInstance(context);
 
         setupHostsAdapter();
         setupDrawer();
         setupHostDiscovery();
 
         intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+
+        ssidAccess(context);
+    }
+
+    /**
+     * Android 8+ now requires extra location permissions to read the SSID.
+     * Determine what permissions to prompt the user for based on saved state.
+     *
+     * @param context
+     */
+    private void ssidAccess(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (UserPreference.getCoarseLocationPermDiag(context) || UserPreference.getFineLocationPermDiag(context)) {
+                return;
+            }
+
+            Activity activity = this;
+            String title = "Android 8-9 SSID Access";
+            String message = "Android 8-9 requires coarse location permissions to read the SSID. " +
+                    "If this is not something you're comfortable with just deny the request and go without the functionality.";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                title = "Android 10+ SSID Access";
+                message = "Android 10+ requires fine location permissions to read the SSID. " +
+                        "If this is not something you're comfortable with just deny the request and go without the functionality.";
+            }
+
+            new AlertDialog.Builder(activity, R.style.DialogTheme).setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
+                        dialogInterface.dismiss();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            UserPreference.saveFineLocationPermDiag(context);
+                        } else {
+                            UserPreference.saveCoarseLocationPermDiag(context);
+                        }
+
+                        String perm = Manifest.permission.ACCESS_COARSE_LOCATION;
+                        int request = COARSE_LOCATION_REQUEST;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            perm = Manifest.permission.ACCESS_FINE_LOCATION;
+                            request = FINE_LOCATION_REQUEST;
+                        }
+
+                        if (ContextCompat.checkSelfPermission(context, perm) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(activity, new String[]{perm}, request);
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert).show().setCanceledOnTouchOutside(false);
+        }
     }
 
     /**
@@ -150,22 +206,13 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                         "This will download the official OUI list from Wireshark and port list from IANA. " +
                         "Note that you won't be able to resolve any MAC vendors or identify services without this data. " +
                         "You can always perform this from the menu later.")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                        ouiTask = new DownloadOuisAsyncTask(db, new OuiParser(), activity);
-                        portTask = new DownloadPortDataAsyncTask(db, new PortParser(), activity);
-                        ouiTask.execute();
-                        portTask.execute();
-                    }
-                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        }).setIcon(android.R.drawable.ic_dialog_alert).show().setCanceledOnTouchOutside(false);
+                .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                    ouiTask = new DownloadOuisAsyncTask(db, new OuiParser(), activity);
+                    portTask = new DownloadPortDataAsyncTask(db, new PortParser(), activity);
+                    ouiTask.execute();
+                    portTask.execute();
+                }).setNegativeButton(android.R.string.no, (dialogInterface, i) -> dialogInterface.cancel()).setIcon(android.R.drawable.ic_dialog_alert).show().setCanceledOnTouchOutside(false);
     }
 
     /**
@@ -336,38 +383,18 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         switch (item.getItemId()) {
             case R.id.sortHostname:
                 if (sortAscending) {
-                    hostAdapter.sort(new Comparator<Host>() {
-                        @Override
-                        public int compare(Host lhs, Host rhs) {
-                            return rhs.getHostname().toLowerCase().compareTo(lhs.getHostname().toLowerCase());
-                        }
-                    });
+                    hostAdapter.sort((lhs, rhs) -> rhs.getHostname().toLowerCase().compareTo(lhs.getHostname().toLowerCase()));
                 } else {
-                    hostAdapter.sort(new Comparator<Host>() {
-                        @Override
-                        public int compare(Host lhs, Host rhs) {
-                            return lhs.getHostname().toLowerCase().compareTo(rhs.getHostname().toLowerCase());
-                        }
-                    });
+                    hostAdapter.sort((lhs, rhs) -> lhs.getHostname().toLowerCase().compareTo(rhs.getHostname().toLowerCase()));
                 }
 
                 sortAscending = !sortAscending;
                 return true;
             case R.id.sortVendor:
                 if (sortAscending) {
-                    hostAdapter.sort(new Comparator<Host>() {
-                        @Override
-                        public int compare(Host lhs, Host rhs) {
-                            return rhs.getVendor().toLowerCase().compareTo(lhs.getVendor().toLowerCase());
-                        }
-                    });
+                    hostAdapter.sort((lhs, rhs) -> rhs.getVendor().toLowerCase().compareTo(lhs.getVendor().toLowerCase()));
                 } else {
-                    hostAdapter.sort(new Comparator<Host>() {
-                        @Override
-                        public int compare(Host lhs, Host rhs) {
-                            return lhs.getVendor().toLowerCase().compareTo(rhs.getVendor().toLowerCase());
-                        }
-                    });
+                    hostAdapter.sort((lhs, rhs) -> lhs.getVendor().toLowerCase().compareTo(rhs.getVendor().toLowerCase()));
                 }
 
                 sortAscending = !sortAscending;
@@ -455,7 +482,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                     Errors.showError(context, resources.getString(R.string.failedSignal));
                     return;
                 }
-                
+
                 signalStrength.setText(String.format(resources.getString(R.string.signalLink), signal, speed));
                 signalHandler.postDelayed(this, TIMER_INTERVAL);
             }
@@ -565,7 +592,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private void getInternalIp() {
         try {
             int netmask = wifi.getInternalWifiSubnet();
-            String internalIpWithSubnet = wifi.getInternalWifiIpAddress(String.class) + "/" + Integer.toString(netmask);
+            String internalIpWithSubnet = wifi.getInternalWifiIpAddress(String.class) + "/" + netmask;
             internalIp.setText(internalIpWithSubnet);
         } catch (UnknownHostException | Wireless.NoWifiManagerException e) {
             Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
@@ -679,31 +706,23 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     @Override
     public void processFinish(final Host h, final AtomicInteger i) {
-        scanHandler.post(new Runnable() {
+        scanHandler.post(() -> {
+            hosts.add(h);
+            hostAdapter.sort((lhs, rhs) -> {
+                try {
+                    int leftIp = ByteBuffer.wrap(InetAddress.getByName(lhs.getIp()).getAddress()).getInt();
+                    int rightIp = ByteBuffer.wrap(InetAddress.getByName(rhs.getIp()).getAddress()).getInt();
 
-            @Override
-            public void run() {
-                hosts.add(h);
-                hostAdapter.sort(new Comparator<Host>() {
-
-                    @Override
-                    public int compare(Host lhs, Host rhs) {
-                        try {
-                            int leftIp = ByteBuffer.wrap(InetAddress.getByName(lhs.getIp()).getAddress()).getInt();
-                            int rightIp = ByteBuffer.wrap(InetAddress.getByName(rhs.getIp()).getAddress()).getInt();
-
-                            return leftIp - rightIp;
-                        } catch (UnknownHostException ignored) {
-                            return 0;
-                        }
-                    }
-                });
-
-                discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
-                if (i.decrementAndGet() == 0) {
-                    discoverHostsBtn.setAlpha(1);
-                    discoverHostsBtn.setEnabled(true);
+                    return leftIp - rightIp;
+                } catch (UnknownHostException ignored) {
+                    return 0;
                 }
+            });
+
+            discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
+            if (i.decrementAndGet() == 0) {
+                discoverHostsBtn.setAlpha(1);
+                discoverHostsBtn.setEnabled(true);
             }
         });
     }
@@ -738,13 +757,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     @Override
     public void processFinish(final boolean output) {
-        scanHandler.post(new Runnable() {
-
-            @Override
-            public void run() {
-                if (output && scanProgressDialog != null && scanProgressDialog.isShowing()) {
-                    scanProgressDialog.dismiss();
-                }
+        scanHandler.post(() -> {
+            if (output && scanProgressDialog != null && scanProgressDialog.isShowing()) {
+                scanProgressDialog.dismiss();
             }
         });
     }
@@ -757,12 +772,6 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      */
     @Override
     public <T extends Throwable> void processFinish(final T output) {
-        scanHandler.post(new Runnable() {
-
-            @Override
-            public void run() {
-                Errors.showError(getApplicationContext(), output.getLocalizedMessage());
-            }
-        });
+        scanHandler.post(() -> Errors.showError(getApplicationContext(), output.getLocalizedMessage()));
     }
 }
