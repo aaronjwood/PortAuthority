@@ -90,7 +90,6 @@ public final class WanHostActivity extends HostActivity {
             public void onClick(View v) {
 
                 portRangeDialog = new Dialog(WanHostActivity.this, R.style.DialogTheme);
-                portRangeDialog.setTitle("Select Port Range");
                 portRangeDialog.setContentView(R.layout.port_range);
                 portRangeDialog.show();
 

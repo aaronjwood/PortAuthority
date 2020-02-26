@@ -15,14 +15,15 @@ sonarqube {
 }
 
 android {
+    viewBinding.enabled = true
     compileSdkVersion 29
     buildToolsVersion '28.0.3'
 
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 29
-        versionCode 58
-        versionName "2.2.13"
+        versionCode 59
+        versionName "2.3.1"
         applicationId "com.aaronjwood.portauthority"
         setProperty("archivesBaseName", "PortAuthority-$versionName")
     }
@@ -68,7 +69,7 @@ android {
 dependencies {
     implementation 'com.android.support:support-v4:28.0.0'
     implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.4.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.9' // Anything past 3.12.x will break our Android 4 support!
     implementation 'jcifs:jcifs:1.3.17'
     implementation 'dnsjava:dnsjava:3.0.1'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
