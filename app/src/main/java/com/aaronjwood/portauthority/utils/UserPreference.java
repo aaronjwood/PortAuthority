@@ -25,6 +25,11 @@ public class UserPreference {
     private static final String COARSE_LOCATION_PERM_DIAG = "COARSE_LOCATION";
     private static final String FINE_LOCATION_PERM_DIAG = "FINE_LOCATION";
 
+    private static final String DEFAULT_WAN_SOCKET_TIMEOUT = "8000";
+    private static final String DEFAULT_LAN_SOCKET_TIMEOUT = "4000";
+    private static final String DEFAULT_HOST_SOCKET_TIMEOUT = "150";
+    private static final String DEFAULT_PORT_SCAN_THREADS = "500";
+
     /**
      * Saves the last used host address for later use.
      *
@@ -169,11 +174,12 @@ public class UserPreference {
      */
     public static int getPortScanThreads(@NonNull Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int numThreads = Integer.parseInt(preferences.getString(PORT_SCAN_THREADS, "500"));
-        if (numThreads == 0) {
-            return 500;
+        String threads = preferences.getString(PORT_SCAN_THREADS, DEFAULT_PORT_SCAN_THREADS);
+        if (threads.isEmpty()) {
+            return Integer.parseInt(DEFAULT_PORT_SCAN_THREADS);
         }
-        return numThreads;
+
+        return Integer.parseInt(threads);
     }
 
     /**
@@ -195,7 +201,12 @@ public class UserPreference {
      */
     public static int getLanSocketTimeout(@NonNull Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return Integer.parseInt(preferences.getString(LAN_SOCKET_TIMEOUT, "4000"));
+        String timeout = preferences.getString(LAN_SOCKET_TIMEOUT, DEFAULT_LAN_SOCKET_TIMEOUT);
+        if (timeout.isEmpty()) {
+            return Integer.parseInt(DEFAULT_LAN_SOCKET_TIMEOUT);
+        }
+
+        return Integer.parseInt(timeout);
     }
 
     /**
@@ -206,7 +217,12 @@ public class UserPreference {
      */
     public static int getWanSocketTimeout(@NonNull Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return Integer.parseInt(preferences.getString(WAN_SOCKET_TIMEOUT, "8000"));
+        String timeout = preferences.getString(WAN_SOCKET_TIMEOUT, DEFAULT_WAN_SOCKET_TIMEOUT);
+        if (timeout.isEmpty()) {
+            return Integer.parseInt(DEFAULT_WAN_SOCKET_TIMEOUT);
+        }
+
+        return Integer.parseInt(timeout);
     }
 
     /**
@@ -217,6 +233,11 @@ public class UserPreference {
      */
     public static int getHostSocketTimeout(@NonNull Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return Integer.parseInt(preferences.getString(HOST_SOCKET_TIMEOUT, "150"));
+        String timeout = preferences.getString(HOST_SOCKET_TIMEOUT, DEFAULT_HOST_SOCKET_TIMEOUT);
+        if (timeout.isEmpty()) {
+            return Integer.parseInt(DEFAULT_HOST_SOCKET_TIMEOUT);
+        }
+
+        return Integer.parseInt(timeout);
     }
 }
