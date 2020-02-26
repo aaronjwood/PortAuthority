@@ -15,8 +15,6 @@ import com.aaronjwood.portauthority.response.DnsAsyncResponse;
 import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
-import org.jetbrains.annotations.NotNull;
-
 public final class DnsActivity extends AppCompatActivity implements DnsAsyncResponse {
 
     private EditText domainName;
@@ -51,7 +49,7 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
     }
 
     @Override
-    protected void onRestoreInstanceState(@NotNull Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
         String recordData = savedInstanceState.getString("records");
