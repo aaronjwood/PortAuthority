@@ -15,6 +15,7 @@ sonarqube {
 }
 
 android {
+    viewBinding.enabled = true
     compileSdkVersion 29
     buildToolsVersion '28.0.3'
 
