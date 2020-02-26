@@ -1,6 +1,7 @@
 package com.aaronjwood.portauthority.activity;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -49,7 +50,7 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
         String recordData = savedInstanceState.getString("records");
