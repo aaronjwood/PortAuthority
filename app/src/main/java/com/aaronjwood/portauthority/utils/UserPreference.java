@@ -175,7 +175,7 @@ public class UserPreference {
     public static int getPortScanThreads(@NonNull Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String threads = preferences.getString(PORT_SCAN_THREADS, DEFAULT_PORT_SCAN_THREADS);
-        if (threads.isEmpty()) {
+        if (threads.isEmpty() || threads.equals("0")) {
             return Integer.parseInt(DEFAULT_PORT_SCAN_THREADS);
         }
 
