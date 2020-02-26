@@ -16,6 +16,7 @@
     </string-array>
     <string-array name="upperDrawer">
         <item>\u2601 Scan WAN Host</item>
+        <item>\u263c Wake Up Host</item>
         <item>\u2194 DNS Lookup</item>
     </string-array>
     <string-array name="lowerDrawer">

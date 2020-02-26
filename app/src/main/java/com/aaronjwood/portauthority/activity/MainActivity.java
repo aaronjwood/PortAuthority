@@ -3,6 +3,7 @@ package com.aaronjwood.portauthority.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
@@ -32,11 +33,13 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.adapter.HostAdapter;
@@ -44,6 +47,7 @@ import com.aaronjwood.portauthority.async.DownloadAsyncTask;
 import com.aaronjwood.portauthority.async.DownloadOuisAsyncTask;
 import com.aaronjwood.portauthority.async.DownloadPortDataAsyncTask;
 import com.aaronjwood.portauthority.async.ScanHostsAsyncTask;
+import com.aaronjwood.portauthority.async.WolAsyncTask;
 import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.Wireless;
@@ -548,6 +552,38 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                         startActivity(new Intent(MainActivity.this, WanHostActivity.class));
                         break;
                     case 1:
+                        Dialog wolDialog = new Dialog(MainActivity.this, R.style.DialogTheme);
+                        wolDialog.setContentView(R.layout.wake_on_lan);
+                        wolDialog.show();
+                        Button wakeUp = wolDialog.findViewById(R.id.wolWake);
+                        wakeUp.setOnClickListener(new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                try {
+                                    if (!wifi.isConnectedWifi()) {
+                                        Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
+                                        return;
+                                    }
+                                } catch (Wireless.NoConnectivityManagerException e) {
+                                    Errors.showError(getApplicationContext(), getResources().getString(R.string.failedWifiManager));
+                                    return;
+                                }
+
+                                EditText ip = wolDialog.findViewById(R.id.wolIp);
+                                EditText mac = wolDialog.findViewById(R.id.wolMac);
+                                String ipVal = ip.getText().toString();
+                                String macVal = mac.getText().toString();
+                                if (ipVal.isEmpty() || macVal.isEmpty()) {
+                                    return;
+                                }
+
+                                new WolAsyncTask().execute(macVal, ipVal);
+                                Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), ipVal), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        break;
+                    case 2:
                         startActivity(new Intent(MainActivity.this, DnsActivity.class));
                         break;
                 }

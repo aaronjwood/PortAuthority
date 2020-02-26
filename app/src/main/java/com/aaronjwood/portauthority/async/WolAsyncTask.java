@@ -20,8 +20,16 @@ public class WolAsyncTask extends AsyncTask<String, Void, Void> {
         String mac = params[0];
         String ip = params[1];
 
+        if (ip == null || mac == null || ip.isEmpty() || mac.isEmpty()) {
+            return null;
+        }
+
         byte[] macBytes = new byte[6];
         String[] macHex = mac.split("([:\\-])");
+        if (macHex.length != 6) {
+            return null;
+        }
+
         for (int i = 0; i < 6; i++) {
             macBytes[i] = (byte) Integer.parseInt(macHex[i], 16);
         }
