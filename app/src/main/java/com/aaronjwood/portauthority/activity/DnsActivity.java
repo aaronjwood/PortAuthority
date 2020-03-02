@@ -11,9 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aaronjwood.portauthority.R;
-import com.aaronjwood.portauthority.network.Dns;
+import com.aaronjwood.portauthority.async.DnsLookupAsyncTask;
 import com.aaronjwood.portauthority.response.DnsAsyncResponse;
-import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 public final class DnsActivity extends AppCompatActivity implements DnsAsyncResponse {
@@ -93,13 +92,7 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
                 if (recordType != null) {
                     String recordName = recordType.toString();
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.startingDnsLookup), Toast.LENGTH_SHORT).show();
-                    try {
-                        Dns.lookup(domain, recordName, DnsActivity.this);
-                    } catch (NoSuchFieldException e) {
-                        Errors.showError(getApplicationContext(), e.getLocalizedMessage());
-                    } catch (IllegalAccessException e) {
-                        Errors.showError(getApplicationContext(), e.getLocalizedMessage());
-                    }
+                    new DnsLookupAsyncTask(DnsActivity.this).execute(domain, recordName);
                 }
             }
         });
