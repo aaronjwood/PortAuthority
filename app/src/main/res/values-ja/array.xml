@@ -16,25 +16,33 @@
     </string-array>
     <string-array name="upperDrawer">
         <item>\u2601 WAN ホストをスキャン</item>
+        <item>\u263c ウェイクアップホスト</item>
         <item>\u2194 DNS 検索</item>
     </string-array>
     <string-array name="lowerDrawer">
+        <item>\u2195 OUIデータベースの更新</item>
+        <item>\u2195 ポートデータベースの更新</item>
         <item>\u2699 設定</item>
     </string-array>
     <string-array name="records">
         <item>レコードタイプ</item>
         <item>A</item>
-        <item>A6</item>
         <item>AAAA</item>
         <item>AFSDB</item>
         <item>APL</item>
+        <item>CAA</item>
+        <item>CDNSKEY</item>
+        <item>CDS</item>
         <item>CERT</item>
         <item>CNAME</item>
+        <item>CSYNC</item>
         <item>DHCID</item>
         <item>DLV</item>
         <item>DNAME</item>
         <item>DNSKEY</item>
         <item>DS</item>
+        <item>HINFO</item>
+        <item>HIP</item>
         <item>IPSECKEY</item>
         <item>KEY</item>
         <item>KX</item>
@@ -45,14 +53,18 @@
         <item>NSEC</item>
         <item>NSEC3</item>
         <item>NSEC3PARAM</item>
+        <item>OPENPGPKEY</item>
         <item>PTR</item>
-        <item>RP</item>
         <item>RRSIG</item>
+        <item>RP</item>
         <item>SIG</item>
         <item>SOA</item>
         <item>SRV</item>
         <item>SSHFP</item>
+        <item>TA</item>
+        <item>TKEY</item>
         <item>TLSA</item>
+        <item>TSIG</item>
         <item>TXT</item>
         <item>URI</item>
     </string-array>
