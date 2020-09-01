@@ -15,7 +15,7 @@ import okhttp3.Response;
 public class WanIpAsyncTask extends AsyncTask<Void, Void, String> {
 
     // IP service is 100% open source https://github.com/aaronjwood/public-ip-api
-    private static final String EXTERNAL_IP_SERVICE = "https://public-ip-api.appspot.com/";
+    private static final String EXTERNAL_IP_SERVICE = "https://yourip.aaronjwood.com/";
     private final WeakReference<MainAsyncResponse> delegate;
 
     /**
