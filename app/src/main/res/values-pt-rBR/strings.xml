@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Port Authority</string>
+    <string name="action_settings">Configurações</string>
+    <string name="macAddress">MAC</string>
+    <string name="macVendor">Fabricante</string>
+    <string name="internalIpLabel">IP do LAN</string>
+    <string name="externalIpLabel">IP do WAN</string>
+    <string name="fetching">Extraindo…</string>
+    <string name="signalLabel">Sinal/Velocidade</string>
+    <string name="hostDiscovery">Descubra os servidores</string>
+    <string name="ssid">SSID</string>
+    <string name="bssid">BSSID</string>
+    <string name="scanWellKnownPorts">Examinar as Portas Conhecidas</string>
+    <string name="scanPortRange">Examinar Intervalo das Portas</string>
+    <string name="resetPortRange">Reiniciar Intervalo das Portas</string>
+    <string name="openPorts">As Portas Abertas</string>
+    <string name="portRangeStart">Iniciar a Porta</string>
+    <string name="portRangeStop">Parar a Porta</string>
+    <string name="wifiDisabled">WiFi desativado</string>
+    <string name="noWifiConnection">Sem conexão WiFi</string>
+    <string name="wanHostHint">URL/IP</string>
+    <string name="scanningWarning">ATENÇÃO</string>
+    <string name="domainName">Nome do domínio</string>
+    <string name="dnsLookup">Consulta o DNS</string>
+    <string name="wakeOnLan">Ativação</string>
+    <string name="waking">Ativando %1$s…</string>
+    <string name="ipAddress">Endereço do IP</string>
+    <string name="startingDnsLookup">Extraindo registros do DNS …</string>
+    <string name="dnsInputError">Digite um domínio e selecione um tipo de registro</string>
+    <string name="notConnectedLan">Você não está conectado à rede local</string>
+    <string name="notConnectedWifi">Você não está conectado à rede WiFi</string>
+    <string name="signalLink">%1$ddBm/%2$dMbps</string>
+    <string name="hostScan">Procurando os servidores</string>
+    <string name="subnetHosts">%1$d hosts na sua sub-rede</string>
+    <string name="sort">Ordenar</string>
+    <string name="sortHostname">Por nome do servidor</string>
+    <string name="sortVendor">Pelo fabricante</string>
+    <string name="copyHostname">Copiar nome do servidor</string>
+    <string name="copyIp">Copiar o IP</string>
+    <string name="copyMac">Copiar o MAC</string>
+    <string name="getMacVendorFailed">Falha ao obter o fabricante do MAC</string>
+    <string name="failedOpenDb">Falha ao abrir a base de dados</string>
+    <string name="downloadingData">Baixando base de dados</string>
+    <string name="failedSubnetHosts">Falha ao obter o número dos servidores na sub-rede</string>
+    <string name="failedSignal">Falha ao obter a força do sinal</string>
+    <string name="failedLinkSpeed">Falha ao obter a velocidade do link</string>
+    <string name="failedSsid">Falha ao obter o SSID</string>
+    <string name="failedBssid">Falha ao obter o BSSID</string>
+    <string name="failedWifiManager">Falha ao obter Gerenciador do Wifi para este dispositivo</string>
+    <string name="noWifiInterface">Nenhuma interface do WiFi encontrada</string>
+    <string name="scanningDisclaimer">
+        Por favor, esteja ciente de que executar examinador das portas contra servidores públicos é normalmente considerado malicioso.
+        Além disso, a execução destes tipos de exames na rede da sua operadora em vez da sua própria conexão WiFi (ou LAN) será mais lenta e às vezes produzirá resultados imprecisos devido à modelagem do tráfego.
+        Sua operadora também pode considerar o tráfego gerado por este tipo de examinação como sendo malicioso.
+    </string>
+
+</resources>
