@@ -58,7 +58,6 @@ import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
@@ -385,6 +384,23 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
+            case R.id.sortIp:
+                sortAscending = !sortAscending;
+                if (sortAscending) {
+                    hostAdapter.sort((lhs, rhs) -> {
+                        int leftIp = ByteBuffer.wrap(lhs.getAddress()).getInt();
+                        int rightIp = ByteBuffer.wrap(rhs.getAddress()).getInt();
+                        return rightIp - leftIp;
+                    });
+                } else {
+                    hostAdapter.sort((lhs, rhs) -> {
+                        int leftIp = ByteBuffer.wrap(lhs.getAddress()).getInt();
+                        int rightIp = ByteBuffer.wrap(rhs.getAddress()).getInt();
+                        return leftIp - rightIp;
+                    });
+                }
+
+                return true;
             case R.id.sortHostname:
                 if (sortAscending) {
                     hostAdapter.sort((lhs, rhs) -> rhs.getHostname().toLowerCase().compareTo(lhs.getHostname().toLowerCase()));
@@ -745,14 +761,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         scanHandler.post(() -> {
             hosts.add(h);
             hostAdapter.sort((lhs, rhs) -> {
-                try {
-                    int leftIp = ByteBuffer.wrap(InetAddress.getByName(lhs.getIp()).getAddress()).getInt();
-                    int rightIp = ByteBuffer.wrap(InetAddress.getByName(rhs.getIp()).getAddress()).getInt();
-
-                    return leftIp - rightIp;
-                } catch (UnknownHostException ignored) {
-                    return 0;
-                }
+                int leftIp = ByteBuffer.wrap(lhs.getAddress()).getInt();
+                int rightIp = ByteBuffer.wrap(rhs.getAddress()).getInt();
+                return leftIp - rightIp;
             });
 
             discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");

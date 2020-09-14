@@ -6,6 +6,9 @@
         android:title="@string/sort">
         <menu>
             <item
+                android:id="@+id/sortIp"
+                android:title="@string/sortIp" />
+            <item
                 android:id="@+id/sortHostname"
                 android:title="@string/sortHostname" />
             <item

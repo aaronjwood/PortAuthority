@@ -199,7 +199,15 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                     try {
                         host = new Host(ip, macAddress, db);
                     } catch (IOException e) {
-                        host = new Host(ip, macAddress);
+                        try {
+                            host = new Host(ip, macAddress);
+                        } catch (UnknownHostException ex) {
+                            if (activity != null) {
+                                activity.processFinish(e);
+                            }
+
+                            return;
+                        }
                     }
 
                     MainAsyncResponse activity1 = delegate.get();

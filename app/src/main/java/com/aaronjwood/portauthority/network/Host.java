@@ -9,11 +9,14 @@ import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class Host implements Serializable {
 
     private String hostname;
     private String ip;
+    private byte[] address;
     private String mac;
     private String vendor;
 
@@ -28,8 +31,9 @@ public class Host implements Serializable {
      * @param ip
      * @param mac
      */
-    public Host(String ip, String mac) {
+    public Host(String ip, String mac) throws UnknownHostException {
         this.ip = ip;
+        this.address = InetAddress.getByName(ip).getAddress();
         this.mac = mac;
     }
 
@@ -76,6 +80,15 @@ public class Host implements Serializable {
      */
     public String getIp() {
         return ip;
+    }
+
+    /**
+     * Returns this host's address in byte representation.
+     *
+     * @return
+     */
+    public byte[] getAddress() {
+        return this.address;
     }
 
     /**
