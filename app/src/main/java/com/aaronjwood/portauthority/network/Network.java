@@ -77,8 +77,7 @@ public abstract class Network {
      * @return Number of hosts.
      */
     public int getNumberOfSubnetHosts(int subnet) {
-        Double sub = (double) subnet;
-        double bitsLeft = 32.0d - sub;
+        double bitsLeft = 32.0d - (double) subnet;
         double hosts = Math.pow(2.0d, bitsLeft) - 2.0d;
 
         return (int) hosts;
