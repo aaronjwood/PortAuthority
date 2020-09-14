@@ -59,7 +59,6 @@ import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
-import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
@@ -266,7 +265,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         } catch (UnknownHostException | SocketException | Wireless.NoWifiManagerException e) {
             macAddress.setText(R.string.noWifiConnection);
             macVendor.setText(R.string.noWifiConnection);
-        } catch (IOException | SQLiteException | UnsupportedOperationException e) {
+        } catch (SQLiteException | UnsupportedOperationException e) {
             macVendor.setText(R.string.getMacVendorFailed);
         } catch (Wireless.NoWifiInterfaceException e) {
             macAddress.setText(R.string.noWifiInterface);
@@ -301,11 +300,11 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 int netmask = 0;
                 try {
                     netmask = wifi.getSubnet();
-                } catch (Wireless.NoWifiManagerException e) {
-                    Errors.showError(context, resources.getString(R.string.notConnectedLan));
-                    return;
                 } catch (Network.SubnetNotFoundException e) {
                     Errors.showError(context, resources.getString(R.string.subnetNotFound));
+                    return;
+                } catch (Network.NoConnectivityManagerException e) {
+                    Errors.showError(context, resources.getString(R.string.notConnectedLan));
                     return;
                 }
 
@@ -650,7 +649,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             int netmask = wifi.getSubnet();
             String internalIpWithSubnet = wifi.getPrivateLanIp(String.class) + "/" + netmask;
             internalIp.setText(internalIpWithSubnet);
-        } catch (UnknownHostException | Wireless.NoWifiManagerException e) {
+        } catch (UnknownHostException | Wireless.NoWifiManagerException | Network.NoConnectivityManagerException e) {
             Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
         } catch (Network.SubnetNotFoundException e) {
             Errors.showError(getApplicationContext(), getResources().getString(R.string.subnetNotFound));

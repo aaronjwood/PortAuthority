@@ -2,14 +2,19 @@ package com.aaronjwood.portauthority.network;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.LinkAddress;
+import android.net.LinkProperties;
 import android.net.NetworkInfo;
 
 import com.aaronjwood.portauthority.async.WanIpAsyncTask;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
+import java.net.InetAddress;
+import java.util.List;
+
 public abstract class Network {
 
-    public class NoConnectivityManagerException extends Exception {
+    public static class NoConnectivityManagerException extends Exception {
     }
 
     public static class SubnetNotFoundException extends Exception {
@@ -66,10 +71,27 @@ public abstract class Network {
     /**
      * Gets the interface's subnet.
      *
-     * @return Subnet.
-     * @throws Exception
+     * @return
+     * @throws SubnetNotFoundException
+     * @throws NoConnectivityManagerException
      */
-    abstract int getSubnet() throws Exception;
+    public int getSubnet() throws SubnetNotFoundException, NoConnectivityManagerException {
+        ConnectivityManager cm = getConnectivityManager();
+        LinkProperties linkProperties = cm.getLinkProperties(cm.getActiveNetwork());
+        if (linkProperties == null) {
+            throw new SubnetNotFoundException();
+        }
+
+        List<LinkAddress> addresses = linkProperties.getLinkAddresses();
+        for (LinkAddress address : addresses) {
+            InetAddress addr = address.getAddress();
+            if (!addr.isLoopbackAddress() && !addr.isLinkLocalAddress()) {
+                return address.getPrefixLength();
+            }
+        }
+
+        throw new SubnetNotFoundException();
+    }
 
     /**
      * Returns the number of hosts in the subnet.

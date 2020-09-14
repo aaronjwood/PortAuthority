@@ -1,14 +1,12 @@
 package com.aaronjwood.portauthority.network;
 
 import android.content.Context;
-import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
 import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -105,46 +103,6 @@ public class Wireless extends Network {
         }
 
         return ssid;
-    }
-
-    /**
-     * Gets the subnet of the wireless interface.
-     *
-     * @return Internal Wifi Subnet Netmask
-     */
-    @Override
-    public int getSubnet() throws NoWifiManagerException, SubnetNotFoundException {
-        WifiManager wifiManager = getWifiManager();
-        DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
-        if (dhcpInfo == null) {
-            throw new SubnetNotFoundException();
-        }
-
-        int netmask = Integer.bitCount(dhcpInfo.netmask);
-        /*
-         * Workaround for #82477
-         * https://code.google.com/p/android/issues/detail?id=82477
-         * If dhcpInfo returns a subnet that cannot exist, then
-         * look up the Network interface instead.
-         */
-        if (netmask < 4 || netmask > 32) {
-            try {
-                InetAddress inetAddress = getPrivateLanAddress();
-                NetworkInterface networkInterface = NetworkInterface.getByInetAddress(inetAddress);
-                if (networkInterface == null) {
-                    return 0;
-                }
-
-                for (InterfaceAddress address : networkInterface.getInterfaceAddresses()) {
-                    if (inetAddress != null && inetAddress.equals(address.getAddress())) {
-                        return address.getNetworkPrefixLength(); // This returns a short of the CIDR notation.
-                    }
-                }
-            } catch (SocketException | UnknownHostException ignored) {
-            }
-        }
-
-        return netmask;
     }
 
     /**
