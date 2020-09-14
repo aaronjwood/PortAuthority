@@ -30,14 +30,14 @@ public class OuiParser implements Parser {
     }
 
     /**
-     * Saves the parsed line of OUI data to the database.
+     * Exports the parsed line of OUI data to the database.
      *
      * @param db
      * @param line
      * @return
      */
     @Override
-    public long saveLine(Database db, String[] line) {
+    public long exportLine(Database db, String[] line) {
         return db.insertOui(line[0], line[1]);
     }
 

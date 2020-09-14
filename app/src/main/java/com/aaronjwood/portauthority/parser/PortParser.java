@@ -29,14 +29,14 @@ public class PortParser implements Parser {
     }
 
     /**
-     * Saves the parsed line to the database.
+     * Exports the parsed line to the database.
      *
      * @param db
      * @param data
      * @return
      */
     @Override
-    public long saveLine(Database db, String[] data) {
+    public long exportLine(Database db, String[] data) {
         return db.insertPort(data[0], data[1]);
     }
 }

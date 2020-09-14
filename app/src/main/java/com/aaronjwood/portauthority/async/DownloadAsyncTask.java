@@ -103,7 +103,7 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, DownloadProgress
                     continue;
                 }
 
-                if (parser.saveLine(db, data) == -1) {
+                if (parser.exportLine(db, data) == -1) {
                     downProg.message = "Failed to insert data into the database. Please run this operation again";
                     publishProgress(downProg);
 
