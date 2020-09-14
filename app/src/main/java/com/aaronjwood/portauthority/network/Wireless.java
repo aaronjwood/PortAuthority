@@ -189,7 +189,7 @@ public class Wireless {
      * @return Number of hosts as an integer.
      */
     public int getNumberOfHostsInWifiSubnet() throws NoWifiManagerException {
-        Double subnet = (double) getInternalWifiSubnet();
+        double subnet = getInternalWifiSubnet();
         double hosts;
         double bitsLeft = 32.0d - subnet;
         hosts = Math.pow(2.0d, bitsLeft) - 2.0d;
