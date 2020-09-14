@@ -58,7 +58,7 @@ public class Host implements Serializable {
         return this;
     }
 
-    private Host setVendor(Database db) throws IOException {
+    private Host setVendor(Database db) {
         vendor = findMacVendor(mac, db);
 
         return this;
@@ -126,9 +126,23 @@ public class Host implements Serializable {
      * @throws IOException
      * @throws SQLiteException
      */
-    public static String findMacVendor(String mac, Database db) throws IOException, SQLiteException {
+    public static String findMacVendor(String mac, Database db) throws SQLiteException {
         String prefix = mac.substring(0, 8);
-        return db.selectVendor(prefix);
-    }
+        String vendor = db.selectVendor(prefix);
+        if (vendor != null) {
+            return vendor;
+        }
 
+        String notInDb = "Vendor not in database";
+        char identifier = mac.charAt(1);
+        if ("26ae".indexOf(identifier) != -1) {
+            return notInDb + " (private address)";
+        }
+
+        if ("13579bdf".indexOf(identifier) != -1) {
+            return notInDb + " (multicast address)";
+        }
+
+        return notInDb;
+    }
 }

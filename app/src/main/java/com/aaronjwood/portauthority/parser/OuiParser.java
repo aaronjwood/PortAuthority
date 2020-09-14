@@ -26,7 +26,6 @@ public class OuiParser implements Parser {
         }
 
         return new String[]{mac, vendor};
-
     }
 
     /**
