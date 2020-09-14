@@ -127,7 +127,6 @@ public final class LanHostActivity extends HostActivity {
                 }
 
                 portRangeDialog = new Dialog(LanHostActivity.this, R.style.DialogTheme);
-                portRangeDialog.setTitle("Select Port Range");
                 portRangeDialog.setContentView(R.layout.port_range);
                 portRangeDialog.show();
 
@@ -162,7 +161,7 @@ public final class LanHostActivity extends HostActivity {
             }
 
             host.wakeOnLan();
-            Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), host.getHostname()), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), host.getHostname()), Toast.LENGTH_SHORT).show();
         });
     }
 

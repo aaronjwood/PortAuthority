@@ -9,11 +9,14 @@ import com.aaronjwood.portauthority.response.HostAsyncResponse;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class Host implements Serializable {
 
     private String hostname;
     private String ip;
+    private byte[] address;
     private String mac;
     private String vendor;
 
@@ -28,8 +31,9 @@ public class Host implements Serializable {
      * @param ip
      * @param mac
      */
-    public Host(String ip, String mac) {
+    public Host(String ip, String mac) throws UnknownHostException {
         this.ip = ip;
+        this.address = InetAddress.getByName(ip).getAddress();
         this.mac = mac;
     }
 
@@ -54,7 +58,7 @@ public class Host implements Serializable {
         return this;
     }
 
-    private Host setVendor(Database db) throws IOException {
+    private Host setVendor(Database db) {
         vendor = findMacVendor(mac, db);
 
         return this;
@@ -76,6 +80,15 @@ public class Host implements Serializable {
      */
     public String getIp() {
         return ip;
+    }
+
+    /**
+     * Returns this host's address in byte representation.
+     *
+     * @return
+     */
+    public byte[] getAddress() {
+        return this.address;
     }
 
     /**
@@ -113,9 +126,23 @@ public class Host implements Serializable {
      * @throws IOException
      * @throws SQLiteException
      */
-    public static String findMacVendor(String mac, Database db) throws IOException, SQLiteException {
+    public static String findMacVendor(String mac, Database db) throws SQLiteException {
         String prefix = mac.substring(0, 8);
-        return db.selectVendor(prefix);
-    }
+        String vendor = db.selectVendor(prefix);
+        if (vendor != null) {
+            return vendor;
+        }
 
+        String notInDb = "Vendor not in database";
+        char identifier = mac.charAt(1);
+        if ("26ae".indexOf(identifier) != -1) {
+            return notInDb + " (private address)";
+        }
+
+        if ("13579bdf".indexOf(identifier) != -1) {
+            return notInDb + " (multicast address)";
+        }
+
+        return notInDb;
+    }
 }

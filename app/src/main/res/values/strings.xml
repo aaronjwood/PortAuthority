@@ -34,6 +34,7 @@
     <string name="hostScan">Scanning For Hosts</string>
     <string name="subnetHosts">%1$d hosts in your subnet</string>
     <string name="sort">Sort</string>
+    <string name="sortIp">By IP</string>
     <string name="sortHostname">By hostname</string>
     <string name="sortVendor">By vendor</string>
     <string name="copyHostname">Copy hostname</string>

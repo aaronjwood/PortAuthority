@@ -5,9 +5,6 @@ import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
-import com.aaronjwood.portauthority.async.WanIpAsyncTask;
-import com.aaronjwood.portauthority.response.MainAsyncResponse;
-
 import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -118,10 +115,6 @@ public class Wireless extends Network {
     @Override
     public int getSubnet() throws NoWifiManagerException, SubnetNotFoundException {
         WifiManager wifiManager = getWifiManager();
-        if (wifiManager == null) {
-            throw new NoWifiManagerException();
-        }
-
         DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
         if (dhcpInfo == null) {
             throw new SubnetNotFoundException();
@@ -177,7 +170,6 @@ public class Wireless extends Network {
         } else {
             return type.cast(new BigInteger(InetAddress.getByAddress(ipByteArray).getAddress()).intValue());
         }
-
     }
 
     /**

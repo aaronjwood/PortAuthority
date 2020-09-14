@@ -1,21 +1,17 @@
 package com.aaronjwood.portauthority.async;
 
-import android.content.Context;
 import android.os.AsyncTask;
 
 import com.aaronjwood.portauthority.response.DnsAsyncResponse;
 
-import org.xbill.DNS.ExtendedResolver;
-import org.xbill.DNS.Lookup;
-import org.xbill.DNS.Record;
-import org.xbill.DNS.Resolver;
-import org.xbill.DNS.TextParseException;
-import org.xbill.DNS.config.AndroidResolverConfigProvider;
-import org.xbill.DNS.config.InitializationException;
+import org.minidns.hla.ResolverApi;
+import org.minidns.hla.ResolverResult;
+import org.minidns.record.Data;
+import org.minidns.record.Record;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
+import java.util.Set;
 
 public class DnsLookupAsyncTask extends AsyncTask<String, Void, String> {
 
@@ -39,61 +35,34 @@ public class DnsLookupAsyncTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
         String domain = params[0];
-        int recordType = Integer.parseInt(params[1]);
-        AndroidResolverConfigProvider resolverCfg = new AndroidResolverConfigProvider();
-        Context ctx = (Context) this.delegate.get();
-        AndroidResolverConfigProvider.setContext(ctx);
+        String recordType = params[1];
+        ResolverResult<? extends Data> result;
         try {
-            resolverCfg.initialize();
-            String[] servers = new String[resolverCfg.servers().size()];
-            for (int i = 0; i < resolverCfg.servers().size(); i++) {
-                InetSocketAddress server = resolverCfg.servers().get(i);
-                servers[i] = server.getHostName();
+            Class<Data> dataClass = Record.TYPE.valueOf(recordType).getDataClass();
+            if (dataClass == null) {
+                return "Record type " + recordType + " not supported";
             }
 
-            Resolver resolver = new ExtendedResolver(servers);
-            Lookup lookup = new Lookup(domain, recordType);
-            lookup.setResolver(resolver);
-            Record[] records = lookup.run();
-            if (records == null || records.length == 0) {
-                return "No records found.";
-            }
-
-            StringBuilder answer = new StringBuilder();
-            for (Record record : records) {
-                String rClass = this.parseRecordClass(record.getDClass());
-                answer.append(String.format("%s\t\t\t\t%s\t\t\t\t%s\t\t\t\t%s%n%n", record.getName(), record.getTTL(), rClass, record.rdataToString()));
-            }
-
-            return answer.toString();
-        } catch (TextParseException e) {
-            return "Error performing lookup: " + e.getMessage();
-        } catch (InitializationException e) {
-            return "Error initializing resolver: " + e.getMessage();
-        } catch (UnknownHostException e) {
-            return "Resolver host is unknown:: " + e.getMessage();
+            result = ResolverApi.INSTANCE.resolve(domain, dataClass);
+        } catch (IOException e) {
+            return "Error performing lookup on type " + recordType + ": " + e.getMessage();
         }
-    }
 
-    /**
-     * Determines the string representation of the DNS record class
-     *
-     * @param recordClass Numeric record class
-     * @return Human readable record class
-     */
-    private String parseRecordClass(int recordClass) {
-        switch (recordClass) {
-            case 1:
-                return "IN";
-            case 2:
-                return "CS";
-            case 3:
-                return "CH";
-            case 4:
-                return "HS";
-            default:
-                return "IN";
+        if (!result.wasSuccessful()) {
+            return "Lookup of type " + recordType + " failed with response code " + result.getResponseCode();
         }
+
+        Set<? extends Data> answers = result.getAnswers();
+        if (answers.isEmpty()) {
+            return "No records found for type " + recordType;
+        }
+
+        StringBuilder out = new StringBuilder();
+        for (Data answer : answers) {
+            out.append(answer.toString()).append("\n\n");
+        }
+
+        return out.toString();
     }
 
     /**

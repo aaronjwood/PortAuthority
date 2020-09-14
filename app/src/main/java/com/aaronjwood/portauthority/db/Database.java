@@ -170,14 +170,12 @@ public class Database extends SQLiteOpenHelper {
     public String selectVendor(String mac) {
         Cursor cursor = db.rawQuery("SELECT " + VENDOR_FIELD + " FROM " + OUI_TABLE + " WHERE " + MAC_FIELD + " = ?", new String[]{mac});
         String vendor;
-        if (cursor.moveToFirst()) {
-            vendor = cursor.getString(cursor.getColumnIndex("vendor"));
-        } else {
-            vendor = "Vendor not in database";
+        if (!cursor.moveToFirst()) {
+            return null;
         }
 
+        vendor = cursor.getString(cursor.getColumnIndex("vendor"));
         cursor.close();
-
         return vendor;
     }
 

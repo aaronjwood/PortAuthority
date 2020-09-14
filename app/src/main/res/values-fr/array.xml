@@ -16,6 +16,7 @@
     </string-array>
     <string-array name="upperDrawer">
         <item>\u2601 Scanner l\'hôte WAN</item>
+        <item>\u263c Hôte de réveil</item>
         <item>\u2194 Recherche DNS</item>
     </string-array>
     <string-array name="lowerDrawer">
@@ -26,17 +27,22 @@
     <string-array name="records">
         <item>Type d\'Enregistrement</item>
         <item>A</item>
-        <item>A6</item>
         <item>AAAA</item>
         <item>AFSDB</item>
         <item>APL</item>
+        <item>CAA</item>
+        <item>CDNSKEY</item>
+        <item>CDS</item>
         <item>CERT</item>
         <item>CNAME</item>
+        <item>CSYNC</item>
         <item>DHCID</item>
         <item>DLV</item>
         <item>DNAME</item>
         <item>DNSKEY</item>
         <item>DS</item>
+        <item>HINFO</item>
+        <item>HIP</item>
         <item>IPSECKEY</item>
         <item>KEY</item>
         <item>KX</item>
@@ -47,14 +53,18 @@
         <item>NSEC</item>
         <item>NSEC3</item>
         <item>NSEC3PARAM</item>
+        <item>OPENPGPKEY</item>
         <item>PTR</item>
-        <item>RP</item>
         <item>RRSIG</item>
+        <item>RP</item>
         <item>SIG</item>
         <item>SOA</item>
         <item>SRV</item>
         <item>SSHFP</item>
+        <item>TA</item>
+        <item>TKEY</item>
         <item>TLSA</item>
+        <item>TSIG</item>
         <item>TXT</item>
         <item>URI</item>
     </string-array>
