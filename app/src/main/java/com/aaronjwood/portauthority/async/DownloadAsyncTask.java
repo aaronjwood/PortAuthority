@@ -95,7 +95,9 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, DownloadProgress
                     return;
                 }
 
-                total += line.length(); // Lean on the fact that we're working with UTF-8 here.
+                // Lean on the fact that we're working with UTF-8 here.
+                // Also, make a rough estimation of how much we need to reduce this to account for the compressed data we've received.
+                total += line.length() / 3;
                 downProg.progress = (int) (total * 100 / len);
                 publishProgress(downProg);
                 String[] data = parser.parseLine(line);
@@ -106,7 +108,6 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, DownloadProgress
                 if (parser.exportLine(db, data) == -1) {
                     downProg.message = "Failed to insert data into the database. Please run this operation again";
                     publishProgress(downProg);
-
                     return;
                 }
             }
