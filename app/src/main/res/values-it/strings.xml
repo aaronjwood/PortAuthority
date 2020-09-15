@@ -12,7 +12,7 @@
     <string name="hostDiscovery">Scopri gli hosts</string>
     <string name="ssid">Nome della rete (SSID)</string>
     <string name="bssid">MAC della rete (BSSID)</string>
-    <string name="scanWellKnownPorts">Scansiona porte conosciute</string>
+    <string name="scanWellKnownPorts">Scansiona porte comuni</string>
     <string name="scanPortRange">Scansiona intervallo di porte</string>
     <string name="resetPortRange">Reset intervallo di porte</string>
     <string name="openPorts">Porte Aperte</string>
