@@ -41,7 +41,7 @@
     <string name="copyHostname">Copia il nome host</string>
     <string name="copyIp">Copia IP</string>
     <string name="copyMac">Copia MAC</string>
-    <string name="getMacVendorFailed">Impossibile ottenere l'indirizzo MAC del produttore</string>
+    <string name="getMacVendorFailed">Impossibile ottenere l\'indirizzo MAC del produttore</string>
     <string name="failedOpenDb">Impossibile aprire il database</string>
     <string name="downloadingData">Download dei dati</string>
     <string name="failedSubnetHosts">Impossibile ottenere il numero di hosts nella sottorete</string>
