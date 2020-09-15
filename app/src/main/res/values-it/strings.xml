@@ -3,13 +3,13 @@
 
     <string name="app_name">Port Authority</string>
     <string name="action_settings">Impostazioni</string>
-    <string name="macAddress">MAC di questo dispositivo</string>
+    <string name="macAddress">MAC</string>
     <string name="macVendor">Produttore</string>
     <string name="internalIpLabel">LAN IP</string>
     <string name="externalIpLabel">WAN IP</string>
     <string name="fetching">Recupero…</string>
     <string name="signalLabel">Segnale/Velocità</string>
-    <string name="hostDiscovery">Scopri gli hosts</string>
+    <string name="hostDiscovery">Scopri gli host</string>
     <string name="ssid">Nome della rete (SSID)</string>
     <string name="bssid">MAC della rete (BSSID)</string>
     <string name="scanWellKnownPorts">Scansiona porte comuni</string>
@@ -32,7 +32,7 @@
     <string name="notConnectedLan">Non sei connesso alla rete locale</string>
     <string name="notConnectedWifi">Non sei connesso alla rete WiFi!</string>
     <string name="signalLink">%1$ddBm/%2$dMbps</string>
-    <string name="hostScan">Scansione per hosts</string>
+    <string name="hostScan">Scansione per host</string>
     <string name="subnetHosts">%1$d hosts nella tua sottorete</string>
     <string name="sort">Ordina</string>
     <string name="sortIp">Per IP</string>
