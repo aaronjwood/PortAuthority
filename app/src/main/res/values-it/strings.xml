@@ -1,1 +1,58 @@
-#
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Port Authority</string>
+    <string name="action_settings">Impostazioni</string>
+    <string name="macAddress">MAC</string>
+    <string name="macVendor">Produttore</string>
+    <string name="internalIpLabel">LAN IP</string>
+    <string name="externalIpLabel">WAN IP</string>
+    <string name="fetching">Recupero…</string>
+    <string name="signalLabel">Segnale/Velocità</string>
+    <string name="hostDiscovery">Scopri gli host</string>
+    <string name="ssid">SSID</string>
+    <string name="bssid">BSSID</string>
+    <string name="scanWellKnownPorts">Scansiona porte conosciute</string>
+    <string name="scanPortRange">Scansiona intervallo di porte</string>
+    <string name="resetPortRange">Reset intervallo di porte</string>
+    <string name="openPorts">Porte Aperte</string>
+    <string name="portRangeStart">Porta Iniziale</string>
+    <string name="portRangeStop">Porta Finale</string>
+    <string name="wifiDisabled">Il WiFi non è abilitato</string>
+    <string name="noWifiConnection">Nessuna connessione WiFi</string>
+    <string name="wanHostHint">URL/IP</string>
+    <string name="scanningWarning">ATTENZIONE</string>
+    <string name="domainName">Nome del dominio</string>
+    <string name="dnsLookup">DNS Lookup</string>
+    <string name="wakeOnLan">Sveglia</string>
+    <string name="waking">Risveglio %1$s…</string>
+    <string name="ipAddress">Indirizzo IP</string>
+    <string name="startingDnsLookup">Recupero dei record DNS...</string>
+    <string name="dnsInputError">Inserisci un dominio e seleziona un tipo di record</string>
+    <string name="notConnectedLan">Non sei connesso alla rete locale</string>
+    <string name="notConnectedWifi">Non sei connesso alla rete WiFi!</string>
+    <string name="signalLink">%1$ddBm/%2$dMbps</string>
+    <string name="hostScan">Scansione per hosts</string>
+    <string name="subnetHosts">%1$d hosts nella tua sottorete</string>
+    <string name="sort">Ordina</string>
+    <string name="sortIp">Per IP</string>
+    <string name="sortHostname">Per nome host</string>
+    <string name="sortVendor">Per produttore</string>
+    <string name="copyHostname">Copia il nome host</string>
+    <string name="copyIp">Copia IP</string>
+    <string name="copyMac">Copia MAC</string>
+    <string name="getMacVendorFailed">Impossibile ottenere l'indirizzo MAC del produttore</string>
+    <string name="failedOpenDb">Impossibile aprire il database</string>
+    <string name="downloadingData">Download dei dati</string>
+    <string name="failedSubnetHosts">Impossibile ottenere il numero di hosts nella sottorete</string>
+    <string name="failedSignal">Impossibile ottenere la potenza del segnale</string>
+    <string name="failedLinkSpeed">Impossibile ottenere la velocità del collegamento</string>
+    <string name="failedSsid">Impossibile ottenere SSID</string>
+    <string name="failedBssid">Impossibile ottenere BSSID</string>
+    <string name="failedWifiManager">Impossibile ottenere WifiManager per questo dispositivo</string>
+    <string name="noWifiInterface">Nessuna interfaccia WiFi trovata</string>
+    <string name="scanningDisclaimer">Tieni presente che l\'esecuzione di scansioni delle porte su server pubblici è normalmente considerata dannosa.
+    Inoltre, l\'esecuzione di questo tipo di scansioni sulla rete del tuo operatore invece che sulla tua connessione WiFi sarà più lenta e produrrà risultati imprecisi a causa del traffic shaping.
+    Il tuo operatore può anche considerare dannoso il traffico generato da questa scansione.</string>
+
+</resources>
