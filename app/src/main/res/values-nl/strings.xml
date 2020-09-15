@@ -30,7 +30,6 @@
     <string name="startingDnsLookup">Ophalen van DNS-records…</string>
     <string name="dnsInputError">Voer een domein in en selecteer een recordtype</string>
     <string name="notConnectedLan">Je bent niet verbonden met een lokaal netwerk</string>
-    <string name="notConnectedWifi">Je bent niet verbonden met een wifinetwerk!</string>
     <string name="signalLink">%1$ddBm/%2$dMbps</string>
     <string name="hostScan">Scannen naar hosts</string>
     <string name="subnetHosts">%1$d hosts in je subnet</string>

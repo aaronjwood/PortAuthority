@@ -10,14 +10,23 @@ import com.aaronjwood.portauthority.async.WanIpAsyncTask;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.List;
 
-public abstract class Network {
+public class Network {
 
     public static class NoConnectivityManagerException extends Exception {
     }
 
-    public static class SubnetNotFoundException extends Exception {
+    public static class NetworkNotFoundException extends Exception {
+    }
+
+    public static class ConnectionInfo {
+        public int subnet;
+        public String ip;
+        public String iface;
     }
 
     protected Context context;
@@ -27,20 +36,11 @@ public abstract class Network {
     }
 
     /**
-     * Gets the Android network information in the context of the current activity
-     *
-     * @return Network information
-     */
-    private NetworkInfo getNetworkInfo() throws NoConnectivityManagerException {
-        return getConnectivityManager().getActiveNetworkInfo();
-    }
-
-    /**
      * Gets the Android connectivity manager in the context of the current activity
      *
      * @return Connectivity manager
      */
-    protected ConnectivityManager getConnectivityManager() throws NoConnectivityManagerException {
+    protected static ConnectivityManager getConnectivityManager(Context context) throws NoConnectivityManagerException {
         ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (manager == null) {
             throw new NoConnectivityManagerException();
@@ -55,42 +55,51 @@ public abstract class Network {
      * @return True if connected or in the process of connecting, false otherwise.
      * @throws NoConnectivityManagerException
      */
-    public boolean isConnected() throws NoConnectivityManagerException {
-        NetworkInfo info = getNetworkInfo();
+    public static boolean isConnected(Context context) throws NoConnectivityManagerException {
+        NetworkInfo info = getConnectivityManager(context).getActiveNetworkInfo();
         return info != null && info.isConnectedOrConnecting();
     }
 
-    /**
-     * Gets the interface's MAC address.
-     *
-     * @return MAC address.
-     * @throws Exception
-     */
-    abstract String getMacAddress() throws Exception;
-
-    /**
-     * Gets the interface's subnet.
-     *
-     * @return
-     * @throws SubnetNotFoundException
-     * @throws NoConnectivityManagerException
-     */
-    public int getSubnet() throws SubnetNotFoundException, NoConnectivityManagerException {
-        ConnectivityManager cm = getConnectivityManager();
-        LinkProperties linkProperties = cm.getLinkProperties(cm.getActiveNetwork());
-        if (linkProperties == null) {
-            throw new SubnetNotFoundException();
+    public static ConnectionInfo getConnectionInfo(Context context) throws NoConnectivityManagerException, UnknownHostException, NetworkNotFoundException {
+        ConnectivityManager cm = getConnectivityManager(context);
+        android.net.Network activeNet = cm.getActiveNetwork();
+        LinkProperties linkProperties = cm.getLinkProperties(activeNet);
+        if (activeNet == null || linkProperties == null) {
+            throw new NetworkNotFoundException();
         }
 
         List<LinkAddress> addresses = linkProperties.getLinkAddresses();
         for (LinkAddress address : addresses) {
             InetAddress addr = address.getAddress();
             if (!addr.isLoopbackAddress() && !addr.isLinkLocalAddress()) {
-                return address.getPrefixLength();
+                ConnectionInfo info = new ConnectionInfo();
+                info.ip = activeNet.getByName(addr.getHostAddress()).getHostAddress();
+                info.iface = linkProperties.getInterfaceName();
+                info.subnet = address.getPrefixLength();
+                return info;
             }
         }
 
-        throw new SubnetNotFoundException();
+        throw new NetworkNotFoundException();
+    }
+
+    public static String getMacAddress(Context context) throws NoConnectivityManagerException, SocketException, NetworkNotFoundException, UnknownHostException {
+        NetworkInterface iface = NetworkInterface.getByName(getConnectionInfo(context).iface);
+        byte[] mac = iface.getHardwareAddress();
+        if (mac == null) {
+            return null;
+        }
+
+        StringBuilder buf = new StringBuilder();
+        for (byte aMac : mac) {
+            buf.append(String.format("%02x:", aMac));
+        }
+
+        if (buf.length() > 0) {
+            buf.deleteCharAt(buf.length() - 1);
+        }
+
+        return buf.toString();
     }
 
     /**
@@ -98,7 +107,7 @@ public abstract class Network {
      *
      * @return Number of hosts.
      */
-    public int getNumberOfSubnetHosts(int subnet) {
+    public static int getNumberOfSubnetHosts(int subnet) {
         double bitsLeft = 32.0d - (double) subnet;
         double hosts = Math.pow(2.0d, bitsLeft) - 2.0d;
 
@@ -110,7 +119,7 @@ public abstract class Network {
      *
      * @param delegate Called when the external IP address has been fetched
      */
-    public void getWanIp(MainAsyncResponse delegate) {
+    public static void getWanIp(MainAsyncResponse delegate) {
         new WanIpAsyncTask(delegate).execute();
     }
 

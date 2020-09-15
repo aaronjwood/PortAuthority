@@ -190,6 +190,11 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                 }
             }
 
+            if (pairs.size() == 0) {
+                activity.processFinish(null, numHosts);
+                return;
+            }
+
             numHosts.addAndGet(pairs.size());
             for (Pair<String, String> pair : pairs) {
                 String ip = pair.first;

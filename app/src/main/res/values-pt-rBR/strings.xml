@@ -30,7 +30,6 @@
     <string name="startingDnsLookup">Extraindo registros do DNS …</string>
     <string name="dnsInputError">Digite um domínio e selecione um tipo de registro</string>
     <string name="notConnectedLan">Você não está conectado à rede local</string>
-    <string name="notConnectedWifi">Você não está conectado à rede WiFi</string>
     <string name="signalLink">%1$ddBm/%2$dMbps</string>
     <string name="hostScan">Procurando os servidores</string>
     <string name="subnetHosts">%1$d hosts na sua sub-rede</string>

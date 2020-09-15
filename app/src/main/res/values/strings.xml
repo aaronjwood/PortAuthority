@@ -50,7 +50,7 @@
     <string name="failedBssid">Failed to get BSSID</string>
     <string name="failedWifiManager">Failed to get WifiManager for this device</string>
     <string name="noWifiInterface">No WiFi interface found</string>
-    <string name="subnetNotFound">Subnet not found</string>
+    <string name="networkNotFound">Network not found</string>
     <string name="scanningDisclaimer">
         Please be aware that running port scans against public servers is normally considered malicious.
         Additionally, running these kinds of scans over your carrier\'s network instead of your own WiFi connection will be slower and will sometimes produce inaccurate results due to traffic shaping.
