@@ -50,9 +50,9 @@
     <string name="failedSsid">Impossibile ottenere il nome della rete (SSID)</string>
     <string name="failedBssid">Impossibile ottenere l\'indirizzo MAC (BSSID)</string>
     <string name="failedWifiManager">Impossibile ottenere i permessi per eseguire WifiManager su questo dispositivo</string>
-    <string name="noWifiInterface">Nessuna interfaccia WiFi trovata</string>
+    <string name="noWifiInterface">Nessuna interfaccia di rete WiFi trovata</string>
     <string name="scanningDisclaimer">Tieni presente che l\'esecuzione di scansioni delle porte su server pubblici è normalmente considerata dannosa.
-    Inoltre, l\'esecuzione di questo tipo di scansioni sulla rete del tuo operatore invece che sulla tua connessione WiFi sarà più lenta e produrrà risultati imprecisi a causa del traffic shaping.
+    Inoltre, l\'esecuzione di questo tipo di scansioni sulla rete mobile del tuo operatore invece che sulla tua connessione WiFi sarà più lenta e produrrà risultati imprecisi a causa del traffic shaping.
     Il tuo operatore può anche considerare dannoso il traffico generato da questa scansione.</string>
 
 </resources>
