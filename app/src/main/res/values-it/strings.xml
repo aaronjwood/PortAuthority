@@ -3,15 +3,15 @@
 
     <string name="app_name">Port Authority</string>
     <string name="action_settings">Impostazioni</string>
-    <string name="macAddress">Indirizzo MAC del Dispositivo</string>
+    <string name="macAddress">MAC di questo dispositivo</string>
     <string name="macVendor">Produttore</string>
     <string name="internalIpLabel">LAN IP</string>
     <string name="externalIpLabel">WAN IP</string>
     <string name="fetching">Recupero…</string>
     <string name="signalLabel">Segnale/Velocità</string>
     <string name="hostDiscovery">Scopri gli hosts</string>
-    <string name="ssid">Nome access-point (SSID)</string>
-    <string name="bssid">MAC access-point (BSSID)</string>
+    <string name="ssid">Nome della rete (SSID)</string>
+    <string name="bssid">MAC della rete (BSSID)</string>
     <string name="scanWellKnownPorts">Scansiona porte conosciute</string>
     <string name="scanPortRange">Scansiona intervallo di porte</string>
     <string name="resetPortRange">Reset intervallo di porte</string>
