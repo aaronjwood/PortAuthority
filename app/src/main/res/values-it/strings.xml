@@ -10,8 +10,8 @@
     <string name="fetching">Recupero…</string>
     <string name="signalLabel">Segnale/Velocità</string>
     <string name="hostDiscovery">Scopri gli host</string>
-    <string name="ssid">SSID</string>
-    <string name="bssid">BSSID</string>
+    <string name="ssid">Nome della rete (SSID)</string>
+    <string name="bssid">Indirizzo MAC (BSSID)</string>
     <string name="scanWellKnownPorts">Scansiona porte conosciute</string>
     <string name="scanPortRange">Scansiona intervallo di porte</string>
     <string name="resetPortRange">Reset intervallo di porte</string>
@@ -47,7 +47,7 @@
     <string name="failedSubnetHosts">Impossibile ottenere il numero di hosts nella sottorete</string>
     <string name="failedSignal">Impossibile ottenere la potenza del segnale</string>
     <string name="failedLinkSpeed">Impossibile ottenere la velocità del collegamento</string>
-    <string name="failedSsid">Impossibile ottenere SSID</string>
+    <string name="failedSsid">Impossibile ottenere il nome della rete (SSID)</string>
     <string name="failedBssid">Impossibile ottenere BSSID</string>
     <string name="failedWifiManager">Impossibile ottenere i permessi per WifiManager su questo dispositivo</string>
     <string name="noWifiInterface">Nessuna interfaccia WiFi trovata</string>
