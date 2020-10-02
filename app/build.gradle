@@ -5,6 +5,7 @@ sonarqube {
     properties {
         property "sonar.projectName", "Port Authority"
         property "sonar.projectKey", "portauthority"
+        property "sonar.host.url", "http://192.168.1.2:9000"
         property "sonar.projectVersion", "1.0"
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.sources", "."
