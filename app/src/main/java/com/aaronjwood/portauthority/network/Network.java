@@ -29,7 +29,7 @@ public class Network {
         public String iface;
     }
 
-    protected Context context;
+    protected final Context context;
 
     Network(Context context) {
         this.context = context;

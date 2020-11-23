@@ -87,7 +87,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private final Handler signalHandler = new Handler();
     private Handler scanHandler;
     private ConnectivityManager connMgr;
-    private IntentFilter intentFilter = new IntentFilter();
+    private final IntentFilter intentFilter = new IntentFilter();
     private HostAdapter hostAdapter;
     private List<Host> hosts = Collections.synchronizedList(new ArrayList<>());
     private Database db;
@@ -95,7 +95,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private DownloadAsyncTask portTask;
     private boolean sortAscending;
 
-    private ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
+    private final ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
         @Override
         public void onAvailable(@NonNull android.net.Network network) {
             getNetworkInfo(true);
@@ -286,9 +286,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             });
             return;
         } catch (SQLiteException | UnsupportedOperationException e) {
-            runOnUiThread(() -> {
-                macVendor.setText(R.string.getMacVendorFailed);
-            });
+            runOnUiThread(() -> macVendor.setText(R.string.getMacVendorFailed));
             return;
         } catch (Network.NetworkNotFoundException e) {
             runOnUiThread(() -> {
@@ -330,7 +328,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 }
 
                 int numSubnetHosts;
-                int netmask = 0;
+                int netmask;
                 try {
                     netmask = Network.getConnectionInfo(context).subnet;
                 } catch (Network.NoConnectivityManagerException | UnknownHostException e) {
@@ -610,31 +608,27 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                         wolDialog.setContentView(R.layout.wake_on_lan);
                         wolDialog.show();
                         Button wakeUp = wolDialog.findViewById(R.id.wolWake);
-                        wakeUp.setOnClickListener(new View.OnClickListener() {
-
-                            @Override
-                            public void onClick(View v) {
-                                try {
-                                    if (!Network.isConnected(getApplicationContext())) {
-                                        Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
-                                        return;
-                                    }
-                                } catch (Wireless.NoConnectivityManagerException e) {
+                        wakeUp.setOnClickListener(v -> {
+                            try {
+                                if (!Network.isConnected(getApplicationContext())) {
                                     Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                                     return;
                                 }
-
-                                EditText ip = wolDialog.findViewById(R.id.wolIp);
-                                EditText mac = wolDialog.findViewById(R.id.wolMac);
-                                String ipVal = ip.getText().toString();
-                                String macVal = mac.getText().toString();
-                                if (ipVal.isEmpty() || macVal.isEmpty()) {
-                                    return;
-                                }
-
-                                new WolAsyncTask().execute(macVal, ipVal);
-                                Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), ipVal), Toast.LENGTH_SHORT).show();
+                            } catch (Wireless.NoConnectivityManagerException e) {
+                                Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
+                                return;
                             }
+
+                            EditText ip = wolDialog.findViewById(R.id.wolIp);
+                            EditText mac = wolDialog.findViewById(R.id.wolMac);
+                            String ipVal = ip.getText().toString();
+                            String macVal = mac.getText().toString();
+                            if (ipVal.isEmpty() || macVal.isEmpty()) {
+                                return;
+                            }
+
+                            new WolAsyncTask().execute(macVal, ipVal);
+                            Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), ipVal), Toast.LENGTH_SHORT).show();
                         });
                         break;
                     case 2:
@@ -684,9 +678,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             Context ctx = getApplicationContext();
             Network.ConnectionInfo connInfo = Network.getConnectionInfo(ctx);
             String internalIpWithSubnet = connInfo.ip + "/" + connInfo.subnet;
-            runOnUiThread(() -> {
-                internalIp.setText(internalIpWithSubnet);
-            });
+            runOnUiThread(() -> internalIp.setText(internalIpWithSubnet));
         } catch (UnknownHostException | Network.NoConnectivityManagerException e) {
             Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
         } catch (Network.NetworkNotFoundException e) {
