@@ -161,6 +161,7 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT " + VENDOR_FIELD + " FROM " + OUI_TABLE + " WHERE " + MAC_FIELD + " = ?", new String[]{mac});
         String vendor;
         if (!cursor.moveToFirst()) {
+            cursor.close();
             return null;
         }
 
