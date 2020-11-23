@@ -19,12 +19,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -40,6 +34,13 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.adapter.HostAdapter;
@@ -208,18 +209,35 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         }
 
         final MainActivity activity = this;
-        new AlertDialog.Builder(activity, R.style.DialogTheme).setTitle("Generate Database")
-                .setMessage("Do you want to create the OUI and port databases? " +
-                        "This will download the official OUI list from Wireshark and port list from IANA. " +
-                        "Note that you won't be able to resolve any MAC vendors or identify services without this data. " +
+        new AlertDialog.Builder(activity, R.style.DialogTheme)
+                .setTitle("Generate OUI Database")
+                .setMessage("Do you want to create the OUI database? " +
+                        "This will download the official OUI list from Wireshark. " +
+                        "Note that you won't be able to resolve any MAC vendors without this data. " +
                         "You can always perform this from the menu later.")
                 .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
                     dialogInterface.dismiss();
                     ouiTask = new DownloadOuisAsyncTask(db, new OuiParser(), activity);
-                    portTask = new DownloadPortDataAsyncTask(db, new PortParser(), activity);
                     ouiTask.execute();
+                })
+                .setNegativeButton(android.R.string.no, (dialogInterface, i) -> dialogInterface.cancel())
+                .setIcon(android.R.drawable.ic_dialog_alert).show()
+                .setCanceledOnTouchOutside(false);
+
+        new AlertDialog.Builder(activity, R.style.DialogTheme)
+                .setTitle("Generate Port Database")
+                .setMessage("Do you want to create the port database? " +
+                        "This will download the official port list from IANA. " +
+                        "Note that you won't be able to identify services without this data. " +
+                        "You can always perform this from the menu later.")
+                .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                    portTask = new DownloadPortDataAsyncTask(db, new PortParser(), activity);
                     portTask.execute();
-                }).setNegativeButton(android.R.string.no, (dialogInterface, i) -> dialogInterface.cancel()).setIcon(android.R.drawable.ic_dialog_alert).show().setCanceledOnTouchOutside(false);
+                })
+                .setNegativeButton(android.R.string.no, (dialogInterface, i) -> dialogInterface.cancel())
+                .setIcon(android.R.drawable.ic_dialog_alert).show()
+                .setCanceledOnTouchOutside(false);
     }
 
     /**

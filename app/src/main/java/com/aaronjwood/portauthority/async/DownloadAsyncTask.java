@@ -13,10 +13,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
-import java.net.URL;
 import java.util.zip.GZIPInputStream;
 
-import javax.net.ssl.HttpsURLConnection;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 class DownloadProgress {
     public String message;
@@ -68,51 +69,49 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, DownloadProgress
      */
     final void doInBackground(String service, Parser parser) {
         BufferedReader in = null;
-        HttpsURLConnection connection = null;
         db.beginTransaction();
         DownloadProgress downProg = new DownloadProgress();
         try {
-            URL url = new URL(service);
-            connection = (HttpsURLConnection) url.openConnection();
-            connection.setRequestProperty("Accept-Encoding", "gzip");
-            connection.connect();
-            if (connection.getResponseCode() != HttpsURLConnection.HTTP_OK) {
-                downProg.message = connection.getResponseCode() + " " + connection.getResponseMessage();
-                publishProgress(downProg);
-
-                return;
-            }
-
-            // Get the content length ourselves since connection.getContentLengthLong() requires a minimum API of 24+.
-            // The same is true for connection.getHeaderFieldLong().
-            String contentLen = connection.getHeaderField("Content-Length");
-            long len = Long.parseLong(contentLen);
-            in = new BufferedReader(new InputStreamReader(new GZIPInputStream(connection.getInputStream()), "UTF-8"));
-            String line;
-            long total = 0;
-            while ((line = in.readLine()) != null) {
-                if (isCancelled()) {
-                    return;
-                }
-
-                // Lean on the fact that we're working with UTF-8 here.
-                // Also, make a rough estimation of how much we need to reduce this to account for the compressed data we've received.
-                total += line.length() / 3;
-                downProg.progress = (int) (total * 100 / len);
-                publishProgress(downProg);
-                String[] data = parser.parseLine(line);
-                if (data == null) {
-                    continue;
-                }
-
-                if (parser.exportLine(db, data) == -1) {
-                    downProg.message = "Failed to insert data into the database. Please run this operation again";
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(service)
+                    .addHeader("Accept-Encoding", "gzip")
+                    .build();
+            try (Response response = client.newCall(request).execute()) {
+                if (!response.isSuccessful()) {
+                    downProg.message = response.code() + " " + response.body().string();
                     publishProgress(downProg);
+
                     return;
                 }
-            }
 
-            db.setTransactionSuccessful();
+                in = new BufferedReader(new InputStreamReader(new GZIPInputStream(response.body().byteStream()), "UTF-8"));
+                String line;
+                long total = 0;
+                while ((line = in.readLine()) != null) {
+                    if (isCancelled()) {
+                        return;
+                    }
+
+                    // Lean on the fact that we're working with UTF-8 here.
+                    // Also, make a rough estimation of how much we need to reduce this to account for the compressed data we've received.
+                    total += line.length() / 3;
+                    downProg.progress = (int) (total * 100 / response.body().contentLength());
+                    publishProgress(downProg);
+                    String[] data = parser.parseLine(line);
+                    if (data == null) {
+                        continue;
+                    }
+
+                    if (parser.exportLine(db, data) == -1) {
+                        downProg.message = "Failed to insert data into the database. Please run this operation again";
+                        publishProgress(downProg);
+                        return;
+                    }
+                }
+
+                db.setTransactionSuccessful();
+            }
         } catch (Exception e) {
             downProg.message = e.toString();
             publishProgress(downProg);
@@ -123,10 +122,6 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, DownloadProgress
                     in.close();
                 }
             } catch (IOException ignored) {
-            }
-
-            if (connection != null) {
-                connection.disconnect();
             }
         }
     }
