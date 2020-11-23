@@ -24,14 +24,6 @@ public class DownloadPortDataAsyncTask extends DownloadAsyncTask {
     }
 
     /**
-     * Displays the progress dialog.
-     */
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
-    /**
      * Downloads new port data.
      *
      * @param params

@@ -22,7 +22,7 @@ import java.util.Enumeration;
 
 public class Wireless {
 
-    private Context context;
+    private final Context context;
 
     public static class NoWifiManagerException extends Exception {
     }

@@ -15,10 +15,10 @@ import java.net.Socket;
 import java.nio.channels.IllegalBlockingModeException;
 
 public class ScanPortsRunnable implements Runnable {
-    private String ip;
-    private int startPort;
-    private int stopPort;
-    private int timeout;
+    private final String ip;
+    private final int startPort;
+    private final int stopPort;
+    private final int timeout;
     private final WeakReference<HostAsyncResponse> delegate;
 
     /**

@@ -98,14 +98,6 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     }
 
     /**
-     * Clean up
-     */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    /**
      * Save the state of the activity
      *
      * @param savedState Data to save

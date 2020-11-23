@@ -83,9 +83,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private Button discoverHostsBtn;
     private String discoverHostsStr; // Cache this so it's not looked up every time a host is found.
     private ProgressDialog scanProgressDialog;
-    private Handler signalHandler = new Handler();
+    private final Handler signalHandler = new Handler();
     private Handler scanHandler;
-    private IntentFilter intentFilter = new IntentFilter();
+    private final IntentFilter intentFilter = new IntentFilter();
     private HostAdapter hostAdapter;
     private List<Host> hosts = Collections.synchronizedList(new ArrayList<>());
     private Database db;
@@ -93,7 +93,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private DownloadAsyncTask portTask;
     private boolean sortAscending;
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
 
         /**
          * Detect if a network connection has been lost or established
@@ -589,31 +589,27 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                         wolDialog.setContentView(R.layout.wake_on_lan);
                         wolDialog.show();
                         Button wakeUp = wolDialog.findViewById(R.id.wolWake);
-                        wakeUp.setOnClickListener(new View.OnClickListener() {
-
-                            @Override
-                            public void onClick(View v) {
-                                try {
-                                    if (!wifi.isConnectedWifi()) {
-                                        Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
-                                        return;
-                                    }
-                                } catch (Wireless.NoConnectivityManagerException e) {
-                                    Errors.showError(getApplicationContext(), getResources().getString(R.string.failedWifiManager));
+                        wakeUp.setOnClickListener(v -> {
+                            try {
+                                if (!wifi.isConnectedWifi()) {
+                                    Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                                     return;
                                 }
-
-                                EditText ip = wolDialog.findViewById(R.id.wolIp);
-                                EditText mac = wolDialog.findViewById(R.id.wolMac);
-                                String ipVal = ip.getText().toString();
-                                String macVal = mac.getText().toString();
-                                if (ipVal.isEmpty() || macVal.isEmpty()) {
-                                    return;
-                                }
-
-                                new WolAsyncTask().execute(macVal, ipVal);
-                                Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), ipVal), Toast.LENGTH_SHORT).show();
+                            } catch (Wireless.NoConnectivityManagerException e) {
+                                Errors.showError(getApplicationContext(), getResources().getString(R.string.failedWifiManager));
+                                return;
                             }
+
+                            EditText ip = wolDialog.findViewById(R.id.wolIp);
+                            EditText mac = wolDialog.findViewById(R.id.wolMac);
+                            String ipVal = ip.getText().toString();
+                            String macVal = mac.getText().toString();
+                            if (ipVal.isEmpty() || macVal.isEmpty()) {
+                                return;
+                            }
+
+                            new WolAsyncTask().execute(macVal, ipVal);
+                            Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), ipVal), Toast.LENGTH_SHORT).show();
                         });
                         break;
                     case 2:

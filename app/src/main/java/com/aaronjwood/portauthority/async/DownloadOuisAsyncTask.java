@@ -27,14 +27,6 @@ public class DownloadOuisAsyncTask extends DownloadAsyncTask {
     }
 
     /**
-     * Sets up and displays the dialog.
-     */
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
-    /**
      * Downloads new OUI data.
      *
      * @param params
