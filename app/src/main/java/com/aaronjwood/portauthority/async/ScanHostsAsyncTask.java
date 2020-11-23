@@ -29,7 +29,7 @@ import jcifs.netbios.NbtAddress;
 
 public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     private final WeakReference<MainAsyncResponse> delegate;
-    private Database db;
+    private final Database db;
     private static final String ARP_TABLE = "/proc/net/arp";
     private static final String IP_CMD = "ip neighbor";
     private static final String NEIGHBOR_INCOMPLETE = "INCOMPLETE";

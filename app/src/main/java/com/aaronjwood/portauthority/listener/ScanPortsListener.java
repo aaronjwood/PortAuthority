@@ -7,8 +7,8 @@ import java.util.List;
 
 public class ScanPortsListener implements View.OnClickListener {
 
-    private List<String> ports;
-    private ArrayAdapter<String> adapter;
+    private final List<String> ports;
+    private final ArrayAdapter<String> adapter;
 
     /**
      * New click listener for scanning ports

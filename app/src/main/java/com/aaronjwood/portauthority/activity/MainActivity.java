@@ -84,7 +84,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private Button discoverHostsBtn;
     private String discoverHostsStr; // Cache this so it's not looked up every time a host is found.
     private ProgressDialog scanProgressDialog;
-    private Handler signalHandler = new Handler();
+    private final Handler signalHandler = new Handler();
     private Handler scanHandler;
     private ConnectivityManager connMgr;
     private IntentFilter intentFilter = new IntentFilter();

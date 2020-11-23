@@ -15,9 +15,9 @@ import java.net.UnknownHostException;
 public class Host implements Serializable {
 
     private String hostname;
-    private String ip;
-    private byte[] address;
-    private String mac;
+    private final String ip;
+    private final byte[] address;
+    private final String mac;
     private String vendor;
 
     public Host(String ip, String mac, Database db) throws IOException {
@@ -50,18 +50,15 @@ public class Host implements Serializable {
      * Sets this host's hostname to the given value
      *
      * @param hostname Hostname for this host
-     * @return
      */
-    public Host setHostname(String hostname) {
+    public void setHostname(String hostname) {
         this.hostname = hostname;
 
-        return this;
     }
 
-    private Host setVendor(Database db) {
+    private void setVendor(Database db) {
         vendor = findMacVendor(mac, db);
 
-        return this;
     }
 
     /**

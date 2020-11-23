@@ -22,7 +22,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String CREATE_MAC_INDEX = "CREATE INDEX IF NOT EXISTS idx_ouis_mac ON " + OUI_TABLE + " (" + MAC_FIELD + ");";
 
     private static Database singleton;
-    private SQLiteDatabase db;
+    private final SQLiteDatabase db;
 
     /**
      * Returns the single instance of this class or creates one if it doesn't already exist.
@@ -51,31 +51,25 @@ public class Database extends SQLiteOpenHelper {
     /**
      * Starts a transaction that allows for multiple readers and one writer.
      *
-     * @return
      */
-    public Database beginTransaction() {
+    public void beginTransaction() {
         db.beginTransactionNonExclusive();
-        return this;
     }
 
     /**
      * Finishes the transaction.
      *
-     * @return
      */
-    public Database endTransaction() {
+    public void endTransaction() {
         db.endTransaction();
-        return this;
     }
 
     /**
      * Marks the transaction as successful and commits the transaction.
      *
-     * @return
      */
-    public Database setTransactionSuccessful() {
+    public void setTransactionSuccessful() {
         db.setTransactionSuccessful();
-        return this;
     }
 
     /**
@@ -142,23 +136,19 @@ public class Database extends SQLiteOpenHelper {
     /**
      * Wipes out all of the OUIs that are currently in the database.
      *
-     * @return
      */
-    public Database clearOuis() {
+    public void clearOuis() {
         db.execSQL("DELETE FROM " + OUI_TABLE);
         db.execSQL("VACUUM");
-        return this;
     }
 
     /**
      * Wipes out all of the ports that are currently in the database.
      *
-     * @return
      */
-    public Database clearPorts() {
+    public void clearPorts() {
         db.execSQL("DELETE FROM " + PORT_TABLE);
         db.execSQL("VACUUM");
-        return this;
     }
 
     /**

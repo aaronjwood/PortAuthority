@@ -36,15 +36,6 @@ public final class WanHostActivity extends HostActivity {
     }
 
     /**
-     * Clean up
-     */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        UserPreference.saveLastUsedHostAddress(this, this.wanHost.getText().toString());
-    }
-
-    /**
      * Event handler for when the well known port scan is initiated
      */
     private void scanWellKnownPortsClick() {
