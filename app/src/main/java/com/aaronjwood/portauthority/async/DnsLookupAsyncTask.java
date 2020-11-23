@@ -59,7 +59,7 @@ public class DnsLookupAsyncTask extends AsyncTask<String, Void, String> {
 
         StringBuilder out = new StringBuilder();
         for (Data answer : answers) {
-            out.append(answer.toString()).append("\n\n");
+            out.append(answer).append("\n\n");
         }
 
         return out.toString();

@@ -71,12 +71,12 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, DownloadProgress
         BufferedReader in = null;
         db.beginTransaction();
         DownloadProgress downProg = new DownloadProgress();
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(service)
+                .addHeader("Accept-Encoding", "gzip")
+                .build();
         try {
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder()
-                    .url(service)
-                    .addHeader("Accept-Encoding", "gzip")
-                    .build();
             try (Response response = client.newCall(request).execute()) {
                 if (!response.isSuccessful()) {
                     downProg.message = response.code() + " " + response.body().string();
