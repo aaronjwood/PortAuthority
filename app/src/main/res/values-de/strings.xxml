@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Port Authority</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="macAddress">MAC</string>
+    <string name="macVendor">Hersteller</string>
+    <string name="internalIpLabel">LAN IP</string>
+    <string name="externalIpLabel">WAN IP</string>
+    <string name="fetching">Abrufen…</string>
+    <string name="signalLabel">Signal/Geschwindigkeit</string>
+    <string name="hostDiscovery">Hosts finden</string>
+    <string name="ssid">SSID</string>
+    <string name="bssid">BSSID</string>
+    <string name="scanWellKnownPorts">Bekannte Ports prüfen</string>
+    <string name="scanPortRange">Portbereich prüfen</string>
+    <string name="resetPortRange">Portbereich zurücksetzen</string>
+    <string name="openPorts">Offene Ports</string>
+    <string name="portRangeStart">Beginn-Port</string>
+    <string name="portRangeStop">Ende-Port</string>
+    <string name="wifiDisabled">WiFi nicht aktiviert</string>
+    <string name="noWifiConnection">Keine WiFi-Verbindung</string>
+    <string name="wanHostHint">URL/IP</string>
+    <string name="scanningWarning">WARNUNG</string>
+    <string name="domainName">Domänename</string>
+    <string name="dnsLookup">DNS-Suche</string>
+    <string name="wakeOnLan">Aufwecken</string>
+    <string name="waking">Wecke %1$s auf…</string>
+    <string name="ipAddress">IP-Adresse</string>
+    <string name="startingDnsLookup">DNS-Einträge werden abgerufen…</string>
+    <string name="dnsInputError">Domäne eingeben und die Eintragstyp auswählen</string>
+    <string name="notConnectedLan">Sie sind nicht mit dem lokalen Netzwerk verbunden!</string>
+    <string name="notConnectedWifi">Sie sind zu keinem WiFi-Netzwerk verbunden!</string>
+    <string name="signalLink">%1$ddBm/%2$dMbps</string>
+    <string name="hostScan">Auf Hosts prüfen</string>
+    <string name="subnetHosts">%1$d Hosts im Subnetz</string>
+    <string name="sort">Sortieren</string>
+    <string name="sortIp">nach IP</string>
+    <string name="sortHostname">nach Hostname</string>
+    <string name="sortVendor">nach Hersteller</string>
+    <string name="copyHostname">Hostname kopieren</string>
+    <string name="copyIp">IP kopieren</string>
+    <string name="copyMac">MAC kopieren</string>
+    <string name="getMacVendorFailed">Hersteller der MAC konnte nicht ermittelt werden</string>
+    <string name="failedOpenDb">Datenbank konnte nicht geöffnet werden</string>
+    <string name="downloadingData">Daten werden heruntergeladen</string>
+    <string name="failedSubnetHosts">Anzahl der Host im Subnetz konnte nicht ermittelt werden</string>
+    <string name="failedSignal">Signalstärke konnte nicht ermittelt werden</string>
+    <string name="failedLinkSpeed">Verbindungsgeschwindigkeit konnte nicht ermittelt werden</string>
+    <string name="failedSsid">SSID konnte nicht ermittelt werden</string>
+    <string name="failedBssid">BSSID konnte nicht ermittelt werden</string>
+    <string name="failedWifiManager">WifiManager konnte für dieses Gerät nicht ermittelt werden</string>
+    <string name="noWifiInterface">Keine WiFi-Schnittstelle gefunden</string>
+    <string name="scanningDisclaimer">
+        Bitte nehmen Sie zur Kenntnis, dass Portscans gegen öffentliche Server normalerweise als bösartig angesehen wird.
+        Weiterhin können Scans dieser Art über das Netzwerk Ihres Mobilfunkanbieters langsamer sein als mit Ihrer eigenen WiFi-Verbindung und manchmal kann es auf Grund Ausprägung des Datenverkehrs zu unplausiblen Ergebnissen kommen.
+        Ihr Mobilfunkanbieter kann den Datenverkehr der durch diesen Scan verursacht wird, ebenfalls als bösartig einstufen.
+    </string>
+
+</resources>
