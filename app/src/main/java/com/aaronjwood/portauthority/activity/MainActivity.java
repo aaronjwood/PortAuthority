@@ -16,6 +16,7 @@ import android.content.res.Resources;
 import android.database.sqlite.SQLiteException;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -209,7 +210,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
                     dialogInterface.dismiss();
                     ouiTask = new DownloadOuisAsyncTask(db, new OuiParser(), activity);
-                    ouiTask.execute();
+                    ouiTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 })
                 .setNegativeButton(android.R.string.no, (dialogInterface, i) -> dialogInterface.cancel())
                 .setIcon(android.R.drawable.ic_dialog_alert).show()
@@ -221,7 +222,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
                     dialogInterface.dismiss();
                     portTask = new DownloadPortDataAsyncTask(db, new PortParser(), activity);
-                    portTask.execute();
+                    portTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 })
                 .setNegativeButton(android.R.string.no, (dialogInterface, i) -> dialogInterface.cancel())
                 .setIcon(android.R.drawable.ic_dialog_alert).show()
@@ -334,7 +335,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
                 try {
                     Integer ip = wifi.getInternalWifiIpAddress(Integer.class);
-                    new ScanHostsAsyncTask(MainActivity.this, db).execute(ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(context));
+                    new ScanHostsAsyncTask(MainActivity.this, db).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(context));
                     discoverHostsBtn.setAlpha(.3f);
                     discoverHostsBtn.setEnabled(false);
                 } catch (UnknownHostException | Wireless.NoWifiManagerException e) {
@@ -602,7 +603,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                                 return;
                             }
 
-                            new WolAsyncTask().execute(macVal, ipVal);
+                            new WolAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, macVal, ipVal);
                             Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), ipVal), Toast.LENGTH_SHORT).show();
                         });
                         break;
@@ -628,11 +629,11 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 switch (position) {
                     case 0:
                         ouiTask = new DownloadOuisAsyncTask(db, new OuiParser(), MainActivity.this);
-                        ouiTask.execute();
+                        ouiTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                     case 1:
                         portTask = new DownloadPortDataAsyncTask(db, new PortParser(), MainActivity.this);
-                        portTask.execute();
+                        portTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                     case 2:
                         startActivity(new Intent(MainActivity.this, PreferencesActivity.class));

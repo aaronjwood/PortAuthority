@@ -1,6 +1,7 @@
 package com.aaronjwood.portauthority.network;
 
 import android.database.sqlite.SQLiteException;
+import android.os.AsyncTask;
 
 import com.aaronjwood.portauthority.async.ScanPortsAsyncTask;
 import com.aaronjwood.portauthority.async.WolAsyncTask;
@@ -98,7 +99,7 @@ public class Host implements Serializable {
     }
 
     public void wakeOnLan() {
-        new WolAsyncTask().execute(mac, ip);
+        new WolAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mac, ip);
     }
 
     /**
@@ -111,7 +112,7 @@ public class Host implements Serializable {
      * @param delegate  Delegate to be called when the port scan has finished
      */
     public static void scanPorts(String ip, int startPort, int stopPort, int timeout, HostAsyncResponse delegate) {
-        new ScanPortsAsyncTask(delegate).execute(ip, startPort, stopPort, timeout);
+        new ScanPortsAsyncTask(delegate).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ip, startPort, stopPort, timeout);
     }
 
     /**
