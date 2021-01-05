@@ -1,8 +1,11 @@
 package com.aaronjwood.portauthority.async;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.AsyncTask;
 
+import com.aaronjwood.portauthority.R;
+import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
 import java.io.IOException;
@@ -37,19 +40,20 @@ public class WanIpAsyncTask extends AsyncTask<Void, Void, String> {
     @Override
     @SuppressLint("NewApi")
     protected String doInBackground(Void... params) {
-        String error = "Couldn't get your external IP";
+        MainAsyncResponse activity = delegate.get();
+        Context ctx = (Context) activity;
         OkHttpClient httpClient = new OkHttpClient();
         Request request = new Request.Builder().url(EXTERNAL_IP_SERVICE).build();
 
         try (Response response = httpClient.newCall(request).execute()) {
             ResponseBody body = response.body();
             if (!response.isSuccessful() || body == null) {
-                return error;
+                return ctx.getResources().getString(R.string.errExternIp);
             }
 
             return body.string().trim();
         } catch (IOException e) {
-            return error;
+            return ctx.getResources().getString(R.string.errExternIp);
         }
     }
 

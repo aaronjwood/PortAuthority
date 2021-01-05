@@ -72,4 +72,5 @@
     <string name="errParseArp">Unable to parse ARP entries</string>
     <string name="errFindArp">Unable to find ARP table</string>
     <string name="errReadArp">Unable to read ARP table</string>
+    <string name="errExternIp">Couldn\'t get your external IP</string>
 </resources>
