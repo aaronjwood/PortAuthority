@@ -36,6 +36,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -161,15 +162,13 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             }
 
             Activity activity = this;
-            String title = "Android 8-9 SSID Access";
-            String message = "Android 8-9 requires coarse location permissions to read the SSID. " +
-                    "If this is not something you're comfortable with just deny the request and go without the functionality.";
+            String version = "8-9";
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                title = "Android 10+ SSID Access";
-                message = "Android 10+ requires fine location permissions to read the SSID. " +
-                        "If this is not something you're comfortable with just deny the request and go without the functionality.";
+                version = "10+";
             }
 
+            String title = getResources().getString(R.string.ssidAccessTitle, version);
+            String message = getResources().getString(R.string.ssidAccessTitle, version);
             new AlertDialog.Builder(activity, R.style.DialogTheme).setTitle(title)
                     .setMessage(message)
                     .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
@@ -205,11 +204,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         final MainActivity activity = this;
         new AlertDialog.Builder(activity, R.style.DialogTheme)
-                .setTitle("Generate OUI Database")
-                .setMessage("Do you want to create the OUI database? " +
-                        "This will download the official OUI list from Wireshark. " +
-                        "Note that you won't be able to resolve any MAC vendors without this data. " +
-                        "You can always perform this from the menu later.")
+                .setTitle(R.string.ouiDbTitle)
+                .setMessage(R.string.ouiDbMsg)
                 .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
                     dialogInterface.dismiss();
                     ouiTask = new DownloadOuisAsyncTask(db, new OuiParser(), activity);
@@ -220,11 +216,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 .setCanceledOnTouchOutside(false);
 
         new AlertDialog.Builder(activity, R.style.DialogTheme)
-                .setTitle("Generate Port Database")
-                .setMessage("Do you want to create the port database? " +
-                        "This will download the official port list from IANA. " +
-                        "Note that you won't be able to identify services without this data. " +
-                        "You can always perform this from the menu later.")
+                .setTitle(R.string.portDbTitle)
+                .setMessage(R.string.portDbMsg)
                 .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
                     dialogInterface.dismiss();
                     portTask = new DownloadPortDataAsyncTask(db, new PortParser(), activity);
@@ -252,7 +245,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         hostList.setAdapter(hostAdapter);
         if (!hosts.isEmpty()) {
-            discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
+            discoverHostsBtn.setText(discoverHostsStr);
+            discoverHostsBtn.append(" (" + hosts.size() + ")");
         }
     }
 
@@ -729,7 +723,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * @param savedState Data to save
      */
     @Override
-    public void onSaveInstanceState(Bundle savedState) {
+    public void onSaveInstanceState(@NonNull Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
         ListAdapter adapter = hostList.getAdapter();
@@ -779,7 +773,8 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 return leftIp - rightIp;
             });
 
-            discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
+            discoverHostsBtn.setText(discoverHostsStr);
+            discoverHostsBtn.append(" (" + hosts.size() + ")");
             if (i.decrementAndGet() == 0) {
                 discoverHostsBtn.setAlpha(1);
                 discoverHostsBtn.setEnabled(true);
