@@ -68,4 +68,8 @@
     <string name="lookupErr">Error performing lookup on type %1$s: %2$s</string>
     <string name="lookupTypeFail">Lookup of type %1$s failed with response code %2$s</string>
     <string name="noRecords">No records found for type %1$s</string>
+    <string name="errAccessArp">Unable to access ARP entries</string>
+    <string name="errParseArp">Unable to parse ARP entries</string>
+    <string name="errFindArp">Unable to find ARP table</string>
+    <string name="errReadArp">Unable to read ARP table</string>
 </resources>
