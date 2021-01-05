@@ -63,4 +63,5 @@
     <string name="ouiDbMsg">Do you want to create the OUI database? This will download the official OUI list from Wireshark. Note that you won\'t be able to resolve any MAC vendors without this data. You can always perform this from the menu later.</string>
     <string name="portDbTitle">Generate Port Database</string>
     <string name="portDbMsg">"Do you want to create the port database? This will download the official port list from IANA. Note that you won't be able to identify services without this data. You can always perform this from the menu later.</string>
+    <string name="failedDbInsert">Failed to insert data into the database. Please run this operation again</string>
 </resources>

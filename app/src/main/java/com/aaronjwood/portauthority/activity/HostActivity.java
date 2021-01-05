@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.aaronjwood.portauthority.R;
@@ -103,7 +104,7 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      * @param savedState Data to save
      */
     @Override
-    public void onSaveInstanceState(Bundle savedState) {
+    public void onSaveInstanceState(@NonNull Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
         String[] savedList = ports.toArray(new String[0]);

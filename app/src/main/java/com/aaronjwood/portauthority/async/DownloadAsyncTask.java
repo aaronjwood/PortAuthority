@@ -18,6 +18,7 @@ import java.util.zip.GZIPInputStream;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 class DownloadProgress {
     public String message;
@@ -31,6 +32,7 @@ class DownloadProgress {
 
 public abstract class DownloadAsyncTask extends AsyncTask<Void, DownloadProgress, Void> {
     private ProgressDialog dialog;
+    private String failedDbInsert;
 
     protected Database db;
     protected WeakReference<MainAsyncResponse> delegate;
@@ -48,6 +50,8 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, DownloadProgress
         }
 
         Context ctx = (Context) activity;
+        this.failedDbInsert = ctx.getResources().getString(R.string.failedDbInsert);
+
         dialog = new ProgressDialog(ctx, R.style.DialogTheme);
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         dialog.setMessage(ctx.getResources().getString(R.string.downloadingData));
@@ -78,14 +82,19 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, DownloadProgress
                 .build();
         try {
             try (Response response = client.newCall(request).execute()) {
-                if (!response.isSuccessful()) {
-                    downProg.message = response.code() + " " + response.body().string();
-                    publishProgress(downProg);
-
+                ResponseBody body = response.body();
+                if (body == null) {
+                    downProg.message = String.valueOf(response.code());
                     return;
                 }
 
-                in = new BufferedReader(new InputStreamReader(new GZIPInputStream(response.body().byteStream()), "UTF-8"));
+                if (!response.isSuccessful()) {
+                    downProg.message = body.string();
+                    publishProgress(downProg);
+                    return;
+                }
+
+                in = new BufferedReader(new InputStreamReader(new GZIPInputStream(body.byteStream()), "UTF-8"));
                 String line;
                 long total = 0;
                 while ((line = in.readLine()) != null) {
@@ -96,7 +105,7 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, DownloadProgress
                     // Lean on the fact that we're working with UTF-8 here.
                     // Also, make a rough estimation of how much we need to reduce this to account for the compressed data we've received.
                     total += line.length() / 3;
-                    downProg.progress = (int) (total * 100 / response.body().contentLength());
+                    downProg.progress = (int) (total * 100 / body.contentLength());
                     publishProgress(downProg);
                     String[] data = parser.parseLine(line);
                     if (data == null) {
@@ -104,7 +113,11 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, DownloadProgress
                     }
 
                     if (parser.exportLine(db, data) == -1) {
-                        downProg.message = "Failed to insert data into the database. Please run this operation again";
+                        MainAsyncResponse activity = delegate.get();
+                        if (activity != null) {
+                            dialog.dismiss();
+                        }
+                        downProg.message = this.failedDbInsert;
                         publishProgress(downProg);
                         return;
                     }

@@ -42,7 +42,7 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle savedState) {
+    protected void onSaveInstanceState(@NonNull Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
         String recordData = dnsAnswer.getText().toString();
