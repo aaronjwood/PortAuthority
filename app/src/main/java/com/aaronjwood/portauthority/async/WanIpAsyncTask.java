@@ -11,6 +11,7 @@ import java.lang.ref.WeakReference;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class WanIpAsyncTask extends AsyncTask<Void, Void, String> {
 
@@ -41,11 +42,12 @@ public class WanIpAsyncTask extends AsyncTask<Void, Void, String> {
         Request request = new Request.Builder().url(EXTERNAL_IP_SERVICE).build();
 
         try (Response response = httpClient.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
+            ResponseBody body = response.body();
+            if (!response.isSuccessful() || body == null) {
                 return error;
             }
 
-            return response.body().string().trim();
+            return body.string().trim();
         } catch (IOException e) {
             return error;
         }
