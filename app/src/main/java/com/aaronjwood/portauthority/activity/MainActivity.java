@@ -164,12 +164,13 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
             Activity activity = this;
             String version = "8-9";
+            String message = getResources().getString(R.string.ssidCoarseMsg, version);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 version = "10+";
+                message = getResources().getString(R.string.ssidFineMsg, version);
             }
 
             String title = getResources().getString(R.string.ssidAccessTitle, version);
-            String message = getResources().getString(R.string.ssidAccessTitle, version);
             new AlertDialog.Builder(activity, R.style.DialogTheme).setTitle(title)
                     .setMessage(message)
                     .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
@@ -246,8 +247,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         hostList.setAdapter(hostAdapter);
         if (!hosts.isEmpty()) {
-            discoverHostsBtn.setText(discoverHostsStr);
-            discoverHostsBtn.append(" (" + hosts.size() + ")");
+            discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
         }
     }
 
@@ -774,8 +774,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 return leftIp - rightIp;
             });
 
-            discoverHostsBtn.setText(discoverHostsStr);
-            discoverHostsBtn.append(" (" + hosts.size() + ")");
+            discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");
             if (i.decrementAndGet() == 0) {
                 discoverHostsBtn.setAlpha(1);
                 discoverHostsBtn.setEnabled(true);

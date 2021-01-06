@@ -58,7 +58,7 @@
     </string>
     <string name="ssidAccessTitle">Android %1$s SSID Access</string>
     <string name="ssidCoarseMsg">Android %1$s requires coarse location permissions to read the SSID. If this is not something you\'re comfortable with just deny the request and go without the functionality.</string>
-    <string name="ssidFineMsg">Android %1$s requires coarse location permissions to read the SSID. If this is not something you\'re comfortable with just deny the request and go without the functionality.</string>
+    <string name="ssidFineMsg">Android %1$s requires fine location permissions to read the SSID. If this is not something you\'re comfortable with just deny the request and go without the functionality.</string>
     <string name="ouiDbTitle">Generate OUI Database</string>
     <string name="ouiDbMsg">Do you want to create the OUI database? This will download the official OUI list from Wireshark. Note that you won\'t be able to resolve any MAC vendors without this data. You can always perform this from the menu later.</string>
     <string name="portDbTitle">Generate Port Database</string>
