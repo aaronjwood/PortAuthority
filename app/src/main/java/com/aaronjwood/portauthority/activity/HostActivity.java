@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -19,6 +18,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.db.Database;
@@ -97,20 +99,12 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
     }
 
     /**
-     * Clean up
-     */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    /**
      * Save the state of the activity
      *
      * @param savedState Data to save
      */
     @Override
-    public void onSaveInstanceState(Bundle savedState) {
+    public void onSaveInstanceState(@NonNull Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
         String[] savedList = ports.toArray(new String[0]);

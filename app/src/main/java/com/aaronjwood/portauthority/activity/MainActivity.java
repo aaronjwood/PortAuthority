@@ -16,15 +16,11 @@ import android.content.res.Resources;
 import android.database.sqlite.SQLiteException;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -40,6 +36,13 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.adapter.HostAdapter;
@@ -57,8 +60,6 @@ import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.utils.Errors;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
-import java.io.IOException;
-import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
@@ -84,9 +85,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private Button discoverHostsBtn;
     private String discoverHostsStr; // Cache this so it's not looked up every time a host is found.
     private ProgressDialog scanProgressDialog;
-    private Handler signalHandler = new Handler();
+    private final Handler signalHandler = new Handler();
     private Handler scanHandler;
-    private IntentFilter intentFilter = new IntentFilter();
+    private final IntentFilter intentFilter = new IntentFilter();
     private HostAdapter hostAdapter;
     private List<Host> hosts = Collections.synchronizedList(new ArrayList<>());
     private Database db;
@@ -94,7 +95,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     private DownloadAsyncTask portTask;
     private boolean sortAscending;
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
 
         /**
          * Detect if a network connection has been lost or established
@@ -162,15 +163,14 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             }
 
             Activity activity = this;
-            String title = "Android 8-9 SSID Access";
-            String message = "Android 8-9 requires coarse location permissions to read the SSID. " +
-                    "If this is not something you're comfortable with just deny the request and go without the functionality.";
+            String version = "8-9";
+            String message = getResources().getString(R.string.ssidCoarseMsg, version);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                title = "Android 10+ SSID Access";
-                message = "Android 10+ requires fine location permissions to read the SSID. " +
-                        "If this is not something you're comfortable with just deny the request and go without the functionality.";
+                version = "10+";
+                message = getResources().getString(R.string.ssidFineMsg, version);
             }
 
+            String title = getResources().getString(R.string.ssidAccessTitle, version);
             new AlertDialog.Builder(activity, R.style.DialogTheme).setTitle(title)
                     .setMessage(message)
                     .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
@@ -205,18 +205,29 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         }
 
         final MainActivity activity = this;
-        new AlertDialog.Builder(activity, R.style.DialogTheme).setTitle("Generate Database")
-                .setMessage("Do you want to create the OUI and port databases? " +
-                        "This will download the official OUI list from Wireshark and port list from IANA. " +
-                        "Note that you won't be able to resolve any MAC vendors or identify services without this data. " +
-                        "You can always perform this from the menu later.")
+        new AlertDialog.Builder(activity, R.style.DialogTheme)
+                .setTitle(R.string.ouiDbTitle)
+                .setMessage(R.string.ouiDbMsg)
                 .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
                     dialogInterface.dismiss();
                     ouiTask = new DownloadOuisAsyncTask(db, new OuiParser(), activity);
+                    ouiTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                })
+                .setNegativeButton(android.R.string.no, (dialogInterface, i) -> dialogInterface.cancel())
+                .setIcon(android.R.drawable.ic_dialog_alert).show()
+                .setCanceledOnTouchOutside(false);
+
+        new AlertDialog.Builder(activity, R.style.DialogTheme)
+                .setTitle(R.string.portDbTitle)
+                .setMessage(R.string.portDbMsg)
+                .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
                     portTask = new DownloadPortDataAsyncTask(db, new PortParser(), activity);
-                    ouiTask.execute();
-                    portTask.execute();
-                }).setNegativeButton(android.R.string.no, (dialogInterface, i) -> dialogInterface.cancel()).setIcon(android.R.drawable.ic_dialog_alert).show().setCanceledOnTouchOutside(false);
+                    portTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                })
+                .setNegativeButton(android.R.string.no, (dialogInterface, i) -> dialogInterface.cancel())
+                .setIcon(android.R.drawable.ic_dialog_alert).show()
+                .setCanceledOnTouchOutside(false);
     }
 
     /**
@@ -263,7 +274,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         } catch (UnknownHostException | SocketException | Wireless.NoWifiManagerException e) {
             macAddress.setText(R.string.noWifiConnection);
             macVendor.setText(R.string.noWifiConnection);
-        } catch (IOException | SQLiteException | UnsupportedOperationException e) {
+        } catch (SQLiteException | UnsupportedOperationException e) {
             macVendor.setText(R.string.getMacVendorFailed);
         } catch (Wireless.NoWifiInterface e) {
             macAddress.setText(R.string.noWifiInterface);
@@ -324,7 +335,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
                 try {
                     Integer ip = wifi.getInternalWifiIpAddress(Integer.class);
-                    new ScanHostsAsyncTask(MainActivity.this, db).execute(ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(context));
+                    new ScanHostsAsyncTask(MainActivity.this, db).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ip, wifi.getInternalWifiSubnet(), UserPreference.getHostSocketTimeout(context));
                     discoverHostsBtn.setAlpha(.3f);
                     discoverHostsBtn.setEnabled(false);
                 } catch (UnknownHostException | Wireless.NoWifiManagerException e) {
@@ -385,6 +396,23 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
+            case R.id.sortIp:
+                sortAscending = !sortAscending;
+                if (sortAscending) {
+                    hostAdapter.sort((lhs, rhs) -> {
+                        int leftIp = ByteBuffer.wrap(lhs.getAddress()).getInt();
+                        int rightIp = ByteBuffer.wrap(rhs.getAddress()).getInt();
+                        return rightIp - leftIp;
+                    });
+                } else {
+                    hostAdapter.sort((lhs, rhs) -> {
+                        int leftIp = ByteBuffer.wrap(lhs.getAddress()).getInt();
+                        int rightIp = ByteBuffer.wrap(rhs.getAddress()).getInt();
+                        return leftIp - rightIp;
+                    });
+                }
+
+                return true;
             case R.id.sortHostname:
                 if (sortAscending) {
                     hostAdapter.sort((lhs, rhs) -> rhs.getHostname().toLowerCase().compareTo(lhs.getHostname().toLowerCase()));
@@ -556,31 +584,27 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                         wolDialog.setContentView(R.layout.wake_on_lan);
                         wolDialog.show();
                         Button wakeUp = wolDialog.findViewById(R.id.wolWake);
-                        wakeUp.setOnClickListener(new View.OnClickListener() {
-
-                            @Override
-                            public void onClick(View v) {
-                                try {
-                                    if (!wifi.isConnectedWifi()) {
-                                        Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
-                                        return;
-                                    }
-                                } catch (Wireless.NoConnectivityManagerException e) {
-                                    Errors.showError(getApplicationContext(), getResources().getString(R.string.failedWifiManager));
+                        wakeUp.setOnClickListener(v -> {
+                            try {
+                                if (!wifi.isConnectedWifi()) {
+                                    Errors.showError(getApplicationContext(), getResources().getString(R.string.notConnectedLan));
                                     return;
                                 }
-
-                                EditText ip = wolDialog.findViewById(R.id.wolIp);
-                                EditText mac = wolDialog.findViewById(R.id.wolMac);
-                                String ipVal = ip.getText().toString();
-                                String macVal = mac.getText().toString();
-                                if (ipVal.isEmpty() || macVal.isEmpty()) {
-                                    return;
-                                }
-
-                                new WolAsyncTask().execute(macVal, ipVal);
-                                Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), ipVal), Toast.LENGTH_SHORT).show();
+                            } catch (Wireless.NoConnectivityManagerException e) {
+                                Errors.showError(getApplicationContext(), getResources().getString(R.string.failedWifiManager));
+                                return;
                             }
+
+                            EditText ip = wolDialog.findViewById(R.id.wolIp);
+                            EditText mac = wolDialog.findViewById(R.id.wolMac);
+                            String ipVal = ip.getText().toString();
+                            String macVal = mac.getText().toString();
+                            if (ipVal.isEmpty() || macVal.isEmpty()) {
+                                return;
+                            }
+
+                            new WolAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, macVal, ipVal);
+                            Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), ipVal), Toast.LENGTH_SHORT).show();
                         });
                         break;
                     case 2:
@@ -605,11 +629,11 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 switch (position) {
                     case 0:
                         ouiTask = new DownloadOuisAsyncTask(db, new OuiParser(), MainActivity.this);
-                        ouiTask.execute();
+                        ouiTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                     case 1:
                         portTask = new DownloadPortDataAsyncTask(db, new PortParser(), MainActivity.this);
-                        portTask.execute();
+                        portTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                     case 2:
                         startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
@@ -700,7 +724,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * @param savedState Data to save
      */
     @Override
-    public void onSaveInstanceState(Bundle savedState) {
+    public void onSaveInstanceState(@NonNull Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
         ListAdapter adapter = hostList.getAdapter();
@@ -745,14 +769,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
         scanHandler.post(() -> {
             hosts.add(h);
             hostAdapter.sort((lhs, rhs) -> {
-                try {
-                    int leftIp = ByteBuffer.wrap(InetAddress.getByName(lhs.getIp()).getAddress()).getInt();
-                    int rightIp = ByteBuffer.wrap(InetAddress.getByName(rhs.getIp()).getAddress()).getInt();
-
-                    return leftIp - rightIp;
-                } catch (UnknownHostException ignored) {
-                    return 0;
-                }
+                int leftIp = ByteBuffer.wrap(lhs.getAddress()).getInt();
+                int rightIp = ByteBuffer.wrap(rhs.getAddress()).getInt();
+                return leftIp - rightIp;
             });
 
             discoverHostsBtn.setText(discoverHostsStr + " (" + hosts.size() + ")");

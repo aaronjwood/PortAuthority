@@ -9,7 +9,9 @@ import java.lang.ref.WeakReference;
 
 public class DownloadOuisAsyncTask extends DownloadAsyncTask {
 
-    private static final String SERVICE = "https://code.wireshark.org/review/gitweb?p=wireshark.git;a=blob_plain;f=manuf";
+    // The official source on gitlab.com doesn't provide a content length header which ruins our ability to report progress!
+    // Use the mirror from github.com instead.
+    private static final String SERVICE = "https://raw.githubusercontent.com/wireshark/wireshark/master/manuf";
 
     /**
      * Creates a new asynchronous task to handle downloading OUI data.
@@ -22,14 +24,6 @@ public class DownloadOuisAsyncTask extends DownloadAsyncTask {
         db = database;
         delegate = new WeakReference<>(activity);
         this.parser = parser;
-    }
-
-    /**
-     * Sets up and displays the dialog.
-     */
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
     }
 
     /**

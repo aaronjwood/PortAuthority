@@ -5,25 +5,24 @@ sonarqube {
     properties {
         property "sonar.projectName", "Port Authority"
         property "sonar.projectKey", "portauthority"
-        property "sonar.projectVersion", "1.0"
+        property "sonar.host.url", "http://192.168.1.3:9000"
         property "sonar.sourceEncoding", "UTF-8"
-        property "sonar.sources", "."
         property "sonar.exclusions", "build/**,**/*.png,**/*.psd"
         property "sonar.import_unknown_files", true
-        property "sonar.android.lint.report", "./build/outputs/lint-results.xml"
+        property "sonar.android.lint.report", "./build/reports/lint-results.xml"
     }
 }
 
 android {
     viewBinding.enabled = true
-    compileSdkVersion 29
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 30
+    buildToolsVersion '30.0.3'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 29
-        versionCode 61
-        versionName "2.3.3"
+        targetSdkVersion 30
+        versionCode 62
+        versionName "2.4.0"
         applicationId "com.aaronjwood.portauthority"
         setProperty("archivesBaseName", "PortAuthority-$versionName")
     }
@@ -67,12 +66,12 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:support-v4:28.0.0'
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.squareup.okhttp3:okhttp:3.12.9' // Anything past 3.12.x will break our Android 4 support!
     implementation 'jcifs:jcifs:1.3.17'
     implementation 'org.minidns:minidns-hla:0.3.2'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     testImplementation 'org.mockito:mockito-core:1.10.19'
 }

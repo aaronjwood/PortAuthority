@@ -13,12 +13,12 @@ public interface Parser {
     String[] parseLine(String line);
 
     /**
-     * Saves a parsed line of data to the database.
+     * Exports a parsed line of data to the database.
      *
      * @param db
      * @param data
      * @return
      */
-    long saveLine(Database db, String[] data);
+    long exportLine(Database db, String[] data);
 
 }

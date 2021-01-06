@@ -6,6 +6,7 @@ import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 
 import com.aaronjwood.portauthority.async.WanIpAsyncTask;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
@@ -22,7 +23,7 @@ import java.util.Enumeration;
 
 public class Wireless {
 
-    private Context context;
+    private final Context context;
 
     public static class NoWifiManagerException extends Exception {
     }
@@ -150,10 +151,6 @@ public class Wireless {
      */
     public int getInternalWifiSubnet() throws NoWifiManagerException {
         WifiManager wifiManager = getWifiManager();
-        if (wifiManager == null) {
-            return 0;
-        }
-
         DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
         if (dhcpInfo == null) {
             return 0;
@@ -193,7 +190,7 @@ public class Wireless {
      * @return Number of hosts as an integer.
      */
     public int getNumberOfHostsInWifiSubnet() throws NoWifiManagerException {
-        Double subnet = (double) getInternalWifiSubnet();
+        double subnet = getInternalWifiSubnet();
         double hosts;
         double bitsLeft = 32.0d - subnet;
         hosts = Math.pow(2.0d, bitsLeft) - 2.0d;
@@ -231,7 +228,7 @@ public class Wireless {
      * @param delegate Called when the external IP address has been fetched
      */
     public void getExternalIpAddress(MainAsyncResponse delegate) {
-        new WanIpAsyncTask(delegate).execute();
+        new WanIpAsyncTask(delegate).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     /**

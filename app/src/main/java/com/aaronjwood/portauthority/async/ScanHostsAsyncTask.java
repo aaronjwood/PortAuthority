@@ -1,9 +1,11 @@
 package com.aaronjwood.portauthority.async;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Pair;
 
+import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
@@ -29,7 +31,7 @@ import jcifs.netbios.NbtAddress;
 
 public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     private final WeakReference<MainAsyncResponse> delegate;
-    private Database db;
+    private final Database db;
     private static final String ARP_TABLE = "/proc/net/arp";
     private static final String IP_CMD = "ip neighbor";
     private static final String NEIGHBOR_INCOMPLETE = "INCOMPLETE";
@@ -59,6 +61,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         int cidr = params[1];
         int timeout = params[2];
         MainAsyncResponse activity = delegate.get();
+        Context ctx = (Context) activity;
 
         // Android 10+ doesn't let us access the ARP table.
         // Do an early check to see if we can get what we need from the system.
@@ -68,26 +71,26 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                 Process ipProc = Runtime.getRuntime().exec(IP_CMD);
                 ipProc.waitFor();
                 if (ipProc.exitValue() != 0) {
-                    activity.processFinish(new IOException("Unable to access ARP entries"));
+                    activity.processFinish(new IOException(ctx.getResources().getString(R.string.errAccessArp)));
                     activity.processFinish(true);
 
                     return null;
                 }
             } catch (IOException | InterruptedException e) {
-                activity.processFinish(new IOException("Unable to parse ARP entries"));
+                activity.processFinish(new IOException(ctx.getResources().getString(R.string.errParseArp)));
                 activity.processFinish(true);
             }
         } else {
             File file = new File(ARP_TABLE);
             if (!file.exists()) {
-                activity.processFinish(new FileNotFoundException("Unable to find ARP table"));
+                activity.processFinish(new FileNotFoundException(ctx.getResources().getString(R.string.errFindArp)));
                 activity.processFinish(true);
 
                 return null;
             }
 
             if (!file.canRead()) {
-                activity.processFinish(new IOException("Unable to read ARP table"));
+                activity.processFinish(new IOException(ctx.getResources().getString(R.string.errReadArp)));
                 activity.processFinish(true);
             }
         }
@@ -139,13 +142,14 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         ExecutorService executor = Executors.newCachedThreadPool();
         final AtomicInteger numHosts = new AtomicInteger(0);
         List<Pair<String, String>> pairs = new ArrayList<>();
+        Context ctx = (Context) activity;
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 Process ipProc = Runtime.getRuntime().exec(IP_CMD);
                 ipProc.waitFor();
                 if (ipProc.exitValue() != 0) {
-                    throw new Exception("Unable to access ARP entries");
+                    throw new Exception(ctx.getResources().getString(R.string.errAccessArp));
                 }
 
                 reader = new BufferedReader(new InputStreamReader(ipProc.getInputStream(), "UTF-8"));
@@ -199,7 +203,15 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                     try {
                         host = new Host(ip, macAddress, db);
                     } catch (IOException e) {
-                        host = new Host(ip, macAddress);
+                        try {
+                            host = new Host(ip, macAddress);
+                        } catch (UnknownHostException ex) {
+                            if (activity != null) {
+                                activity.processFinish(e);
+                            }
+
+                            return;
+                        }
                     }
 
                     MainAsyncResponse activity1 = delegate.get();
