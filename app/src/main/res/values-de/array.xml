@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="threads">
+        <item>500</item>
+        <item>450</item>
+        <item>400</item>
+        <item>350</item>
+        <item>300</item>
+        <item>250</item>
+        <item>200</item>
+        <item>150</item>
+        <item>100</item>
+        <item>50</item>
+        <item>25</item>
+        <item>10</item>
+    </string-array>
+    <string-array name="upperDrawer">
+        <item>\u2601 WAN Host prüfen</item>
+        <item>\u263c Host aufwecken</item>
+        <item>\u2194 DNS-Suche</item>
+    </string-array>
+    <string-array name="lowerDrawer">
+        <item>\u2195 OUI-Datenbank aktualisieren</item>
+        <item>\u2195 Port-Datenbank aktualisieren</item>
+        <item>\u2699 Einstellungen</item>
+    </string-array>
+    <string-array name="records">
+        <item>Eintragstyp</item>
+        <item>A</item>
+        <item>AAAA</item>
+        <item>AFSDB</item>
+        <item>APL</item>
+        <item>CAA</item>
+        <item>CDNSKEY</item>
+        <item>CDS</item>
+        <item>CERT</item>
+        <item>CNAME</item>
+        <item>CSYNC</item>
+        <item>DHCID</item>
+        <item>DLV</item>
+        <item>DNAME</item>
+        <item>DNSKEY</item>
+        <item>DS</item>
+        <item>HINFO</item>
+        <item>HIP</item>
+        <item>IPSECKEY</item>
+        <item>KEY</item>
+        <item>KX</item>
+        <item>LOC</item>
+        <item>MX</item>
+        <item>NAPTR</item>
+        <item>NS</item>
+        <item>NSEC</item>
+        <item>NSEC3</item>
+        <item>NSEC3PARAM</item>
+        <item>OPENPGPKEY</item>
+        <item>PTR</item>
+        <item>RRSIG</item>
+        <item>RP</item>
+        <item>SIG</item>
+        <item>SOA</item>
+        <item>SRV</item>
+        <item>SSHFP</item>
+        <item>TA</item>
+        <item>TKEY</item>
+        <item>TLSA</item>
+        <item>TSIG</item>
+        <item>TXT</item>
+        <item>URI</item>
+    </string-array>
+</resources>

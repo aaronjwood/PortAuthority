@@ -1,7 +1,9 @@
 package com.aaronjwood.portauthority.async;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
+import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.response.DnsAsyncResponse;
 
 import org.minidns.hla.ResolverApi;
@@ -37,24 +39,27 @@ public class DnsLookupAsyncTask extends AsyncTask<String, Void, String> {
         String domain = params[0];
         String recordType = params[1];
         ResolverResult<? extends Data> result;
+        DnsAsyncResponse activity = delegate.get();
+        Context ctx = (Context) activity;
+
         try {
             Class<Data> dataClass = Record.TYPE.valueOf(recordType).getDataClass();
             if (dataClass == null) {
-                return "Record type " + recordType + " not supported";
+                return ctx.getResources().getString(R.string.unsuppRecType, recordType);
             }
 
             result = ResolverApi.INSTANCE.resolve(domain, dataClass);
         } catch (IOException e) {
-            return "Error performing lookup on type " + recordType + ": " + e.getMessage();
+            return ctx.getResources().getString(R.string.lookupErr, recordType, e.getMessage());
         }
 
         if (!result.wasSuccessful()) {
-            return "Lookup of type " + recordType + " failed with response code " + result.getResponseCode();
+            return ctx.getResources().getString(R.string.lookupTypeFail, recordType, result.getResponseCode());
         }
 
         Set<? extends Data> answers = result.getAnswers();
         if (answers.isEmpty()) {
-            return "No records found for type " + recordType;
+            return ctx.getResources().getString(R.string.noRecords, recordType);
         }
 
         StringBuilder out = new StringBuilder();

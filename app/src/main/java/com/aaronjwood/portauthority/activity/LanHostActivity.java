@@ -9,6 +9,8 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.listener.ScanPortsListener;
 import com.aaronjwood.portauthority.network.Host;
@@ -57,7 +59,7 @@ public final class LanHostActivity extends HostActivity {
      * @param savedState Data to save
      */
     @Override
-    public void onSaveInstanceState(Bundle savedState) {
+    public void onSaveInstanceState(@NonNull Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
         savedState.putSerializable("host", host);

@@ -1,5 +1,6 @@
 package com.aaronjwood.portauthority.activity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -42,7 +43,7 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle savedState) {
+    protected void onSaveInstanceState(@NonNull Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
         String recordData = dnsAnswer.getText().toString();
@@ -93,7 +94,7 @@ public final class DnsActivity extends AppCompatActivity implements DnsAsyncResp
                 if (recordType != null) {
                     String recordName = recordType.toString();
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.startingDnsLookup), Toast.LENGTH_SHORT).show();
-                    new DnsLookupAsyncTask(DnsActivity.this).execute(domain, recordName);
+                    new DnsLookupAsyncTask(DnsActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, domain, recordName);
                 }
             }
         });

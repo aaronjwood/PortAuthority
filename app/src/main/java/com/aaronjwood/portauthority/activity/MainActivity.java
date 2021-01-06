@@ -15,6 +15,7 @@ import android.content.res.Resources;
 import android.database.sqlite.SQLiteException;
 import android.net.ConnectivityManager;
 import android.net.NetworkRequest;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -166,15 +167,14 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
             }
 
             Activity activity = this;
-            String title = "Android 8-9 SSID Access";
-            String message = "Android 8-9 requires coarse location permissions to read the SSID. " +
-                    "If this is not something you're comfortable with just deny the request and go without the functionality.";
+            String version = "8-9";
+            String message = getResources().getString(R.string.ssidCoarseMsg, version);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                title = "Android 10+ SSID Access";
-                message = "Android 10+ requires fine location permissions to read the SSID. " +
-                        "If this is not something you're comfortable with just deny the request and go without the functionality.";
+                version = "10+";
+                message = getResources().getString(R.string.ssidFineMsg, version);
             }
 
+            String title = getResources().getString(R.string.ssidAccessTitle, version);
             new AlertDialog.Builder(activity, R.style.DialogTheme).setTitle(title)
                     .setMessage(message)
                     .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
@@ -210,30 +210,24 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
 
         final MainActivity activity = this;
         new AlertDialog.Builder(activity, R.style.DialogTheme)
-                .setTitle("Generate OUI Database")
-                .setMessage("Do you want to create the OUI database? " +
-                        "This will download the official OUI list from Wireshark. " +
-                        "Note that you won't be able to resolve any MAC vendors without this data. " +
-                        "You can always perform this from the menu later.")
+                .setTitle(R.string.ouiDbTitle)
+                .setMessage(R.string.ouiDbMsg)
                 .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
                     dialogInterface.dismiss();
                     ouiTask = new DownloadOuisAsyncTask(db, new OuiParser(), activity);
-                    ouiTask.execute();
+                    ouiTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 })
                 .setNegativeButton(android.R.string.no, (dialogInterface, i) -> dialogInterface.cancel())
                 .setIcon(android.R.drawable.ic_dialog_alert).show()
                 .setCanceledOnTouchOutside(false);
 
         new AlertDialog.Builder(activity, R.style.DialogTheme)
-                .setTitle("Generate Port Database")
-                .setMessage("Do you want to create the port database? " +
-                        "This will download the official port list from IANA. " +
-                        "Note that you won't be able to identify services without this data. " +
-                        "You can always perform this from the menu later.")
+                .setTitle(R.string.portDbTitle)
+                .setMessage(R.string.portDbMsg)
                 .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
                     dialogInterface.dismiss();
                     portTask = new DownloadPortDataAsyncTask(db, new PortParser(), activity);
-                    portTask.execute();
+                    portTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 })
                 .setNegativeButton(android.R.string.no, (dialogInterface, i) -> dialogInterface.cancel())
                 .setIcon(android.R.drawable.ic_dialog_alert).show()
@@ -367,7 +361,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                         ipNum += ip[i] << (24 - (8 * i));
                     }
 
-                    new ScanHostsAsyncTask(MainActivity.this, db).execute(ipNum, netmask, UserPreference.getHostSocketTimeout(context));
+                    new ScanHostsAsyncTask(MainActivity.this, db).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ipNum, netmask, UserPreference.getHostSocketTimeout(context));
                     discoverHostsBtn.setAlpha(.3f);
                     discoverHostsBtn.setEnabled(false);
                 } catch (UnknownHostException | Network.NoConnectivityManagerException e) {
@@ -627,7 +621,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                                 return;
                             }
 
-                            new WolAsyncTask().execute(macVal, ipVal);
+                            new WolAsyncTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, macVal, ipVal);
                             Toast.makeText(getApplicationContext(), String.format(getResources().getString(R.string.waking), ipVal), Toast.LENGTH_SHORT).show();
                         });
                         break;
@@ -653,11 +647,11 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                 switch (position) {
                     case 0:
                         ouiTask = new DownloadOuisAsyncTask(db, new OuiParser(), MainActivity.this);
-                        ouiTask.execute();
+                        ouiTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                     case 1:
                         portTask = new DownloadPortDataAsyncTask(db, new PortParser(), MainActivity.this);
-                        portTask.execute();
+                        portTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                     case 2:
                         startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
@@ -752,7 +746,7 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
      * @param savedState Data to save
      */
     @Override
-    public void onSaveInstanceState(Bundle savedState) {
+    public void onSaveInstanceState(@NonNull Bundle savedState) {
         super.onSaveInstanceState(savedState);
 
         ListAdapter adapter = hostList.getAdapter();
