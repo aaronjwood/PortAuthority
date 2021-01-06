@@ -5,7 +5,7 @@ sonarqube {
     properties {
         property "sonar.projectName", "Port Authority"
         property "sonar.projectKey", "portauthority"
-        property "sonar.host.url", "http://192.168.1.2:9000"
+        property "sonar.host.url", "http://192.168.1.3:9000"
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.exclusions", "build/**,**/*.png,**/*.psd"
         property "sonar.import_unknown_files", true
