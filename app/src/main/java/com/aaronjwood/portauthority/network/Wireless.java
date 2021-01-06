@@ -1,38 +1,12 @@
 package com.aaronjwood.portauthority.network;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.DhcpInfo;
-import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 
-import com.aaronjwood.portauthority.async.WanIpAsyncTask;
-import com.aaronjwood.portauthority.response.MainAsyncResponse;
-
-import java.math.BigInteger;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.nio.ByteOrder;
-import java.util.Enumeration;
-
-public class Wireless {
-
-    private final Context context;
+public class Wireless extends Network {
 
     public static class NoWifiManagerException extends Exception {
-    }
-
-    public static class NoConnectivityManagerException extends Exception {
-    }
-
-    public static class NoWifiInterface extends Exception {
-
     }
 
     /**
@@ -41,48 +15,7 @@ public class Wireless {
      * @param context The activity to use for context
      */
     public Wireless(Context context) {
-        this.context = context;
-    }
-
-    /**
-     * Gets the MAC address of the device
-     *
-     * @return MAC address
-     */
-    public String getMacAddress() throws UnknownHostException, SocketException, NoWifiManagerException, NoWifiInterface {
-        String address = getWifiInfo().getMacAddress(); //Won't work on Android 6+ https://developer.android.com/about/versions/marshmallow/android-6.0-changes.html#behavior-hardware-id
-        if (!"02:00:00:00:00:00".equals(address)) {
-            return address;
-        }
-
-        //This should get us the device's MAC address on Android 6+
-        NetworkInterface iface = NetworkInterface.getByInetAddress(getWifiInetAddress());
-        if (iface == null) {
-            throw new NoWifiInterface();
-        }
-
-        byte[] mac = iface.getHardwareAddress();
-
-        StringBuilder buf = new StringBuilder();
-        for (byte aMac : mac) {
-            buf.append(String.format("%02x:", aMac));
-        }
-
-        if (buf.length() > 0) {
-            buf.deleteCharAt(buf.length() - 1);
-        }
-
-        return buf.toString();
-    }
-
-    /**
-     * Gets the device's wireless address
-     *
-     * @return Wireless address
-     */
-    private InetAddress getWifiInetAddress() throws UnknownHostException, NoWifiManagerException {
-        String ipAddress = getInternalWifiIpAddress(String.class);
-        return InetAddress.getByName(ipAddress);
+        super(context);
     }
 
     /**
@@ -117,120 +50,6 @@ public class Wireless {
         return ssid;
     }
 
-
-    /**
-     * Gets the device's internal LAN IP address associated with the WiFi network
-     *
-     * @param type
-     * @param <T>
-     * @return Local WiFi network LAN IP address
-     */
-    public <T> T getInternalWifiIpAddress(Class<T> type) throws UnknownHostException, NoWifiManagerException {
-        int ip = getWifiInfo().getIpAddress();
-
-        //Endianness can be a potential issue on some hardware
-        if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
-            ip = Integer.reverseBytes(ip);
-        }
-
-        byte[] ipByteArray = BigInteger.valueOf(ip).toByteArray();
-
-
-        if (type.isInstance("")) {
-            return type.cast(InetAddress.getByAddress(ipByteArray).getHostAddress());
-        } else {
-            return type.cast(new BigInteger(InetAddress.getByAddress(ipByteArray).getAddress()).intValue());
-        }
-
-    }
-
-    /**
-     * Gets the Wifi Manager DHCP information and returns the Netmask of the internal Wifi Network as an int
-     *
-     * @return Internal Wifi Subnet Netmask
-     */
-    public int getInternalWifiSubnet() throws NoWifiManagerException {
-        WifiManager wifiManager = getWifiManager();
-        DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
-        if (dhcpInfo == null) {
-            return 0;
-        }
-
-        int netmask = Integer.bitCount(dhcpInfo.netmask);
-        /*
-         * Workaround for #82477
-         * https://code.google.com/p/android/issues/detail?id=82477
-         * If dhcpInfo returns a subnet that cannot exist, then
-         * look up the Network interface instead.
-         */
-        if (netmask < 4 || netmask > 32) {
-            try {
-                InetAddress inetAddress = getWifiInetAddress();
-                NetworkInterface networkInterface = NetworkInterface.getByInetAddress(inetAddress);
-                if (networkInterface == null) {
-                    return 0;
-                }
-
-                for (InterfaceAddress address : networkInterface.getInterfaceAddresses()) {
-                    if (inetAddress != null && inetAddress.equals(address.getAddress())) {
-                        return address.getNetworkPrefixLength(); // This returns a short of the CIDR notation.
-                    }
-                }
-            } catch (SocketException | UnknownHostException ignored) {
-            }
-        }
-
-        return netmask;
-    }
-
-
-    /**
-     * Returns the number of hosts in the subnet.
-     *
-     * @return Number of hosts as an integer.
-     */
-    public int getNumberOfHostsInWifiSubnet() throws NoWifiManagerException {
-        double subnet = getInternalWifiSubnet();
-        double hosts;
-        double bitsLeft = 32.0d - subnet;
-        hosts = Math.pow(2.0d, bitsLeft) - 2.0d;
-
-        return (int) hosts;
-    }
-
-
-    /**
-     * Gets the device's internal LAN IP address associated with the cellular network
-     *
-     * @return Local cellular network LAN IP address
-     */
-    public static String getInternalMobileIpAddress() {
-        try {
-            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en != null && en.hasMoreElements(); ) {
-                NetworkInterface intf = en.nextElement();
-                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
-                    InetAddress inetAddress = enumIpAddr.nextElement();
-                    if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
-                        return inetAddress.getHostAddress();
-                    }
-                }
-            }
-        } catch (SocketException ex) {
-            return "Unknown";
-        }
-
-        return "Unknown";
-    }
-
-    /**
-     * Gets the device's external (WAN) IP address
-     *
-     * @param delegate Called when the external IP address has been fetched
-     */
-    public void getExternalIpAddress(MainAsyncResponse delegate) {
-        new WanIpAsyncTask(delegate).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
     /**
      * Gets the current link speed of the wireless network that the device is connected to
      *
@@ -238,16 +57,6 @@ public class Wireless {
      */
     public int getLinkSpeed() throws NoWifiManagerException {
         return getWifiInfo().getLinkSpeed();
-    }
-
-    /**
-     * Determines if the device is connected to a WiFi network or not
-     *
-     * @return True if the device is connected, false if it isn't
-     */
-    public boolean isConnectedWifi() throws NoConnectivityManagerException {
-        NetworkInfo info = getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        return info != null && info.isConnectedOrConnecting();
     }
 
     /**
@@ -280,29 +89,6 @@ public class Wireless {
      */
     private WifiInfo getWifiInfo() throws NoWifiManagerException {
         return getWifiManager().getConnectionInfo();
-    }
-
-    /**
-     * Gets the Android connectivity manager in the context of the current activity
-     *
-     * @return Connectivity manager
-     */
-    private ConnectivityManager getConnectivityManager() throws NoConnectivityManagerException {
-        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (manager == null) {
-            throw new NoConnectivityManagerException();
-        }
-
-        return manager;
-    }
-
-    /**
-     * Gets the Android network information in the context of the current activity
-     *
-     * @return Network information
-     */
-    private NetworkInfo getNetworkInfo(int type) throws NoConnectivityManagerException {
-        return getConnectivityManager().getNetworkInfo(type);
     }
 
 }

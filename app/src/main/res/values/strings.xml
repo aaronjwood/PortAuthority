@@ -30,7 +30,6 @@
     <string name="startingDnsLookup">Fetching DNS records…</string>
     <string name="dnsInputError">Enter a domain and select a record type</string>
     <string name="notConnectedLan">You\'re not connected to the local network</string>
-    <string name="notConnectedWifi">You\'re not connected to a WiFi network!</string>
     <string name="signalLink">%1$ddBm/%2$dMbps</string>
     <string name="hostScan">Scanning For Hosts</string>
     <string name="subnetHosts">%1$d hosts in your subnet</string>
@@ -51,6 +50,7 @@
     <string name="failedBssid">Failed to get BSSID</string>
     <string name="failedWifiManager">Failed to get WifiManager for this device</string>
     <string name="noWifiInterface">No WiFi interface found</string>
+    <string name="networkNotFound">Network not found</string>
     <string name="scanningDisclaimer">
         Please be aware that running port scans against public servers is normally considered malicious.
         Additionally, running these kinds of scans over your carrier\'s network instead of your own WiFi connection will be slower and will sometimes produce inaccurate results due to traffic shaping.

@@ -2,6 +2,7 @@ package com.aaronjwood.portauthority.activity;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -26,6 +27,7 @@ import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.listener.ScanPortsListener;
 import com.aaronjwood.portauthority.network.Host;
+import com.aaronjwood.portauthority.network.Network;
 import com.aaronjwood.portauthority.response.HostAsyncResponse;
 import com.aaronjwood.portauthority.utils.Constants;
 import com.aaronjwood.portauthority.utils.Errors;
@@ -37,7 +39,6 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class HostActivity extends AppCompatActivity implements HostAsyncResponse {
-
     protected int layout;
     protected ArrayAdapter<String> adapter;
     protected ListView portList;
@@ -57,7 +58,8 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
         super.onCreate(savedInstanceState);
         setContentView(layout);
 
-        db = Database.getInstance(getApplicationContext());
+        Context ctx = getApplicationContext();
+        db = Database.getInstance(ctx);
         handler = new Handler(Looper.getMainLooper());
 
         setupPortsAdapter();
@@ -314,5 +316,19 @@ public abstract class HostActivity extends AppCompatActivity implements HostAsyn
      */
     public <T extends Throwable> void processFinish(final T output) {
         handler.post(() -> Errors.showError(getApplicationContext(), output.getLocalizedMessage()));
+    }
+
+    /**
+     * Determines if there is an active network connection.
+     *
+     * @return True if there's a connection, otherwise false.
+     */
+    protected boolean isConnected() {
+        Context ctx = getApplicationContext();
+        try {
+            return Network.isConnected(ctx);
+        } catch (Network.NoConnectivityManagerException e) {
+            return false;
+        }
     }
 }

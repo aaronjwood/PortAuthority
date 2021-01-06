@@ -29,7 +29,6 @@
     <string name="startingDnsLookup">Récupération des enregistrements DNS...</string>
     <string name="dnsInputError">Entrez un domaine et sélectionnez un type d\'enregistrement</string>
     <string name="notConnectedLan">Vous n\'êtes pas connecté au réseau local</string>
-    <string name="notConnectedWifi">Vous n\'êtes connecté à aucun réseau Wi-Fi!</string>
     <string name="signalLink">%1$ddBm/%2$dMbps</string>
     <string name="hostScan">Recherche d\'Hôtes</string>
     <string name="subnetHosts">%1$d hôtes dans votre sous-réseau</string>
