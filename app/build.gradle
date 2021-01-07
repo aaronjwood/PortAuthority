@@ -15,12 +15,12 @@ sonarqube {
 
 android {
     viewBinding.enabled = true
-    compileSdkVersion 30
+    compileSdkVersion 29
     buildToolsVersion '30.0.3'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 30
+        targetSdkVersion 29
         versionCode 62
         versionName "2.4.0"
         applicationId "com.aaronjwood.portauthority"

@@ -4,14 +4,14 @@ jdk:
 android:
   components:
     - build-tools-30.0.3
-    - android-30
+    - android-29
 
 env:
   global:
    - secure: "em+bEb3nWLV7f+Dt4y9/OH2Lpf6mscT9E52kXhSEm/PiFpTtzlx7BgHGlpsYVwsMf0e7x2AdF/yzq4c7ugoMqWmFXMthgFUKcLTXqW/IeARGz3smMXnyScRoaFElDm0Q33fxiqDlU7UVA4j1FysR5GqTU10MasJgGpoyTthRQvra0LU8zwI4IMiASfa8Tij5LclsbaTpcgB4TdXtBmbpKQAUzjvV/ZfLsYQ950C0rbVKk9T1xtc8d5BTbggwHWbMMqGn6RFvSCQioeI/Q6Daak6zDglUY+JE/1BnzlGzoba9C7TLZV4+TQkmB5kc6FtKqSXycjwJSKm3wQFYOzJrLMPqMtlmaAeTEs5yBIYtIIAiID+hbeUKvWTpoUxwUYz7s7XLikJRdxe7iBlhdy3qv+FdGOJjV9g/xeSVXISvXzcKp2sNdU+FABBBDAA2CKWrZOXuzPAh8iYxLnt649hQFAw99ylkn75+LpJgq7gRUO87Fde0Zw3vYhLIS8UH3OBtggV1yrYHuKXWUyfkiA/xcm+NSFgIXJzGvYlOZWS+uZvXeh7wJz5CF0t3m6emBoqX6JAXQ/t9SgwGX8lwbLPK3HiYBnTMEDxb6qpIiYa8E8tfudA1YNyeszG8mZtiErJf9YleagACuASwPFsLb8Bg9BNJX5X89+VrbzPbncZD9Tc="
 
 before_install:
-  - yes | sdkmanager "platforms;android-30"
+  - yes | sdkmanager "platforms;android-29"
   - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 
 addons:
