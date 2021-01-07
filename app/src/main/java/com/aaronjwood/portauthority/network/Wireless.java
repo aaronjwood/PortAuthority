@@ -61,8 +61,8 @@ public class Wireless {
             throw new NoWifiInterface();
         }
 
+        // TODO: address this for Android 11 https://developer.android.com/training/articles/user-data-ids#mac-11-plus
         byte[] mac = iface.getHardwareAddress();
-
         StringBuilder buf = new StringBuilder();
         for (byte aMac : mac) {
             buf.append(String.format("%02x:", aMac));
