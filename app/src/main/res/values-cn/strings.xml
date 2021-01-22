@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Port Authority</string>
+    <string name="action_settings">设置</string>
+    <string name="macAddress">MAC 地址</string>
+    <string name="macVendor">厂商</string>
+    <string name="internalIpLabel">局域网 IP</string>
+    <string name="externalIpLabel">广域网 IP</string>
+    <string name="fetching">获取中…</string>
+    <string name="signalLabel">信号/速度</string>
+    <string name="hostDiscovery">发现主机</string>
+    <string name="ssid">SSID</string>
+    <string name="bssid">BSSID</string>
+    <string name="scanWellKnownPorts">扫描知名端口</string>
+    <string name="scanPortRange">扫描端口区间</string>
+    <string name="resetPortRange">重置端口区间</string>
+    <string name="openPorts">开放端口</string>
+    <string name="portRangeStart">启动端口</string>
+    <string name="portRangeStop">停止端口</string>
+    <string name="wifiDisabled">WiFi 未启用</string>
+    <string name="noWifiConnection">无 WiFi 连接</string>
+    <string name="wanHostHint">URL/IP</string>
+    <string name="scanningWarning">警告</string>
+    <string name="domainName">网域名</string>
+    <string name="dnsLookup">DNS 查询</string>
+    <string name="wakeOnLan">唤醒</string>
+    <string name="waking">正在唤醒 %1$s…</string>
+    <string name="ipAddress">IP 地址</string>
+    <string name="startingDnsLookup">正在获取 DNS 记录…</string>
+    <string name="dnsInputError">输入一个域并选择记录类型</string>
+    <string name="notConnectedLan">你未连接到本地网络</string>
+    <string name="notConnectedWifi">你未连接到一个 WiFi 网络！</string>
+    <string name="signalLink">%1$ddBm/%2$dMbps</string>
+    <string name="hostScan">扫描主机中</string>
+    <string name="subnetHosts">你的子网有 %1$d 主机</string>
+    <string name="sort">排序</string>
+    <string name="sortIp">按 IP</string>
+    <string name="sortHostname">按主机名</string>
+    <string name="sortVendor">按厂商</string>
+    <string name="copyHostname">复制主机名</string>
+    <string name="copyIp">复制 IP</string>
+    <string name="copyMac">复制 MAC 地址</string>
+    <string name="getMacVendorFailed">获取 MAC 厂商失败</string>
+    <string name="failedOpenDb">打开数据库失败</string>
+    <string name="downloadingData">下载数据中</string>
+    <string name="failedSubnetHosts">获取子网内主机数失败</string>
+    <string name="failedSignal">获取信号强度失败</string>
+    <string name="failedLinkSpeed">获取连接速度失败</string>
+    <string name="failedSsid">获取 SSID 失败</string>
+    <string name="failedBssid">获取 BSSID 失败</string>
+    <string name="failedWifiManager">获取这台设备的 WifiManager 失败</string>
+    <string name="noWifiInterface">未找到 WiFi 接口</string>
+    <string name="scanningDisclaimer">
+        请注意，对公共服务器运行端口扫描通常被认为是恶意的。
+        此外，通过运营商网络而非你的 WiFi 连接运行这类扫描会比较慢，而且由于流量定形，有时会产生不准确的结果。
+        你的运营商也可以认为此扫描产生的流量是恶意的。
+    </string>
+    <string name="ssidAccessTitle">安卓 %1$s SSID 访问</string>
+    <string name="ssidCoarseMsg">安卓 %1$s 需要粗略位置权限来读取 SSID。如果你对此感到不适，拒绝请求即可，当然相应的功能将无法使用。</string>
+    <string name="ssidFineMsg">安卓 %1$s 需要精确位置权限来读取 SSID。 如果你对此感到不适，拒绝请求即可，当然相应的功能将无法使用。</string>
+    <string name="ouiDbTitle">生成 OUI 数据库</string>
+    <string name="ouiDbMsg">你想创建 OUI 数据库吗？这将从 Wireshark 下载官方的 OUI 列表。请注意，没有这些数据你无法解析任何 MAC 厂商。你可以稍后在菜单中执行此操作。</string>
+    <string name="portDbTitle">生成端口数据库</string>
+    <string name="portDbMsg">你想创建端口数据库吗？这将从 IANA 下载官方端口列表。请注意，没有这些数据，你将无法标识服务。你可以稍后从菜单中执行此操作。</string>
+    <string name="failedDbInsert">向数据库插入数据失败。请重新执行此操作</string>
+    <string name="unsuppRecType">记录类型 %1$s 不受支持</string>
+    <string name="lookupErr">对类型 %1$s: %2$s 执行查询时出错</string>
+    <string name="lookupTypeFail">类型 %1$s 查询失败，响应码 %2$s</string>
+    <string name="noRecords">未找到类型 %1$s 的记录</string>
+    <string name="errAccessArp">无法访问 ARP 条目</string>
+    <string name="errParseArp">无法解析 ARP 条目</string>
+    <string name="errFindArp">找不到 ARP 表</string>
+    <string name="errReadArp">无法读取 ARP 表</string>
+    <string name="errExternIp">无法获得你的外部 IP</string>
+</resources>
