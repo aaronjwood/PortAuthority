@@ -10,6 +10,8 @@ import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
+import com.aaronjwood.portauthority.utils.MDNSResolver;
+import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,6 +41,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     private static final String ARP_INCOMPLETE = "0x0";
     private static final String ARP_INACTIVE = "00:00:00:00:00:00";
     private static final int NETBIOS_FILE_SERVER = 0x20;
+    private static final int NETBIOS_WORKSTATION = 0x00;
 
     /**
      * Constructor to set the delegate
@@ -228,14 +231,56 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                         activity1.processFinish(e);
                         return;
                     }
+                    /**
+                    * BUG: Some devices don't respond to mDNS if NetBIOS is queried first. Why?
+                    * So let's query mDNS first, to keep in mind for eventual UPnP implementation.
+                    **/
+                    try {
+                        MDNSResolver resolver = new MDNSResolver(UserPreference.getLanSocketTimeout(ctx));
+                        InetAddress add = InetAddress.getByName(ip);
+                        String name = resolver.resolve(add);
+                        resolver.close();
+                        if (name != null && !name.isEmpty()) {
+                            host.setHostname(name);
+                            if (activity1 != null) {
+                                // Call with null to refresh
+                                activity1.processFinish(null, numHosts);
+                            }
+                            return;
+                        }
+                    }
+                    catch (Exception e) {
+                        // It's common that many discovered hosts won't have a mDNS entry.
+                    }
 
                     try {
+                        // Default 5000
+                        jcifs.Config.setProperty("jcifs.netbios.soTimeout", Integer.toString(UserPreference.getLanSocketTimeout(ctx)));
+                        // Default 2
+                        jcifs.Config.setProperty("jcifs.netbios.retryCount", "1");
+                        // Default 3000, called even if retryCount == 1 ?
+                        jcifs.Config.setProperty("jcifs.netbios.retryTimeout", "20");
                         NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
+                        String hostname_temp = "";
                         for (NbtAddress addr : netbios) {
-                            if (addr.getNameType() == NETBIOS_FILE_SERVER) {
-                                host.setHostname(addr.getHostName());
-                                return;
+                            switch (addr.getNameType()) {
+                                // Use NETBIOS_FILE_SERVER name in priority
+                                case NETBIOS_FILE_SERVER:
+                                    hostname_temp = addr.getHostName();
+                                    break;
+                                // Use NETBIOS_WORKSTATION name only if NETBIOS_FILE_SERVER hasn't been found
+                                case NETBIOS_WORKSTATION:
+                                    host.setHostname(addr.getHostName());
+                                    break;
                             }
+                        }
+                        if (!hostname_temp.isEmpty()) {
+                            host.setHostname(hostname_temp);
+                        }
+                        if (activity1 != null) {
+                            // Call with null to refresh
+                            activity1.processFinish(null, numHosts);
+                            return;
                         }
                     } catch (UnknownHostException e) {
                         // It's common that many discovered hosts won't have a NetBIOS entry.

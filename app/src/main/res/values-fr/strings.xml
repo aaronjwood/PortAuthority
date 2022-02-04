@@ -38,7 +38,7 @@
     <string name="sortVendor">Par fournisseur MAC</string>
     <string name="copyHostname">Copier le nom d\'hôte</string>
     <string name="copyIp">Copier l\'IP</string>
-    <string name="copyMac">Copier l'adresse MAC</string>
+    <string name="copyMac">Copier l\'adresse MAC</string>
     <string name="getMacVendorFailed">Fournisseur MAC indisponible</string>
     <string name="failedOpenDb">Échec de l\'ouverture de la base de données</string>
     <string name="downloadingData">Téléchargement des données</string>
