@@ -53,6 +53,9 @@ public class Host implements Serializable {
      * @param hostname Hostname for this host
      */
     public void setHostname(String hostname) {
+        if (hostname != null && hostname.isEmpty() && hostname.endsWith(".local")) {
+            hostname = hostname.substring(0, hostname.length() - 6);
+        }
         this.hostname = hostname;
 
     }
