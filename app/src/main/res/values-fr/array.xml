@@ -16,7 +16,7 @@
     </string-array>
     <string-array name="upperDrawer">
         <item>\u2601 Scanner l\'IP WAN</item>
-        <item>\u263c Reveiller l'appareil</item>
+        <item>\u263c Reveiller l\'appareil</item>
         <item>\u2194 Recherche DNS</item>
     </string-array>
     <string-array name="lowerDrawer">
