@@ -88,3 +88,8 @@ Like the application and the work I put into it? Consider purchasing the donate 
 Contributions of any kind are welcome!
 Please submit any pull requests to the development branch.
 This means that modifications need to be done either on a new branch based off of development or on the development branch directly.
+
+## Privacy
+This app does not track, collect, or share any data it comes across with anyone or anything.
+There are no ads or analytics trackers in this software.
+The service used to determine your public IP address is [open source](https://github.com/aaronjwood/public-ip-api) and is 100% stateless.
