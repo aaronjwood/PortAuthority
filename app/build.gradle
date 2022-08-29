@@ -59,10 +59,10 @@ android {
             dimension "main"
         }
     }
-
-    lintOptions {
+    lint {
         abortOnError false
     }
+
 }
 
 dependencies {
