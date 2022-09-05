@@ -3,6 +3,7 @@ package com.aaronjwood.portauthority.async;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.ParcelFileDescriptor;
 import android.util.Pair;
 
 import com.aaronjwood.portauthority.R;
@@ -10,6 +11,9 @@ import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
+import com.aaronjwood.portauthority.utils.MDNSResolver;
+import com.aaronjwood.portauthority.utils.NetBIOSResolver;
+import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,8 +31,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import jcifs.netbios.NbtAddress;
-
 public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     private final WeakReference<MainAsyncResponse> delegate;
     private final Database db;
@@ -39,7 +41,13 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     private static final String ARP_INCOMPLETE = "0x0";
     private static final String ARP_INACTIVE = "00:00:00:00:00:00";
     private static final int NETBIOS_FILE_SERVER = 0x20;
+    private static final int NETBIOS_WORKSTATION = 0x00;
 
+    static {
+        System.loadLibrary("ipneigh");
+    }
+
+    public native int nativeIPNeigh(int fd);
     /**
      * Constructor to set the delegate
      *
@@ -68,9 +76,21 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         // https://developer.android.com/about/versions/10/privacy/changes#proc-net-filesystem
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             try {
-                Process ipProc = Runtime.getRuntime().exec(IP_CMD);
-                ipProc.waitFor();
-                if (ipProc.exitValue() != 0) {
+                int returnCode = 0;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
+                    ParcelFileDescriptor readSidePfd = pipe[0];
+                    ParcelFileDescriptor writeSidePfd = pipe[1];
+                    ParcelFileDescriptor.AutoCloseInputStream inputStream = new ParcelFileDescriptor.AutoCloseInputStream(readSidePfd);
+                    int fd_write = writeSidePfd.detachFd();
+                    returnCode = nativeIPNeigh(fd_write);
+                    inputStream.close();
+                } else {
+                    Process ipProc = Runtime.getRuntime().exec(IP_CMD);
+                    ipProc.waitFor();
+                    returnCode = ipProc.exitValue();
+                }
+                if (returnCode != 0) {
                     activity.processFinish(new IOException(ctx.getResources().getString(R.string.errAccessArp)));
                     activity.processFinish(true);
 
@@ -146,13 +166,24 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                Process ipProc = Runtime.getRuntime().exec(IP_CMD);
-                ipProc.waitFor();
-                if (ipProc.exitValue() != 0) {
+                int returnCode = 0;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
+                    ParcelFileDescriptor readSidePfd = pipe[0];
+                    ParcelFileDescriptor writeSidePfd = pipe[1];
+                    ParcelFileDescriptor.AutoCloseInputStream inputStream = new ParcelFileDescriptor.AutoCloseInputStream(readSidePfd);
+                    int fd_write = writeSidePfd.detachFd();
+                    returnCode = nativeIPNeigh(fd_write);
+                    reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                } else {
+                    Process ipProc = Runtime.getRuntime().exec(IP_CMD);
+                    ipProc.waitFor();
+                    returnCode = ipProc.exitValue();
+                    reader = new BufferedReader(new InputStreamReader(ipProc.getInputStream(), "UTF-8"));
+                }
+                if (returnCode != 0) {
                     throw new Exception(ctx.getResources().getString(R.string.errAccessArp));
                 }
-
-                reader = new BufferedReader(new InputStreamReader(ipProc.getInputStream(), "UTF-8"));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String[] neighborLine = line.split("\\s+");
@@ -228,16 +259,43 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                         activity1.processFinish(e);
                         return;
                     }
+                    /**
+                    * BUG: Some devices don't respond to mDNS if NetBIOS is queried first. Why?
+                    * So let's query mDNS first, to keep in mind for eventual UPnP implementation.
+                    **/
+                    try {
+                        MDNSResolver resolver = new MDNSResolver(UserPreference.getLanSocketTimeout(ctx));
+                        InetAddress add = InetAddress.getByName(ip);
+                        String name = resolver.resolve(add);
+                        resolver.close();
+                        if (name != null && !name.isEmpty()) {
+                            host.setHostname(name);
+                            if (activity1 != null) {
+                                // Call with null to refresh
+                                activity1.processFinish(null, numHosts);
+                            }
+                            return;
+                        }
+                    }
+                    catch (Exception e) {
+                        // It's common that many discovered hosts won't have a mDNS entry.
+                    }
 
                     try {
-                        NbtAddress[] netbios = NbtAddress.getAllByAddress(ip);
-                        for (NbtAddress addr : netbios) {
-                            if (addr.getNameType() == NETBIOS_FILE_SERVER) {
-                                host.setHostname(addr.getHostName());
-                                return;
+                        NetBIOSResolver resolver = new NetBIOSResolver(UserPreference.getLanSocketTimeout(ctx));
+                        InetAddress add = InetAddress.getByName(ip);
+                        String[] name = resolver.resolve(add);
+                        resolver.close();
+                        if (name != null && name[0] != null && !name[0].isEmpty()) {
+                            host.setHostname(name[0]);
+                            if (activity1 != null) {
+                                // Call with null to refresh
+                                activity1.processFinish(null, numHosts);
                             }
+                            return;
                         }
-                    } catch (UnknownHostException e) {
+                    }
+                    catch (Exception e) {
                         // It's common that many discovered hosts won't have a NetBIOS entry.
                     }
                 });

@@ -15,16 +15,21 @@ sonarqube {
 
 android {
     viewBinding.enabled = true
-    compileSdkVersion 29
+    compileSdkVersion 31
     buildToolsVersion '30.0.3'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 29
+        targetSdkVersion 31
         versionCode 63
         versionName "2.4.1"
         applicationId "com.aaronjwood.portauthority"
         setProperty("archivesBaseName", "PortAuthority-$versionName")
+        externalNativeBuild {
+            ndkBuild {
+                cppFlags ''
+            }
+        }
     }
 
     compileOptions {
@@ -59,18 +64,22 @@ android {
             dimension "main"
         }
     }
-
-    lintOptions {
+    lint {
         abortOnError false
     }
+    externalNativeBuild {
+        ndkBuild {
+            path file('src/main/c/Android.mk')
+        }
+    }
+
 }
 
 dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.squareup.okhttp3:okhttp:3.12.9' // Anything past 3.12.x will break our Android 4 support!
-    implementation 'jcifs:jcifs:1.3.17'
-    implementation 'org.minidns:minidns-hla:0.3.2'
+    implementation 'org.minidns:minidns-hla:1.0.2'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.mockito:mockito-core:1.10.19'
