@@ -1,4 +1,4 @@
-package com.aaronjwood.portauthority.utils;
+package com.aaronjwood.portauthority.network;
 
 import java.io.Closeable;
 import java.io.IOException;

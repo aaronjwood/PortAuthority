@@ -10,8 +10,8 @@ import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
-import com.aaronjwood.portauthority.utils.MDNSResolver;
-import com.aaronjwood.portauthority.utils.NetBIOSResolver;
+import com.aaronjwood.portauthority.network.MDNSResolver;
+import com.aaronjwood.portauthority.network.NetBIOSResolver;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.io.BufferedReader;
