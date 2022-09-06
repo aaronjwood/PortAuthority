@@ -3,6 +3,7 @@ package com.aaronjwood.portauthority.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,19 +31,6 @@ public class UserPreference {
     private static final String DEFAULT_HOST_SOCKET_TIMEOUT = "150";
     private static final String DEFAULT_PORT_SCAN_THREADS = "500";
 
-    /**
-     * Saves the last used host address for later use.
-     *
-     * @param hostAddress the host address string or {@code null} to clear the saved value.
-     */
-    public static void saveLastUsedHostAddress(@NonNull Context context, @Nullable String hostAddress) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if (hostAddress == null) {
-            preferences.edit().remove(KEY_HOST_ADDRESS).apply();
-        } else {
-            preferences.edit().putString(KEY_HOST_ADDRESS, hostAddress).apply();
-        }
-    }
 
     /**
      * Saves the state of the coarse location permission dialog.
