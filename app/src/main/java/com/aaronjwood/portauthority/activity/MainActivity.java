@@ -404,13 +404,15 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                         int rightIp = ByteBuffer.wrap(rhs.getAddress()).getInt();
                         return rightIp - leftIp;
                     });
-                } else {
-                    hostAdapter.sort((lhs, rhs) -> {
-                        int leftIp = ByteBuffer.wrap(lhs.getAddress()).getInt();
-                        int rightIp = ByteBuffer.wrap(rhs.getAddress()).getInt();
-                        return leftIp - rightIp;
-                    });
+
+                    return true;
                 }
+
+                hostAdapter.sort((lhs, rhs) -> {
+                    int leftIp = ByteBuffer.wrap(lhs.getAddress()).getInt();
+                    int rightIp = ByteBuffer.wrap(rhs.getAddress()).getInt();
+                    return leftIp - rightIp;
+                });
 
                 return true;
             case R.id.sortHostname:
