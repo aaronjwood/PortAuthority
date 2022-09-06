@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -141,7 +142,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                 throw new Exception(ctx.getResources().getString(R.string.errAccessArp));
             }
 
-            reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+            reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] neighborLine = line.split("\\s+");
