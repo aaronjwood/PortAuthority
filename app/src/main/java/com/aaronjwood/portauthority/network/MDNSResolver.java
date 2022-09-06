@@ -16,7 +16,6 @@ public class MDNSResolver implements Closeable {
     public MDNSResolver(int timeout) throws IOException {
         socket.setSoTimeout(timeout);
         socket.setTimeToLive(1);
-        // TODO: iPhones respond only back to the multicast address and port 5353 provided requestId == 0
         socket.joinGroup(mdnsIP);
     }
 
