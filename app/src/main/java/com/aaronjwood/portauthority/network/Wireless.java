@@ -63,7 +63,7 @@ public class Wireless {
 
         byte[] mac = iface.getHardwareAddress();
         if (mac == null) {
-            return new String("Not available");
+            return "Not available";
         }
         StringBuilder buf = new StringBuilder();
         for (byte aMac : mac) {
