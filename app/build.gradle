@@ -21,8 +21,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 33
-        versionCode 63
-        versionName "2.4.1"
+        versionCode 64
+        versionName "2.4.2"
         applicationId "com.aaronjwood.portauthority"
         setProperty("archivesBaseName", "PortAuthority-$versionName")
         externalNativeBuild {
