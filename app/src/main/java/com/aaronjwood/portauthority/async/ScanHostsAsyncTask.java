@@ -2,7 +2,6 @@ package com.aaronjwood.portauthority.async;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.util.Pair;
 
@@ -16,9 +15,6 @@ import com.aaronjwood.portauthority.utils.NetBIOSResolver;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
@@ -34,20 +30,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
     private final WeakReference<MainAsyncResponse> delegate;
     private final Database db;
-    private static final String ARP_TABLE = "/proc/net/arp";
-    private static final String IP_CMD = "ip neighbor";
     private static final String NEIGHBOR_INCOMPLETE = "INCOMPLETE";
     private static final String NEIGHBOR_FAILED = "FAILED";
-    private static final String ARP_INCOMPLETE = "0x0";
-    private static final String ARP_INACTIVE = "00:00:00:00:00:00";
-    private static final int NETBIOS_FILE_SERVER = 0x20;
-    private static final int NETBIOS_WORKSTATION = 0x00;
 
     static {
         System.loadLibrary("ipneigh");
     }
 
     public native int nativeIPNeigh(int fd);
+
     /**
      * Constructor to set the delegate
      *
@@ -71,48 +62,24 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         MainAsyncResponse activity = delegate.get();
         Context ctx = (Context) activity;
 
-        // Android 10+ doesn't let us access the ARP table.
-        // Do an early check to see if we can get what we need from the system.
-        // https://developer.android.com/about/versions/10/privacy/changes#proc-net-filesystem
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            try {
-                int returnCode = 0;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
-                    ParcelFileDescriptor readSidePfd = pipe[0];
-                    ParcelFileDescriptor writeSidePfd = pipe[1];
-                    ParcelFileDescriptor.AutoCloseInputStream inputStream = new ParcelFileDescriptor.AutoCloseInputStream(readSidePfd);
-                    int fd_write = writeSidePfd.detachFd();
-                    returnCode = nativeIPNeigh(fd_write);
-                    inputStream.close();
-                } else {
-                    Process ipProc = Runtime.getRuntime().exec(IP_CMD);
-                    ipProc.waitFor();
-                    returnCode = ipProc.exitValue();
-                }
-                if (returnCode != 0) {
-                    activity.processFinish(new IOException(ctx.getResources().getString(R.string.errAccessArp)));
-                    activity.processFinish(true);
-
-                    return null;
-                }
-            } catch (IOException | InterruptedException e) {
-                activity.processFinish(new IOException(ctx.getResources().getString(R.string.errParseArp)));
-                activity.processFinish(true);
-            }
-        } else {
-            File file = new File(ARP_TABLE);
-            if (!file.exists()) {
-                activity.processFinish(new FileNotFoundException(ctx.getResources().getString(R.string.errFindArp)));
+        try {
+            int returnCode;
+            ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
+            ParcelFileDescriptor readSidePfd = pipe[0];
+            ParcelFileDescriptor writeSidePfd = pipe[1];
+            ParcelFileDescriptor.AutoCloseInputStream inputStream = new ParcelFileDescriptor.AutoCloseInputStream(readSidePfd);
+            int fd_write = writeSidePfd.detachFd();
+            returnCode = nativeIPNeigh(fd_write);
+            inputStream.close();
+            if (returnCode != 0) {
+                activity.processFinish(new IOException(ctx.getResources().getString(R.string.errAccessArp)));
                 activity.processFinish(true);
 
                 return null;
             }
-
-            if (!file.canRead()) {
-                activity.processFinish(new IOException(ctx.getResources().getString(R.string.errReadArp)));
-                activity.processFinish(true);
-            }
+        } catch (IOException e) {
+            activity.processFinish(new IOException(ctx.getResources().getString(R.string.errParseArp)));
+            activity.processFinish(true);
         }
 
         ExecutorService executor = Executors.newCachedThreadPool();
@@ -165,63 +132,39 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         Context ctx = (Context) activity;
 
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                int returnCode = 0;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
-                    ParcelFileDescriptor readSidePfd = pipe[0];
-                    ParcelFileDescriptor writeSidePfd = pipe[1];
-                    ParcelFileDescriptor.AutoCloseInputStream inputStream = new ParcelFileDescriptor.AutoCloseInputStream(readSidePfd);
-                    int fd_write = writeSidePfd.detachFd();
-                    returnCode = nativeIPNeigh(fd_write);
-                    reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-                } else {
-                    Process ipProc = Runtime.getRuntime().exec(IP_CMD);
-                    ipProc.waitFor();
-                    returnCode = ipProc.exitValue();
-                    reader = new BufferedReader(new InputStreamReader(ipProc.getInputStream(), "UTF-8"));
+            int returnCode;
+            ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
+            ParcelFileDescriptor readSidePfd = pipe[0];
+            ParcelFileDescriptor writeSidePfd = pipe[1];
+            ParcelFileDescriptor.AutoCloseInputStream inputStream = new ParcelFileDescriptor.AutoCloseInputStream(readSidePfd);
+            int fd_write = writeSidePfd.detachFd();
+            returnCode = nativeIPNeigh(fd_write);
+            reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+            if (returnCode != 0) {
+                throw new Exception(ctx.getResources().getString(R.string.errAccessArp));
+            }
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] neighborLine = line.split("\\s+");
+
+                // We don't have a validated ARP entry for this case.
+                if (neighborLine.length <= 4) {
+                    continue;
                 }
-                if (returnCode != 0) {
-                    throw new Exception(ctx.getResources().getString(R.string.errAccessArp));
+
+                String ip = neighborLine[0];
+                InetAddress addr = InetAddress.getByName(ip);
+                if (addr.isLinkLocalAddress() || addr.isLoopbackAddress()) {
+                    continue;
                 }
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] neighborLine = line.split("\\s+");
 
-                    // We don't have a validated ARP entry for this case.
-                    if (neighborLine.length <= 4) {
-                        continue;
-                    }
+                String macAddress = neighborLine[4];
+                String state = neighborLine[neighborLine.length - 1];
 
-                    String ip = neighborLine[0];
-                    InetAddress addr = InetAddress.getByName(ip);
-                    if (addr.isLinkLocalAddress() || addr.isLoopbackAddress()) {
-                        continue;
-                    }
-
-                    String macAddress = neighborLine[4];
-                    String state = neighborLine[neighborLine.length - 1];
-
-                    // Determine if the ARP entry is valid.
-                    // https://github.com/sivasankariit/iproute2/blob/master/ip/ipneigh.c
-                    if (!NEIGHBOR_FAILED.equals(state) && !NEIGHBOR_INCOMPLETE.equals(state)) {
-                        pairs.add(new Pair<>(ip, macAddress));
-                    }
-                }
-            } else {
-                reader = new BufferedReader(new InputStreamReader(new FileInputStream(ARP_TABLE), "UTF-8"));
-                reader.readLine(); // Skip header.
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    String[] arpLine = line.split("\\s+");
-                    String ip = arpLine[0];
-                    String flag = arpLine[2];
-                    String macAddress = arpLine[3];
-
-                    if (!ARP_INCOMPLETE.equals(flag) && !ARP_INACTIVE.equals(macAddress)) {
-                        pairs.add(new Pair<>(ip, macAddress));
-                    }
+                // Determine if the ARP entry is valid.
+                // https://github.com/sivasankariit/iproute2/blob/master/ip/ipneigh.c
+                if (!NEIGHBOR_FAILED.equals(state) && !NEIGHBOR_INCOMPLETE.equals(state)) {
+                    pairs.add(new Pair<>(ip, macAddress));
                 }
             }
 
@@ -259,10 +202,9 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                         activity1.processFinish(e);
                         return;
                     }
-                    /**
-                    * BUG: Some devices don't respond to mDNS if NetBIOS is queried first. Why?
-                    * So let's query mDNS first, to keep in mind for eventual UPnP implementation.
-                    **/
+
+                    // BUG: Some devices don't respond to mDNS if NetBIOS is queried first. Why?
+                    // So let's query mDNS first, to keep in mind for eventual UPnP implementation.
                     try {
                         MDNSResolver resolver = new MDNSResolver(UserPreference.getLanSocketTimeout(ctx));
                         InetAddress add = InetAddress.getByName(ip);
@@ -276,8 +218,7 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                             }
                             return;
                         }
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         // It's common that many discovered hosts won't have a mDNS entry.
                     }
 
@@ -292,10 +233,8 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
                                 // Call with null to refresh
                                 activity1.processFinish(null, numHosts);
                             }
-                            return;
                         }
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         // It's common that many discovered hosts won't have a NetBIOS entry.
                     }
                 });
