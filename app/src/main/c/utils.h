@@ -47,7 +47,6 @@ typedef struct
 	__u32 data[64];
 } inet_prefix;
 
-int get_hex(char c);
 int get_user_hz(void);
 const char *ipx_ntop(int af, const void *addr, char *str, size_t len);
 const char *dnet_ntop(int af, const void *addr, char *str, size_t len);

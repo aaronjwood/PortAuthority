@@ -117,7 +117,7 @@ int inet_addr_match(const inet_prefix *a, const inet_prefix *b, int bits)
 	bits &= 0x1f;
 
 	if (words)
-		if (memcmp(a1, a2, words << 2))
+		if (memcmp(a1, a2, words << 2) != 0)
 			return -1;
 
 	if (bits) {
@@ -180,7 +180,6 @@ int print_neigh(const struct sockaddr_nl *who, struct nlmsghdr *n, void *arg)
 	struct ndmsg *r = NLMSG_DATA(n);
 	int len = n->nlmsg_len;
 	struct rtattr *tb[NDA_MAX+1];
-	static int logit = 1;
 	static int show_stats = 0;
 
 	if (n->nlmsg_type != RTM_NEWNEIGH && n->nlmsg_type != RTM_DELNEIGH &&
@@ -210,11 +209,7 @@ int print_neigh(const struct sockaddr_nl *who, struct nlmsghdr *n, void *arg)
 		return 0;
 
 	if (filter.master && !(n->nlmsg_flags & NLM_F_DUMP_FILTERED)) {
-		if (logit) {
-			logit = 0;
-			fprintf(fp,
-				"\nWARNING: Kernel does not support filtering by master device\n\n");
-		}
+			fprintf(fp, "\nWARNING: Kernel does not support filtering by master device\n\n");
 	}
 
 	parse_rtattr(tb, NDA_MAX, NDA_RTA(r), n->nlmsg_len - NLMSG_LENGTH(sizeof(*r)));
@@ -322,7 +317,7 @@ void ipneigh_reset_filter(int ifindex)
 	filter.index = ifindex;
 }
 
-static int do_show_or_flush(int argc, char **argv, int flush, FILE *mypipe)
+static int do_show_or_flush(FILE *mypipe)
 {
 	struct {
 		struct nlmsghdr	n;
@@ -332,29 +327,14 @@ static int do_show_or_flush(int argc, char **argv, int flush, FILE *mypipe)
 		.n.nlmsg_type = RTM_GETNEIGH,
 		.n.nlmsg_len = NLMSG_LENGTH(sizeof(struct ndmsg)),
 	};
-	char *filter_dev = NULL;
 	static int preferred_family = AF_UNSPEC;
 	ipneigh_reset_filter(0);
 	if (!filter.family)
 		filter.family = preferred_family;
-	if (flush) {
-		if (argc <= 0) {
-			fprintf(stderr, "Flush requires arguments.\n");
-			return -1;
-		}
-		filter.state = ~(NUD_PERMANENT|NUD_NOARP);
-	} else
-		filter.state = 0xFF & ~NUD_NOARP;
+	filter.state = 0xFF & ~NUD_NOARP;
 
 	// RTM_GETLINK forbidden by Android API 30
 	//ll_init_map(&rth);
-	if (filter_dev) {
-		if ((filter.index = ll_name_to_index(filter_dev)) == 0) {
-			fprintf(stderr, "Cannot find device \"%s\"\n", filter_dev);
-			return -1;
-		}
-		addattr32(&req.n, sizeof(req), NDA_IFINDEX, filter.index);
-	}
 	req.ndm.ndm_family = filter.family;
 	if (rtnl_dump_request_n(&rth, &req.n) < 0) {
 		perror("Cannot send dump request");
@@ -380,7 +360,7 @@ int Java_com_aaronjwood_portauthority_async_ScanHostsAsyncTask_nativeIPNeigh(JNI
 	if (rtnl_open(&rth, 0) < 0)
 		exit(1);
 
-	int res = do_show_or_flush(0, NULL, 0, mypipe);
+	int res = do_show_or_flush(mypipe);
 
 	rtnl_close(&rth);
 	fclose(mypipe);
