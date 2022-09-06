@@ -21,7 +21,7 @@ public class Host implements Serializable {
     private final String mac;
     private String vendor;
 
-    public Host(String ip, String mac, Database db) throws IOException {
+    public Host(String ip, String mac, Database db) throws UnknownHostException {
         this(ip, mac);
         setVendor(db);
     }

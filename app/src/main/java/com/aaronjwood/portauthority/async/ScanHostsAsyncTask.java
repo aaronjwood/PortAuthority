@@ -5,11 +5,14 @@ import android.os.AsyncTask;
 import android.os.ParcelFileDescriptor;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Host;
 import com.aaronjwood.portauthority.network.MDNSResolver;
 import com.aaronjwood.portauthority.network.NetBIOSResolver;
+import com.aaronjwood.portauthority.network.Resolver;
 import com.aaronjwood.portauthority.response.MainAsyncResponse;
 import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
 import com.aaronjwood.portauthority.utils.UserPreference;
@@ -17,6 +20,7 @@ import com.aaronjwood.portauthority.utils.UserPreference;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -118,145 +122,176 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
      * Resolves both DNS and NetBIOS
      * Don't update the UI in onPostExecute since we want to do multiple UI updates here
      * onPostExecute seems to perform all UI updates at once which would hinder what we're doing here
-     * TODO: this method is gross, refactor it and break it up
+     * TODO: complexity has gone down but method is still too big.
      *
      * @param params
      */
     @Override
     protected final void onProgressUpdate(Void... params) {
-        BufferedReader reader = null;
         final MainAsyncResponse activity = delegate.get();
         ExecutorService executor = Executors.newCachedThreadPool();
         final AtomicInteger numHosts = new AtomicInteger(0);
         List<Pair<String, String>> pairs = new ArrayList<>();
         Context ctx = (Context) activity;
 
+        ParcelFileDescriptor[] pipe;
         try {
-            ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
-            ParcelFileDescriptor readSidePfd = pipe[0];
-            ParcelFileDescriptor writeSidePfd = pipe[1];
-            ParcelFileDescriptor.AutoCloseInputStream inputStream = new ParcelFileDescriptor.AutoCloseInputStream(readSidePfd);
-            int fd_write = writeSidePfd.detachFd();
-            int returnCode = nativeIPNeigh(fd_write);
-            if (returnCode != 0) {
-                throw new Exception(ctx.getResources().getString(R.string.errAccessArp));
-            }
+            pipe = ParcelFileDescriptor.createPipe();
+        } catch (IOException e) {
+            reportError(activity, e);
+            cleanup(executor, activity, null);
+            return;
+        }
 
-            reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        ParcelFileDescriptor readSidePfd = pipe[0];
+        ParcelFileDescriptor writeSidePfd = pipe[1];
+        ParcelFileDescriptor.AutoCloseInputStream inputStream = new ParcelFileDescriptor.AutoCloseInputStream(readSidePfd);
+        int fd_write = writeSidePfd.detachFd();
+        int returnCode = nativeIPNeigh(fd_write);
+        if (returnCode != 0) {
+            reportError(activity, new Exception(ctx.getResources().getString(R.string.errAccessArp)));
+            cleanup(executor, activity, null);
+            return;
+        }
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        while (true) {
             String line;
-            while ((line = reader.readLine()) != null) {
-                String[] neighborLine = line.split("\\s+");
-
-                // We don't have a validated ARP entry for this case.
-                if (neighborLine.length <= 4) {
-                    continue;
-                }
-
-                String ip = neighborLine[0];
-                InetAddress addr = InetAddress.getByName(ip);
-                if (addr.isLinkLocalAddress() || addr.isLoopbackAddress()) {
-                    continue;
-                }
-
-                String macAddress = neighborLine[4];
-                String state = neighborLine[neighborLine.length - 1];
-
-                // Determine if the ARP entry is valid.
-                // https://github.com/sivasankariit/iproute2/blob/master/ip/ipneigh.c
-                if (!NEIGHBOR_FAILED.equals(state) && !NEIGHBOR_INCOMPLETE.equals(state)) {
-                    pairs.add(new Pair<>(ip, macAddress));
-                }
+            try {
+                if ((line = reader.readLine()) == null) break;
+            } catch (IOException e) {
+                reportError(activity, e);
+                cleanup(executor, activity, reader);
+                return;
             }
 
-            numHosts.addAndGet(pairs.size());
-            for (Pair<String, String> pair : pairs) {
-                String ip = pair.first;
-                String macAddress = pair.second;
-                executor.execute(() -> {
-                    Host host;
-                    try {
-                        host = new Host(ip, macAddress, db);
-                    } catch (IOException e) {
-                        try {
-                            host = new Host(ip, macAddress);
-                        } catch (UnknownHostException ex) {
-                            if (activity != null) {
-                                activity.processFinish(e);
-                            }
+            String[] neighborLine = line.split("\\s+");
 
-                            return;
-                        }
-                    }
+            // We don't have a validated ARP entry for this case.
+            if (neighborLine.length <= 4) {
+                continue;
+            }
 
-                    MainAsyncResponse activity1 = delegate.get();
-                    try {
-                        InetAddress add = InetAddress.getByName(ip);
-                        String hostname = add.getCanonicalHostName();
-                        host.setHostname(hostname);
+            String ip = neighborLine[0];
+            InetAddress addr;
+            try {
+                addr = InetAddress.getByName(ip);
+            } catch (UnknownHostException e) {
+                reportError(activity, e);
+                cleanup(executor, activity, reader);
+                return;
+            }
 
-                        if (activity1 != null) {
-                            activity1.processFinish(host, numHosts);
-                        }
-                    } catch (UnknownHostException e) {
-                        numHosts.decrementAndGet();
-                        activity1.processFinish(e);
+            if (addr.isLinkLocalAddress() || addr.isLoopbackAddress()) {
+                continue;
+            }
+
+            String macAddress = neighborLine[4];
+            String state = neighborLine[neighborLine.length - 1];
+
+            // Determine if the ARP entry is valid.
+            // https://github.com/sivasankariit/iproute2/blob/master/ip/ipneigh.c
+            if (!NEIGHBOR_FAILED.equals(state) && !NEIGHBOR_INCOMPLETE.equals(state)) {
+                pairs.add(new Pair<>(ip, macAddress));
+            }
+        }
+
+        numHosts.addAndGet(pairs.size());
+        for (Pair<String, String> pair : pairs) {
+            String ip = pair.first;
+            String macAddress = pair.second;
+            executor.execute(() -> {
+                Host host;
+                try {
+                    host = new Host(ip, macAddress, db);
+                } catch (UnknownHostException e) {
+                    reportError(activity, e);
+                    cleanup(executor, activity, reader);
+                    return;
+                }
+
+                MainAsyncResponse activity1 = delegate.get();
+                InetAddress add;
+                try {
+                    add = InetAddress.getByName(ip);
+                } catch (UnknownHostException e) {
+                    numHosts.decrementAndGet();
+                    reportError(activity1, e);
+                    cleanup(executor, activity, reader);
+                    return;
+                }
+
+                String hostname = add.getCanonicalHostName();
+                host.setHostname(hostname);
+
+                if (activity1 != null) {
+                    activity1.processFinish(host, numHosts);
+                }
+
+                // BUG: Some devices don't respond to mDNS if NetBIOS is queried first. Why?
+                // So let's query mDNS first, to keep in mind for eventual UPnP implementation.
+                try {
+                    if (resolve(ip, host, activity1, numHosts, new MDNSResolver(UserPreference.getLanSocketTimeout(ctx)))) {
                         return;
                     }
 
-                    // BUG: Some devices don't respond to mDNS if NetBIOS is queried first. Why?
-                    // So let's query mDNS first, to keep in mind for eventual UPnP implementation.
-                    try {
-                        MDNSResolver resolver = new MDNSResolver(UserPreference.getLanSocketTimeout(ctx));
-                        InetAddress add = InetAddress.getByName(ip);
-                        String name = resolver.resolve(add);
-                        resolver.close();
-                        if (name != null && !name.isEmpty()) {
-                            host.setHostname(name);
-                            if (activity1 != null) {
-                                // Call with null to refresh
-                                activity1.processFinish(null, numHosts);
-                            }
-                            return;
-                        }
-                    } catch (Exception e) {
-                        // It's common that many discovered hosts won't have a mDNS entry.
-                    }
-
-                    try {
-                        NetBIOSResolver resolver = new NetBIOSResolver(UserPreference.getLanSocketTimeout(ctx));
-                        InetAddress add = InetAddress.getByName(ip);
-                        String[] name = resolver.resolve(add);
-                        resolver.close();
-                        if (name != null && name[0] != null && !name[0].isEmpty()) {
-                            host.setHostname(name[0]);
-                            if (activity1 != null) {
-                                // Call with null to refresh
-                                activity1.processFinish(null, numHosts);
-                            }
-                        }
-                    } catch (Exception e) {
-                        // It's common that many discovered hosts won't have a NetBIOS entry.
-                    }
-                });
-            }
-        } catch (Exception e) {
-            if (activity != null) {
-                activity.processFinish(e);
-            }
-
-        } finally {
-            executor.shutdown();
-            if (activity != null) {
-                activity.processFinish(true);
-            }
-
-            try {
-                if (reader != null) {
-                    reader.close();
+                    resolve(ip, host, activity1, numHosts, new NetBIOSResolver(UserPreference.getLanSocketTimeout(ctx)));
+                } catch (Exception ignored) {
                 }
+            });
+        }
+
+        cleanup(executor, activity, reader);
+    }
+
+    private void reportError(MainAsyncResponse activity, Exception e) {
+        if (activity != null) {
+            activity.processFinish(e);
+        }
+    }
+
+    private void cleanup(@NonNull ExecutorService executor, MainAsyncResponse activity, Reader reader) {
+        executor.shutdown();
+        if (activity != null) {
+            activity.processFinish(true);
+        }
+
+        if (reader != null) {
+            try {
+                reader.close();
             } catch (IOException ignored) {
-                // Something's really wrong if we can't close the stream...
             }
         }
+    }
+
+    private boolean resolve(String ip, Host host, MainAsyncResponse activity, AtomicInteger numHosts, Resolver resolver) {
+        InetAddress add;
+        try {
+            add = InetAddress.getByName(ip);
+        } catch (UnknownHostException e) {
+            resolver.close();
+            return false;
+        }
+
+        String[] name;
+        try {
+            name = resolver.resolve(add);
+        } catch (IOException e) {
+            resolver.close();
+            return false;
+        }
+
+        resolver.close();
+        if (name != null && name[0] != null && !name[0].isEmpty()) {
+            host.setHostname(name[0]);
+            if (activity != null) {
+                // Call with null to refresh
+                activity.processFinish(null, numHosts);
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }

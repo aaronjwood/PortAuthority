@@ -8,7 +8,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
-public class MDNSResolver implements Closeable {
+public class MDNSResolver implements Closeable, Resolver {
     private final InetAddress mdnsIP = InetAddress.getByName("224.0.0.251");
     private final int mdnsPort = 5353;
     private final MulticastSocket socket = new MulticastSocket();
@@ -58,7 +58,7 @@ public class MDNSResolver implements Closeable {
         return (addr[3] & 0xFF) + "." + (addr[2] & 0xFF) + "." + (addr[1] & 0xFF) + "." + (addr[0] & 0xFF) + ".in-addr.arpa";
     }
 
-    public String resolve(InetAddress ip) throws IOException {
+    public String[] resolve(InetAddress ip) throws IOException {
         byte[] addr = ip.getAddress();
         int requestId = addr[2] * 0xFF + addr[3];
         byte[] request = dnsRequest(requestId, reverseName(addr));
@@ -70,7 +70,7 @@ public class MDNSResolver implements Closeable {
         if (response[0] != request[0] && response[1] != request[1]) return null;
         int numQueries = response[5];
         int offset = (numQueries == 0 ? 12 + reverseName(addr).length() : request.length) + 2 + 2 + 2 + 4 + 2;
-        return decodeName(response, offset, respPacket.getLength() - offset);
+        return new String[]{decodeName(response, offset, respPacket.getLength() - offset)};
     }
 
     public void close() {
