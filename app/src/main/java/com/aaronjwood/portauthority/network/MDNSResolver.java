@@ -9,9 +9,9 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 
 public class MDNSResolver implements Closeable {
-    InetAddress mdnsIP = InetAddress.getByName("224.0.0.251");
-    private int mdnsPort = 5353;
-    MulticastSocket socket = new MulticastSocket();
+    private InetAddress mdnsIP = InetAddress.getByName("224.0.0.251");
+    private final int mdnsPort = 5353;
+    private MulticastSocket socket = new MulticastSocket();
 
     public MDNSResolver(int timeout) throws IOException {
         socket.setSoTimeout(timeout);

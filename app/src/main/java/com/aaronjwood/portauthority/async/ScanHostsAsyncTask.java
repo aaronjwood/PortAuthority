@@ -8,10 +8,10 @@ import android.util.Pair;
 import com.aaronjwood.portauthority.R;
 import com.aaronjwood.portauthority.db.Database;
 import com.aaronjwood.portauthority.network.Host;
-import com.aaronjwood.portauthority.response.MainAsyncResponse;
-import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
 import com.aaronjwood.portauthority.network.MDNSResolver;
 import com.aaronjwood.portauthority.network.NetBIOSResolver;
+import com.aaronjwood.portauthority.response.MainAsyncResponse;
+import com.aaronjwood.portauthority.runnable.ScanHostsRunnable;
 import com.aaronjwood.portauthority.utils.UserPreference;
 
 import java.io.BufferedReader;
@@ -63,13 +63,12 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         Context ctx = (Context) activity;
 
         try {
-            int returnCode;
             ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
             ParcelFileDescriptor readSidePfd = pipe[0];
             ParcelFileDescriptor writeSidePfd = pipe[1];
             ParcelFileDescriptor.AutoCloseInputStream inputStream = new ParcelFileDescriptor.AutoCloseInputStream(readSidePfd);
             int fd_write = writeSidePfd.detachFd();
-            returnCode = nativeIPNeigh(fd_write);
+            int returnCode = nativeIPNeigh(fd_write);
             inputStream.close();
             if (returnCode != 0) {
                 activity.processFinish(new IOException(ctx.getResources().getString(R.string.errAccessArp)));
@@ -132,17 +131,17 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         Context ctx = (Context) activity;
 
         try {
-            int returnCode;
             ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
             ParcelFileDescriptor readSidePfd = pipe[0];
             ParcelFileDescriptor writeSidePfd = pipe[1];
             ParcelFileDescriptor.AutoCloseInputStream inputStream = new ParcelFileDescriptor.AutoCloseInputStream(readSidePfd);
             int fd_write = writeSidePfd.detachFd();
-            returnCode = nativeIPNeigh(fd_write);
-            reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+            int returnCode = nativeIPNeigh(fd_write);
             if (returnCode != 0) {
                 throw new Exception(ctx.getResources().getString(R.string.errAccessArp));
             }
+
+            reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] neighborLine = line.split("\\s+");
