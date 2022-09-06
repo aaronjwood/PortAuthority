@@ -252,7 +252,7 @@ public class Wireless {
      * @return True if the device is connected, false if it isn't
      */
     public boolean isConnectedWifi() throws NoConnectivityManagerException {
-        NetworkInfo info = getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo info = getConnectivityManager().getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         return info != null && info.isConnectedOrConnecting();
     }
 
@@ -300,15 +300,6 @@ public class Wireless {
         }
 
         return manager;
-    }
-
-    /**
-     * Gets the Android network information in the context of the current activity
-     *
-     * @return Network information
-     */
-    private NetworkInfo getNetworkInfo(int type) throws NoConnectivityManagerException {
-        return getConnectivityManager().getNetworkInfo(type);
     }
 
 }
