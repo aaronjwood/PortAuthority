@@ -404,13 +404,15 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
                         int rightIp = ByteBuffer.wrap(rhs.getAddress()).getInt();
                         return rightIp - leftIp;
                     });
-                } else {
-                    hostAdapter.sort((lhs, rhs) -> {
-                        int leftIp = ByteBuffer.wrap(lhs.getAddress()).getInt();
-                        int rightIp = ByteBuffer.wrap(rhs.getAddress()).getInt();
-                        return leftIp - rightIp;
-                    });
+
+                    return true;
                 }
+
+                hostAdapter.sort((lhs, rhs) -> {
+                    int leftIp = ByteBuffer.wrap(lhs.getAddress()).getInt();
+                    int rightIp = ByteBuffer.wrap(rhs.getAddress()).getInt();
+                    return leftIp - rightIp;
+                });
 
                 return true;
             case R.id.sortHostname:
@@ -767,7 +769,9 @@ public final class MainActivity extends AppCompatActivity implements MainAsyncRe
     @Override
     public void processFinish(final Host h, final AtomicInteger i) {
         scanHandler.post(() -> {
-            hosts.add(h);
+            if (h != null) {
+                hosts.add(h);
+            }
             hostAdapter.sort((lhs, rhs) -> {
                 int leftIp = ByteBuffer.wrap(lhs.getAddress()).getInt();
                 int rightIp = ByteBuffer.wrap(rhs.getAddress()).getInt();

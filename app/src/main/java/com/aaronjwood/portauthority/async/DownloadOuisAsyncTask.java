@@ -10,7 +10,6 @@ import java.lang.ref.WeakReference;
 public class DownloadOuisAsyncTask extends DownloadAsyncTask {
 
     // The official source on gitlab.com doesn't provide a content length header which ruins our ability to report progress!
-    // Use the mirror from github.com instead.
     private static final String SERVICE = "https://raw.githubusercontent.com/wireshark/wireshark/master/manuf";
 
     /**

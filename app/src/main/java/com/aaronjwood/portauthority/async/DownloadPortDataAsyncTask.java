@@ -8,7 +8,8 @@ import java.lang.ref.WeakReference;
 
 public class DownloadPortDataAsyncTask extends DownloadAsyncTask {
 
-    private static final String SERVICE = "https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.csv";
+    // The official source on iana.org doesn't provide a content length header which ruins our ability to report progress!
+    private static final String SERVICE = "https://raw.githubusercontent.com/wireshark/wireshark/master/services";
 
     /**
      * Creates a new asynchronous task that takes care of downloading port data.

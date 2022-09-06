@@ -21,7 +21,7 @@ public class Host implements Serializable {
     private final String mac;
     private String vendor;
 
-    public Host(String ip, String mac, Database db) throws IOException {
+    public Host(String ip, String mac, Database db) throws UnknownHostException {
         this(ip, mac);
         setVendor(db);
     }
@@ -53,6 +53,9 @@ public class Host implements Serializable {
      * @param hostname Hostname for this host
      */
     public void setHostname(String hostname) {
+        if (hostname != null && (hostname.isEmpty() || hostname.endsWith(".local"))) {
+            hostname = hostname.substring(0, hostname.length() - 6);
+        }
         this.hostname = hostname;
 
     }

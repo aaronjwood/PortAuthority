@@ -56,5 +56,21 @@
         Weiterhin können Scans dieser Art über das Netzwerk Ihres Mobilfunkanbieters langsamer sein als mit Ihrer eigenen WiFi-Verbindung und manchmal kann es auf Grund Ausprägung des Datenverkehrs zu unplausiblen Ergebnissen kommen.
         Ihr Mobilfunkanbieter kann den Datenverkehr der durch diesen Scan verursacht wird, ebenfalls als bösartig einstufen.
     </string>
-
+    <string name="ssidAccessTitle">Android %1$s SSID-Zugriff</string>
+    <string name="ssidCoarseMsg">Android %1$s erfordert die Berechtigung für den ungefähren Standort zum Lesen der SSID. Wenn Sie damit nicht einverstanden sind, dann lehnen sie die Berechtigungsanfrage ab und fahren ohne diese Funktion fort.</string>
+    <string name="ssidFineMsg">Android %1$s erfordert die Berechtigung für den genauen Standort zum Lesen der SSID. Wenn Sie damit nicht einverstanden sind, dann lehnen sie die Berechtigungsanfrage ab und fahren ohne diese Funktion fort.</string>
+    <string name="ouiDbTitle">OUI-Datenbank generieren</string>
+    <string name="ouiDbMsg">Möchten Sie die OUI-Datenbank erstellen? Wenn ja, wird die offizielle OUI-Liste von Wireshark heruntergeladen. Bitte nehmen Sie zur Kenntnis, dass Sie ohne die Informationen keinen der MAC zugeordneten Hersteller auflösen können. Sie können diesen Vorgang jederzeit vom Menü aus starten.</string>
+    <string name="portDbTitle">Port-Datenbank generieren</string>
+    <string name="portDbMsg">Möchten Sie die Port-Datenbank erstellen? Wenn ja, wird die offizielle Portliste von der IANA heruntergeladen. Bitte nehmen Sie zur Kenntnis, dass Sie ohne die Informationen keine Dienste identifizieren können. Sie können diesen Vorgang jederzeit vom Menü aus starten.</string>
+    <string name="failedDbInsert">Daten konnten nicht in die Datenbank eingefügt werden. Bitte führen Sie den Vorgang erneut aus</string>
+    <string name="unsuppRecType">Eintragstyp %1$s nicht unterstützt</string>
+    <string name="lookupErr">Fehler bei der Prüfung des Typs %1$s: %2$s</string>
+    <string name="lookupTypeFail">Prüfung von Typ %1$s ist mit dem Fehlercode %2$s fehlgeschlagen</string>
+    <string name="noRecords">Keine Einträge des Typs %1$s gefunden</string>
+    <string name="errAccessArp">Auf ARP-Einträge kann nicht zugegriffen werden</string>
+    <string name="errParseArp">ARP-Einträge können nicht analysiert werden</string>
+    <string name="errFindArp">ARP-Tabelle konnte nicht gefunden werden</string>
+    <string name="errReadArp">ARP-Tabelle konnte nicht gelesen werden</string>
+    <string name="errExternIp">Externe IP kann nicht abfragt werden</string>
 </resources>

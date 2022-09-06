@@ -4,7 +4,6 @@
 <a href="https://play.google.com/store/apps/details?id=com.aaronjwood.portauthority.free"><img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="60"></a>
 
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/74a6e90f803d46a1a39b34daabeb8af1)](https://www.codacy.com/app/aaronjwood/PortAuthority)
-[![Build Status](https://travis-ci.org/aaronjwood/PortAuthority.svg)](https://travis-ci.org/aaronjwood/PortAuthority)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/8687/badge.svg)](https://scan.coverity.com/projects/aaronjwood-portauthority)
 [![Known Vulnerabilities](https://snyk.io/test/github/aaronjwood/PortAuthority/badge.svg)](https://snyk.io/test/github/aaronjwood/PortAuthority)
 
@@ -88,3 +87,8 @@ Like the application and the work I put into it? Consider purchasing the donate 
 Contributions of any kind are welcome!
 Please submit any pull requests to the development branch.
 This means that modifications need to be done either on a new branch based off of development or on the development branch directly.
+
+## Privacy
+This app does not track, collect, or share any data it comes across with anyone or anything.
+There are no ads or analytics trackers in this software.
+The service used to determine your public IP address is [open source](https://github.com/aaronjwood/public-ip-api) and is 100% stateless.

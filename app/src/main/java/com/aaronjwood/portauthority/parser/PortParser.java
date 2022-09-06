@@ -12,18 +12,20 @@ public class PortParser implements Parser {
      */
     @Override
     public String[] parseLine(String line) {
-        String[] data = line.split(",", -1);
-        if (data.length != 12) {
+        if (line.isEmpty() || line.startsWith("#")) {
             return null;
         }
 
-        String transport = data[2];
-        if (!"tcp".equalsIgnoreCase(transport)) {
+        String[] data = line.split("\\s+");
+        if (!data[1].contains("tcp")) {
             return null;
         }
 
-        String port = data[1];
-        String description = data[3];
+        String port = data[1].substring(0, data[1].indexOf("/"));
+        String description = data[0];
+        if (line.contains("#")) {
+            description = line.substring(line.indexOf("#") + 1);
+        }
 
         return new String[]{port, description};
     }
