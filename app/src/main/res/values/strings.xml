@@ -73,4 +73,5 @@
     <string name="errFindArp">Unable to find ARP table</string>
     <string name="errReadArp">Unable to read ARP table</string>
     <string name="errExternIp">Couldn\'t get your external IP</string>
+    <string name="nonPrivilegedMacAccess">Unavailable for non-privileged apps starting with Android 11</string>
 </resources>
