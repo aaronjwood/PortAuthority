@@ -50,7 +50,6 @@ public class Database extends SQLiteOpenHelper {
 
     /**
      * Starts a transaction that allows for multiple readers and one writer.
-     *
      */
     public void beginTransaction() {
         db.beginTransactionNonExclusive();
@@ -58,7 +57,6 @@ public class Database extends SQLiteOpenHelper {
 
     /**
      * Finishes the transaction.
-     *
      */
     public void endTransaction() {
         db.endTransaction();
@@ -66,7 +64,6 @@ public class Database extends SQLiteOpenHelper {
 
     /**
      * Marks the transaction as successful and commits the transaction.
-     *
      */
     public void setTransactionSuccessful() {
         db.setTransactionSuccessful();
@@ -135,7 +132,6 @@ public class Database extends SQLiteOpenHelper {
 
     /**
      * Wipes out all of the OUIs that are currently in the database.
-     *
      */
     public void clearOuis() {
         db.execSQL("DELETE FROM " + OUI_TABLE);
@@ -144,7 +140,6 @@ public class Database extends SQLiteOpenHelper {
 
     /**
      * Wipes out all of the ports that are currently in the database.
-     *
      */
     public void clearPorts() {
         db.execSQL("DELETE FROM " + PORT_TABLE);
@@ -159,13 +154,18 @@ public class Database extends SQLiteOpenHelper {
      */
     public String selectVendor(String mac) {
         Cursor cursor = db.rawQuery("SELECT " + VENDOR_FIELD + " FROM " + OUI_TABLE + " WHERE " + MAC_FIELD + " = ?", new String[]{mac});
-        String vendor;
         if (!cursor.moveToFirst()) {
             cursor.close();
             return null;
         }
 
-        vendor = cursor.getString(cursor.getColumnIndex("vendor"));
+        int vendorIdx = cursor.getColumnIndex(VENDOR_FIELD);
+        if (vendorIdx < 0) {
+            cursor.close();
+            return null;
+        }
+
+        String vendor = cursor.getString(vendorIdx);
         cursor.close();
         return vendor;
     }
@@ -178,14 +178,16 @@ public class Database extends SQLiteOpenHelper {
      */
     public String selectPortDescription(String port) {
         Cursor cursor = db.rawQuery("SELECT " + DESCRIPTION_FIELD + " FROM " + PORT_TABLE + " WHERE " + PORT_FIELD + " = ?", new String[]{port});
-        String name = "";
+        String descrip = "";
         if (cursor.moveToFirst()) {
-            name = cursor.getString(cursor.getColumnIndex(DESCRIPTION_FIELD));
+            int descripIdx = cursor.getColumnIndex(DESCRIPTION_FIELD);
+            if (descripIdx >= 0) {
+                descrip = cursor.getString(descripIdx);
+            }
         }
 
         cursor.close();
-
-        return name;
+        return descrip;
     }
 
 }
