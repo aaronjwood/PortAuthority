@@ -73,4 +73,5 @@
     <string name="errFindArp">找不到 ARP 表</string>
     <string name="errReadArp">无法读取 ARP 表</string>
     <string name="errExternIp">无法获得你的外部 IP</string>
+    <string name="nonPrivilegedMacAccess">从 Android 11 起对非特权应用不可用</string>
 </resources>
