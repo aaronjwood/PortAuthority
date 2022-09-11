@@ -65,27 +65,6 @@ public class ScanHostsAsyncTask extends AsyncTask<Integer, Void, Void> {
         int cidr = params[1];
         int timeout = params[2];
         MainAsyncResponse activity = delegate.get();
-        Context ctx = (Context) activity;
-
-        try {
-            ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
-            ParcelFileDescriptor readSidePfd = pipe[0];
-            ParcelFileDescriptor writeSidePfd = pipe[1];
-            ParcelFileDescriptor.AutoCloseInputStream inputStream = new ParcelFileDescriptor.AutoCloseInputStream(readSidePfd);
-            int fd_write = writeSidePfd.detachFd();
-            int returnCode = nativeIPNeigh(fd_write);
-            inputStream.close();
-            if (returnCode != 0) {
-                activity.processFinish(new IOException(ctx.getResources().getString(R.string.errAccessArp)));
-                activity.processFinish(true);
-
-                return null;
-            }
-        } catch (IOException e) {
-            activity.processFinish(new IOException(ctx.getResources().getString(R.string.errParseArp)));
-            activity.processFinish(true);
-        }
-
         ExecutorService executor = Executors.newCachedThreadPool();
 
         double hostBits = 32.0d - cidr; // How many bits do we have for the hosts.

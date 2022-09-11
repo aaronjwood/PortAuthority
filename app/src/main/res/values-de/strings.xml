@@ -73,4 +73,5 @@
     <string name="errFindArp">ARP-Tabelle konnte nicht gefunden werden</string>
     <string name="errReadArp">ARP-Tabelle konnte nicht gelesen werden</string>
     <string name="errExternIp">Externe IP kann nicht abfragt werden</string>
+    <string name="nonPrivilegedMacAccess">Nicht verfügbar für nicht-privilegierte Apps (ab Android 11)</string>
 </resources>

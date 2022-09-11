@@ -37,7 +37,7 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="externalIp"
-            android:summary="Determines whether or not the application should get your external IP using a third party service"
+            android:summary="Determines whether or not the application should get your external IP using a web service"
             android:title="Fetch device's external IP"
             android:widgetLayout="@layout/checkbox" />
     </PreferenceCategory>

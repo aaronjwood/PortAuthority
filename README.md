@@ -3,7 +3,6 @@
 [<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="60">](https://f-droid.org/app/com.aaronjwood.portauthority)
 <a href="https://play.google.com/store/apps/details?id=com.aaronjwood.portauthority.free"><img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="60"></a>
 
-[![Codacy Badge](https://api.codacy.com/project/badge/grade/74a6e90f803d46a1a39b34daabeb8af1)](https://www.codacy.com/app/aaronjwood/PortAuthority)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/8687/badge.svg)](https://scan.coverity.com/projects/aaronjwood-portauthority)
 [![Known Vulnerabilities](https://snyk.io/test/github/aaronjwood/PortAuthority/badge.svg)](https://snyk.io/test/github/aaronjwood/PortAuthority)
 
