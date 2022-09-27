@@ -42,49 +42,30 @@ public class ScanPortsAsyncTask extends AsyncTask<Object, Void, Void> {
         HostAsyncResponse activity = delegate.get();
         if (activity != null) {
             final int NUM_THREADS = UserPreference.getPortScanThreads((Context) activity);
-
-            try {
-                InetAddress address = InetAddress.getByName(ip);
-                ip = address.getHostAddress();
-            } catch (UnknownHostException e) {
-                activity.processFinish(false);
-                activity.processFinish(e);
-
-                return null;
-            }
-
             ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(NUM_THREADS);
             Random rand = new Random();
-
             int chunk = (int) Math.ceil((double) (stopPort - startPort) / NUM_THREADS);
             int previousStart = startPort;
             int previousStop = startPort + chunk;
-
             for (int i = 0; i < NUM_THREADS; i++) {
                 if (previousStop >= stopPort) {
                     executor.execute(new ScanPortsRunnable(ip, previousStart, stopPort, timeout, delegate));
                     break;
                 }
-
                 int schedule = rand.nextInt((int) ((((stopPort - startPort) / NUM_THREADS) / 1.5)) + 1) + 1;
                 executor.schedule(new ScanPortsRunnable(ip, previousStart, previousStop, timeout, delegate), i % schedule, TimeUnit.SECONDS);
-
                 previousStart = previousStop + 1;
                 previousStop = previousStop + chunk;
             }
-
             executor.shutdown();
-
             try {
                 executor.awaitTermination(5, TimeUnit.MINUTES);
                 executor.shutdownNow();
             } catch (InterruptedException e) {
                 activity.processFinish(e);
             }
-
             activity.processFinish(true);
         }
-
         return null;
     }
 }
