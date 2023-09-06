@@ -11,6 +11,7 @@ import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
@@ -95,7 +96,11 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, DownloadProgress
                     return;
                 }
 
-                in = new BufferedReader(new InputStreamReader(new GZIPInputStream(body.byteStream()), StandardCharsets.UTF_8));
+                InputStream bodyStream = body.byteStream();
+                if ("gzip".equals(response.header("Content-Encoding"))) {
+                    bodyStream = new GZIPInputStream(bodyStream);
+                }
+                in = new BufferedReader(new InputStreamReader(bodyStream, StandardCharsets.UTF_8));
                 String line;
                 long total = 0;
                 while ((line = in.readLine()) != null) {
