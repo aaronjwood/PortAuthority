@@ -17,12 +17,12 @@ public class OuiParser implements Parser {
         }
 
         String[] data = line.split("\\t");
-        String mac = data[0].toLowerCase();
+        String mac = data[0].trim().toLowerCase();
         String vendor;
         if (data.length == 3) {
             vendor = data[2];
         } else {
-            vendor = data[1];
+            vendor = data[1].trim();
         }
 
         return new String[]{mac, vendor};

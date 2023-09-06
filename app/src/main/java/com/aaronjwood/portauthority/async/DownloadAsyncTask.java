@@ -11,6 +11,7 @@ import com.aaronjwood.portauthority.response.MainAsyncResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
@@ -95,18 +96,25 @@ public abstract class DownloadAsyncTask extends AsyncTask<Void, DownloadProgress
                     return;
                 }
 
-                in = new BufferedReader(new InputStreamReader(new GZIPInputStream(body.byteStream()), StandardCharsets.UTF_8));
-                String line;
+                InputStream bodyStream = body.byteStream();
+                boolean gzipped = "gzip".equals(response.header("Content-Encoding"));
+                if (gzipped) {
+                    bodyStream = new GZIPInputStream(bodyStream);
+                }
+                in = new BufferedReader(new InputStreamReader(bodyStream, StandardCharsets.UTF_8));
+                // Lean on the fact that we're working with UTF-8 here.
+                // Also, make a rough estimation of how much we need to reduce this to account for the compressed data we've received.
+                double progressPerByte = 100d / body.contentLength() * (gzipped ? 3 : 1);
                 long total = 0;
+                String line;
                 while ((line = in.readLine()) != null) {
                     if (isCancelled()) {
                         return;
                     }
 
-                    // Lean on the fact that we're working with UTF-8 here.
-                    // Also, make a rough estimation of how much we need to reduce this to account for the compressed data we've received.
-                    total += line.length() / 3;
-                    downProg.progress = (int) (total * 100 / body.contentLength());
+                    total += line.length();
+                    downProg.progress = (int) (total * progressPerByte);
+
                     publishProgress(downProg);
                     String[] data = parser.parseLine(line);
                     if (data == null) {
