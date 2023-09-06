@@ -91,3 +91,10 @@ This means that modifications need to be done either on a new branch based off o
 This app does not track, collect, or share any data it comes across with anyone or anything.
 There are no ads or analytics trackers in this software.
 The service used to determine your public IP address is [open source](https://github.com/aaronjwood/public-ip-api) and is 100% stateless.
+
+## Acknowledgements
+
+MAC address vendor OUI resolution is possible thanks to the [lookup table](https://www.wireshark.org/download/automated/data/manuf) assembled by WireShark from IEEE public OUI listings.
+See also [Wireshark's OUI Lookup Tool](https://www.wireshark.org/tools/oui-lookup.html).
+
+Port service names and descriptions are provided by the IANA as the [Service Name and Transport Protocol Port Number Registry](https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml).
